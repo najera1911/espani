@@ -12,7 +12,7 @@
         public function __construct()
         {
             parent::__construct();
-            
+
             if ($this->session->userdata('isLoggedIn')) {
                 $this->acl->setUserId($this->session->userdata('idEmpleado'));
             }
@@ -54,7 +54,7 @@
                 $this->index('login',['error'=>true]);
             }else{
 
-                if($this->usuario_model->validar_usuario($usuario, $clave)){
+                if($this->usuario_model->validar_usuario($usuarios, $clave)){
                     redirect('/');
                 }else{
                     $this->index('login',['error'=>true]);
