@@ -1,8 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * Created by REPSS Hidalgo.
- * User: Ulises Darío Martínez Salinas
- * Contact: ulises[dot]salinas[at]gmail[dot]com
  * Date: 16/05/2017
  * Time: 10:57 AM
  */

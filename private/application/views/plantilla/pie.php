@@ -1,13 +1,13 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-    /**
-     * Created by REPSS Hidalgo.
-     * User: Ulises Darío Martínez Salinas
-     * Contact: ulises[dot]salinas[at]gmail[dot]com
-     * Date: 16/05/2017
-     * Time: 10:57 AM
-     */
+/**
+ * Created by REPSS Hidalgo.
+ * User: Ulises Darío Martínez Salinas
+ * Contact: ulises[dot]salinas[at]gmail[dot]com
+ * Date: 16/05/2017
+ * Time: 10:57 AM
+ */
 
-    $anio=2018;
+$anio=2018;
 ?>
 
 </div> <!--pusher-->
@@ -39,6 +39,13 @@
     });
 </script>
 
+
+<?php if(isset($scripts)){
+    for($i=0;$i<count($scripts);$i++){
+        echo '<script src="' . base_url("assets/js/" . $scripts[$i] . '?v=1"></script>');
+    }
+}?>
+</body>
 <footer id="footer" class="pb-4 pt-4">
     <div class="container-fluid">
         <div class="row text-center">
@@ -49,12 +56,4 @@
         </div>
     </div>
 </footer>
-
-
-<?php if(isset($scripts)){
-    for($i=0;$i<count($scripts);$i++){
-        echo '<script src="' . base_url("assets/js/" . $scripts[$i] . '?v=1"></script>');
-    }
-}?>
-</body>
 </html>

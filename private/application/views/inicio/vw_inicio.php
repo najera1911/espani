@@ -18,67 +18,77 @@ $this->load->view("plantilla/encabezado",$data);
 
 ?>
 
-<menu id="menu">
-    <div class="container-fluid">
-        <div class="row mt-5 mb-5">
-            <div class="col text-center text-uppercase">
-                <h2>Plataforma Integral ESPANI</h2>
+    <menu id="menu">
+        <div class="container-fluid">
+            <div class="row mt-5 mb-5">
+                <div class="col text-center text-uppercase">
+                    <h2 class="text-espani">Plataforma Integral ESPANI</h2>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <ul class="ca-menu">
+                    <li>
+                        <a href="#">
+                            <div class="ca-icon pt-3">
+                                <span class="fas fa-users"></span>
+                            </div>
+                            <div class="ca-content">
+                                <h2 class="ca-main">Empleados</h2>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="ml-2">
+                        <a href="#">
+                            <div class="ca-icon pt-3">
+                                <span class="fas fa-user-tie"></span>
+                            </div>
+                            <div class="ca-content">
+                                <h2 class="ca-main">Clientes</h2>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="ml-2">
+                        <a href="#">
+                            <div class="ca-icon pt-3">
+                                <span class="fas fa-dolly-flatbed"></span>
+                            </div>
+                            <div class="ca-content">
+                                <h2 class="ca-main">Orden de Corte</h2>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="ml-2">
+                        <a href="#">
+                            <div class="ca-icon pt-3">
+                                <span class="fas fa-clipboard-list"></span>
+                            </div>
+                            <div class="ca-content">
+                                <h2 class="ca-main">Catalogos</h2>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="ml-2">
+                        <a href="#">
+                            <div class="ca-icon pt-3">
+                                <span class="fas fa-donate"></span>
+                            </div>
+                            <div class="ca-content">
+                                <h2 class="ca-main">Pagos</h2>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="row mb-5">
-            <ul class="ca-menu">
-                <li>
-                    <a href="#">
-                        <span class="ca-icon">F</span>
-                        <div class="ca-content">
-                            <h2 class="ca-main">Empleados</h2>
-                        </div>
-                    </a>
-                </li>
-                <li class="ml-2">
-                    <a href="#">
-                        <span class="ca-icon">H</span>
-                        <div class="ca-content">
-                            <h2 class="ca-main">Clientes</h2>
-                        </div>
-                    </a>
-                </li>
-                <li class="ml-2">
-                    <a href="#">
-                        <span class="ca-icon">N</span>
-                        <div class="ca-content">
-                            <h2 class="ca-main">Orden de Corte</h2>
-                        </div>
-                    </a>
-                </li>
-                <li class="ml-2">
-                    <a href="#">
-                        <span class="ca-icon">K</span>
-                        <div class="ca-content">
-                            <h2 class="ca-main">Catalogos</h2>
-                        </div>
-                    </a>
-                </li>
-                <li class="ml-2">
-                    <a href="#">
-                        <span class="ca-icon">L</span>
-                        <div class="ca-content">
-                            <h2 class="ca-main">Pagos</h2>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</menu>
+    </menu>
 
 
-<script>
-    $(document).ready(function(){
+    <script>
+        $(document).ready(function(){
 
 
-    });
-</script>
+        });
+    </script>
 
 <?php
 $data['scripts'] = array(
