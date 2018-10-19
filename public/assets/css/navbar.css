@@ -1,0 +1,30 @@
+#header .nav-link{
+    color: rgba(249, 245, 245, .95) !important;
+}
+
+#header .nav-link:hover{
+    color: rgb(116, 191, 125) !important;
+}
+
+#header .nav-link:active{
+    color: rgb(116, 191, 125) !important;
+    font-weight: bold !important;
+}
+
+#header .dropdown-menu{
+    background-color: #8b949d !important;
+}
+
+#header .dropdown-item:focus, .dropdown-item:hover {
+    color: #ffffff !important;
+    background-color: #495057bf !important;
+}
+
+#footer{
+    background-color: #343a40 !important;
+    color: white !important;
+}
+
+#footer a{
+    color: white;
+}

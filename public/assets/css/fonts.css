@@ -1,0 +1,34 @@
+@font-face {
+    font-family: 'soberanas';
+    src: url('../fonts/SoberanaSans-Bold.eot');
+    src: local('☺'), url('../fonts/SoberanaSans-Bold.woff') format('woff'), url('../fonts/SoberanaSans-Bold.ttf') format('truetype'),
+                     url('../fonts/SoberanaSans-Bold.svg') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'soberanas';
+    src: url('../fonts/SoberanaSans-Regular.eot');
+    src: local('☺'), url('../fonts/SoberanaSans-Regular.woff') format('woff'), url('../fonts/SoberanaSans-Regular.ttf') format('truetype'),
+                      url('../fonts/SoberanaSans-Regular.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'soberanat';
+    src: url('../fonts/SoberanaTitular-Bold.eot');
+    src: local('☺'), url('../fonts/SoberanaTitular-Bold.woff') format('woff'), url('../fonts/SoberanaTitular-Bold.ttf') format('truetype'),
+                     url('../fonts/SoberanaTitular-Bold.svg') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'soberanat';
+    src: url('../fonts/SoberanaTitular-Regular.eot');
+    src: local('☺'), url('../fonts/SoberanaTitular-Regular.woff') format('woff'), url('../fonts/SoberanaTitular-Regular.ttf') format('truetype'),
+                   url('../fonts/SoberanaTitular-Regular.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
