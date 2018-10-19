@@ -54,7 +54,7 @@
                 $this->index('login',['error'=>true]);
             }else{
 
-                if($this->usuario_model->validar_usuario($usuarios, $clave)){
+                if($this->usuario_model->validar_usuario($usuario, $clave)){
                     redirect('/');
                 }else{
                     $this->index('login',['error'=>true]);
