@@ -23,7 +23,7 @@
                         return $res;
                     }else{
                         return FALSE;
-                    }         
+                    }
                 }else{
                     return FALSE;
                 }
@@ -145,11 +145,11 @@
                     $this->db->set('fh_nacimiento', $params['fh_nacimiento'] );
                 }
 
-                    if($this->db->update('cat_usuario')){
-                        return   $params['id']  ;
-                    }else{
-                        return FALSE;
-                    }
+                if($this->db->update('cat_usuario')){
+                    return   $params['id']  ;
+                }else{
+                    return FALSE;
+                }
 
             }
 
@@ -180,8 +180,8 @@
 
         function get_permisos_pefil($idPerfil){
             $sql = "select t1.descripcion as nombre, t1.cat_permiso_id as id, t1.clave from cat_perfil_permiso as t0 " .
-                   "inner join cat_permiso as t1 on t1.cat_permiso_id = t0.cat_permiso_id where t0.cat_perfil_id = ? ".
-                   "and t0.activo = 1 ";
+                "inner join cat_permiso as t1 on t1.cat_permiso_id = t0.cat_permiso_id where t0.cat_perfil_id = ? ".
+                "and t0.activo = 1 ";
 //            var_dump($sql);
 
             return $this->db->query($sql, [$idPerfil])->result();

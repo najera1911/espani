@@ -20,9 +20,9 @@
     float:left;
     background: #fff;
     border: 1px solid #073c13;
-    -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    -moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.52);
+    -moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.52);
+    box-shadow: 5px 4px 1px 1px rgba(0, 0, 0, 0.52);
     margin-right: 4px;
     -webkit-transition: all 300ms linear;
     -moz-transition: all 300ms linear;
@@ -38,20 +38,20 @@
     width: 100%;
     height: 100%;
     display: block;
-    color: #333;
+    color: #033a03;
     position: relative;
 }
 .ca-icon{
     font-family: 'WebSymbolsRegular', cursive;
-    font-size: 60px;
-    color: #333;
-    text-shadow: 0px 0px 1px #333;
+    font-size: 8vw;
+    color: #166f16;
+    text-shadow: 0 0 1px #333;
     line-height: 150px;
     position: absolute;
     width: 100%;
-    height: 50%;
-    left: 0px;
-    top: 0px;
+    height: 60%;
+    left: 0;
+    top: 0;
     text-align: center;
     -webkit-transition: all 400ms linear;
     -moz-transition: all 400ms linear;
@@ -63,11 +63,11 @@
     position: absolute;
     left: 0px;
     width: 100%;
-    height: 50%;
-    top: 50%;
+    height: 40%;
+    top: 60%;
 }
 .ca-main{
-    font-size: 30px;
+    font-size: 2.5vw;
     opacity: 0.8;
     text-align: center;
     -webkit-transition: all 200ms linear;
@@ -89,14 +89,14 @@
     transition: all 200ms linear;
 }
 .ca-menu li:hover{
-    background-color: #000;
+    background-color: #212529;
 }
 .ca-menu li:hover .ca-icon{
     color: #fff;
     font-size: 90px;
 }
 .ca-menu li:hover .ca-main{
-    color: #00ccff;
+    color: #bd2130;
     -webkit-animation: moveFromLeftRotate 300ms ease;
     -moz-animation: moveFromLeftRotate 300ms ease;
     -ms-animation: moveFromLeftRotate 300ms ease;

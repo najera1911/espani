@@ -8,9 +8,6 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
 
 </style>
 
-
-
-
 <nav id="header" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -24,7 +21,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item itemfirst">
                     <a class="nav-link" href="#main"><span class="fas fa-home fa-fw"></span> Inicio</a>
                 </li>
                 <li class="nav-item">
@@ -45,14 +42,14 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-lock"> Admin</a>
+                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-cogs"></span> Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-sign-out-alt"> Salir</a>
+                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-sign-out-alt"></span> Salir</a>
                 </li>
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link text-platzi" href="#" data-target="#modalCompra" data-toggle="modal">Comprar tickets</a>-->
-<!--                </li>-->
+                <!--                <li class="nav-item">-->
+                <!--                    <a class="nav-link text-platzi" href="#" data-target="#modalCompra" data-toggle="modal">Comprar tickets</a>-->
+                <!--                </li>-->
             </ul>
         </div>
     </div>

@@ -15,3 +15,12 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 /vendor/
+.idea/ceredi3.iml
+.idea/ceredi3.iml
+.idea/dictionaries/Christian.xml
+.idea/misc.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/ceredi3.iml
+private/application/config/database.php
+.idea/vcs.xml

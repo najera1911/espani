@@ -1,16 +1,20 @@
 <?php
-    defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-    $data['title'] = ":: Inicio";
-    $data['css'] = array(
-        "font-awesome.css",
-        "styleLogin.css"
-    );
+$data['title'] = ":: Inicio";
+$data['css'] = array(
+    "font-awesome.css",
+    "styleLogin.css"
+);
 
-    $this->load->view("plantilla/encabezado",$data);
+$this->load->view("plantilla/encabezado",$data);
 
 
 
+<<<<<<< HEAD
+=======
+//    echo password_hash('53RVr3ps$123',PASSWORD_BCRYPT, ['cost' => 11] );
+>>>>>>> 99c0e63a73df52e38a53848eb4f3cce125f249e4
 ?>
 
 
@@ -26,12 +30,12 @@
     <link href="//fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900iSlabo+27px&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
           rel="stylesheet">
 
-    <body>
-    <div class="agileheader">
+
+    <div class="agileheader mt-5">
         <h1>LOGIN NOREL</h1>
     </div>
 
-    <section class="main-w3l">
+    <section class="main-w3l mb-5 mt-5">
         <div class="w3layouts-main">
             <h2>Iniciar Sesión</h2>
             <div class="w3ls-form" style="padding-bottom: 20px">
@@ -54,20 +58,18 @@
 
         </div>
     </section>
-
-
-    </body>
-
-
-
-
-<script>
-
-
-</script>
+    <br><br><br><br><br>
+    <script>
+    </script>
 
 
 <?php
+<<<<<<< HEAD
     $data['scripts'] = array(
     );
     $this->load->view("plantilla/pie",$data);
+=======
+$data['scripts'] = array(
+);
+$this->load->view("plantilla/pie",$data);
+>>>>>>> 99c0e63a73df52e38a53848eb4f3cce125f249e4
