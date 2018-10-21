@@ -22,10 +22,10 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item itemfirst">
-                    <a class="nav-link" href="#main"><span class="fas fa-home fa-fw"></span> Inicio</a>
+                    <a class="nav-link" href="<?php echo base_url()?>inicio/index/inicio"><span class="fas fa-home fa-fw"></span> Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#main"><span class="fas fa-users"></span> Empleados</a>
+                    <a class="nav-link" href="<?php echo base_url()?>empleados/index/empleados"><span class="fas fa-users"></span> Empleados</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#main"><span class="fas fa-user-tie"></span> Clientes </a>
@@ -45,7 +45,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-cogs"></span> Admin</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-sign-out-alt"></span> Salir</a>
+                    <a class="nav-link" href="<?php echo  site_url(("inicio/cerrar_sesion"));?>"><span class="fas fa-sign-out-alt"></span> Salir</a>
                 </li>
                 <!--                <li class="nav-item">-->
                 <!--                    <a class="nav-link text-platzi" href="#" data-target="#modalCompra" data-toggle="modal">Comprar tickets</a>-->
@@ -54,4 +54,6 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
         </div>
     </div>
 </nav>
+
+<div class="container-fluid">
 

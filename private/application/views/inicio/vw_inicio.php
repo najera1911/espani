@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $data['title'] = ":: Inicio";
 $data['css'] = array(
-    'style6.css'
+    'espaniMain.css'
 );
 
 $this->load->view("plantilla/encabezado",$data);
@@ -25,60 +25,138 @@ $this->load->view("plantilla/encabezado",$data);
                     <h2 class="text-espani">Plataforma Integral ESPANI</h2>
                 </div>
             </div>
-            <div class="row mb-5">
-                <ul class="ca-menu">
-                    <li>
-                        <a href="#">
-                            <div class="ca-icon pt-3">
-                                <span class="fas fa-users"></span>
-                            </div>
-                            <div class="ca-content">
-                                <h2 class="ca-main">Empleados</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ml-2">
-                        <a href="#">
-                            <div class="ca-icon pt-3">
-                                <span class="fas fa-user-tie"></span>
-                            </div>
-                            <div class="ca-content">
-                                <h2 class="ca-main">Clientes</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ml-2">
-                        <a href="#">
-                            <div class="ca-icon pt-3">
-                                <span class="fas fa-dolly-flatbed"></span>
-                            </div>
-                            <div class="ca-content">
-                                <h2 class="ca-main">Orden de Corte</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ml-2">
-                        <a href="#">
-                            <div class="ca-icon pt-3">
-                                <span class="fas fa-clipboard-list"></span>
-                            </div>
-                            <div class="ca-content">
-                                <h2 class="ca-main">Catalogos</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="ml-2">
-                        <a href="#">
-                            <div class="ca-icon pt-3">
-                                <span class="fas fa-donate"></span>
-                            </div>
-                            <div class="ca-content">
-                                <h2 class="ca-main">Pagos</h2>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+            <div id="ca-menu">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>empleados/index/empleados">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/emp.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Empleados</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/client.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Clientes</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/catalogos.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Catalogos</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/oPago.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Orden de Pago</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/nomina.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Nomina</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
+                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/report.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main">Reportes</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+<!--            <div class="row mb-5">-->
+<!---->
+<!--                <ul class="ca-menu">-->
+<!--                    <li>-->
+<!--                        <a href="#">-->
+<!--                            <div class="ca-icon pt-3">-->
+<!--                                <img src="--><?php //echo base_url('assets/img/')?><!--emp.png">-->
+<!--                            </div>-->
+<!--                            <div class="ca-content">-->
+<!--                                <h2 class="ca-main">Empleados</h2>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="ml-2">-->
+<!--                        <a href="#">-->
+<!--                            <div class="ca-icon pt-3">-->
+<!--                                <span class="fas fa-user-tie"></span>-->
+<!--                            </div>-->
+<!--                            <div class="ca-content">-->
+<!--                                <h2 class="ca-main">Clientes</h2>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="ml-2">-->
+<!--                        <a href="#">-->
+<!--                            <div class="ca-icon pt-3">-->
+<!--                                <span class="fas fa-dolly-flatbed"></span>-->
+<!--                            </div>-->
+<!--                            <div class="ca-content">-->
+<!--                                <h2 class="ca-main">Orden de Corte</h2>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="ml-2">-->
+<!--                        <a href="#">-->
+<!--                            <div class="ca-icon pt-3">-->
+<!--                                <span class="fas fa-clipboard-list"></span>-->
+<!--                            </div>-->
+<!--                            <div class="ca-content">-->
+<!--                                <h2 class="ca-main">Catalogos</h2>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    <li class="ml-2">-->
+<!--                        <a href="#">-->
+<!--                            <div class="ca-icon pt-3">-->
+<!--                                <span class="fas fa-donate"></span>-->
+<!--                            </div>-->
+<!--                            <div class="ca-content">-->
+<!--                                <h2 class="ca-main">Pagos</h2>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
         </div>
     </menu>
 

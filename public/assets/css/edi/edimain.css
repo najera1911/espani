@@ -1,9 +1,0 @@
-.ui.toggle.checkbox.verde input:checked ~ .box:before, .ui.toggle.checkbox.verde input:checked ~ label:before {
-    background-color: #1F8C1D !important;
-}
-.ui.toggle.checkbox.amarillo input:checked ~ .box:before, .ui.toggle.checkbox.amarillo input:checked ~ label:before {
-    background-color: #BCBB3F !important;
-}
-.ui.toggle.checkbox.rojo input:checked ~ .box:before, .ui.toggle.checkbox.rojo input:checked ~ label:before {
-    background-color: #8C0700 !important;
-}

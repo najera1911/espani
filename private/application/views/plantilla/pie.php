@@ -10,7 +10,8 @@
 $anio=2018;
 ?>
 
-</div> <!--pusher-->
+
+</div> <!--end container-fluid-->
 
 <!-- Pie de página -->
 <!--<script src="--><?php //echo base_url('assets/js/')?><!--semantic.min.js?v=2.11"></script>-->

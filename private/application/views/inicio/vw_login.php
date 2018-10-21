@@ -10,11 +10,8 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado",$data);
 
 
-
-<<<<<<< HEAD
-=======
 //    echo password_hash('53RVr3ps$123',PASSWORD_BCRYPT, ['cost' => 11] );
->>>>>>> 99c0e63a73df52e38a53848eb4f3cce125f249e4
+
 ?>
 
 
@@ -64,12 +61,11 @@ $this->load->view("plantilla/encabezado",$data);
 
 
 <?php
-<<<<<<< HEAD
+
     $data['scripts'] = array(
     );
     $this->load->view("plantilla/pie",$data);
-=======
+
 $data['scripts'] = array(
 );
 $this->load->view("plantilla/pie",$data);
->>>>>>> 99c0e63a73df52e38a53848eb4f3cce125f249e4
