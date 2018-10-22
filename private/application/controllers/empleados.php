@@ -28,18 +28,12 @@ class Empleados extends CI_Controller{
         exit($msg . trim(" " . $num ));
     }
 
-    function index($pagina = 'empleados', $data=null){
-
+    function index($pagina = ''){
         if (!file_exists(VIEWPATH . 'empleados/vw_' . $pagina . '.php')) {
             show_404();
         }
 
-        if (!$this->session->userdata('isLoggedIn')) {
-            $pagina = 'login';
-        }
-
-        $this->load->view('empleados/vw_' . $pagina, $data);
-
+        $this->load->view('empleados/vw_' . $pagina);
     }
 
     //funcion para obtener datos
@@ -47,12 +41,14 @@ class Empleados extends CI_Controller{
         if( !$this->session->userdata('isLoggedIn') ) {
             $this->cliError('Default response');
         }
-        if (!$this->acl->hasPermission('admin_access')){
-            $this->cliError('Default response.');
-        }
+//        if (!$this->acl->hasPermission('admin_access')){
+//            $this->cliError('Default response.');
+//        }
 
         switch($what){
-            case 'ejemploContrato':
+            case 'empleados':
+                $data = $this->empleados_model->get_empleados(array('estatus'=>1));
+                exit(json_encode($data));
                 break;
             default : $this->cliError();
         }

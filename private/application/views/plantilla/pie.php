@@ -15,9 +15,10 @@ $anio=2018;
 
 <!-- Pie de página -->
 <!--<script src="--><?php //echo base_url('assets/js/')?><!--semantic.min.js?v=2.11"></script>-->
+
+
 <script src="<?php echo base_url('assets/js/')?>datepicker.min.js?v=1"></script>
 <script src="<?php echo base_url('assets/js/i18n/')?>datepicker.es.js?v=1"></script>
-<script src="<?php echo base_url('assets/js/')?>bootstrap.js?v=4.1.3"></script>
 <script src="<?php echo base_url('assets/js/')?>bootstrap.min.js?v=4.1.3"></script>
 
 <script>
@@ -47,7 +48,7 @@ $anio=2018;
     }
 }?>
 </body>
-<footer id="footer" class="pb-4 pt-4">
+<footer id="footer" class="pb-4 pt-4 mt-5">
     <div class="container-fluid">
         <div class="row text-center">
             <div class="col-12">

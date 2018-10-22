@@ -3,6 +3,10 @@
     text-shadow: 4px 4px 2px rgba(150, 150, 150, 1);
 }
 
+.txt-Subtitulos{
+    color: #6f0812;
+}
+
 #header .nav-link{
     color: rgba(249, 245, 245, .95) !important;
 }
@@ -41,3 +45,19 @@
 #footer a{
     color: white;
 }
+
+.modal-header{
+    border-bottom: 3px solid #094215 !important;
+    background-color: #0f421775 !important;
+}
+
+.modal-content{
+    border: 1px solid #094215 !important;
+}
+
+@media (min-width: 992px){
+    .modal-lg {
+        max-width: 1000px !important;
+    }
+}
+
