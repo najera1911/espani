@@ -32,7 +32,7 @@ body p,h1,h2,h3,h4,h5,h6,a{
 	font-family: 'Roboto', sans-serif;
 }
 body {
-    background: url('../img/banner.jpg') no-repeat 62% 34%;
+    background: url('../img/banner.jpeg') no-repeat 62% 34%;
     background-size: cover;
 	text-align:center;
 }
@@ -418,7 +418,7 @@ input[type="submit"]:hover {
 	.w3ls-bottom p a {
 		padding: 2px;
 		font-size: 14px;
-		letter-spacing: 0px;	
+		letter-spacing: 0px;
 	}
 	.footer-w3l p {
 		margin: 1em 0em;
@@ -427,6 +427,6 @@ input[type="submit"]:hover {
 		margin: 30px 0px 15px 0;
 		font-size: 22px;
 	}
-	
+
 }
 /*--//responsive end here--*/
