@@ -50,6 +50,18 @@ class Empleados extends CI_Controller{
                 $data = $this->empleados_model->get_empleados(array('estatus'=>1));
                 exit(json_encode($data));
                 break;
+            case 'catEntidad':
+                $res = $this->empleados_model->getEntidad();
+                exit(json_encode($res));
+                break;
+            case 'catDepartamento':
+                $res = $this->empleados_model->getDepartamento();
+                exit(json_encode($res));
+                break;
+            case 'catPuesto':
+                $res = $this->empleados_model->getPuesto();
+                exit(json_encode($res));
+                break;
             default : $this->cliError();
         }
     }

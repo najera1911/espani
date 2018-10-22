@@ -70,7 +70,7 @@ $this->load->view("plantilla/encabezado",$data);
                                 <div class="form-group col-md-4">
                                     <label for="cmbSexo">Sexo</label>
                                     <select class="form-control" id="cmbSexo" required>
-                                        <option value="">-Elije-</option>
+                                        <option value="">Sexo</option>
                                         <option value="F">Femenino</option>
                                         <option value="M">Masculino</option>
                                     </select>
@@ -136,13 +136,11 @@ $this->load->view("plantilla/encabezado",$data);
                                 <div class="form-group col-md-4">
                                     <label for="cmbDep">Departamento</label>
                                     <select class="form-control" id="cmbDep" required>
-                                        <option value="">-Elije-</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="cmbPuesto">Puesto</label>
                                     <select class="form-control" id="cmbPuesto" required>
-                                        <option value="">-Elije-</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-4">
@@ -160,7 +158,8 @@ $this->load->view("plantilla/encabezado",$data);
 
             </div>
             <div class="modal-footer d-flex justify-content-center">
-                <button class="btn btn-deep-orange">Sign up</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardarEmpleado">Guardar</button>
             </div>
         </div>
     </div>
@@ -171,8 +170,12 @@ $this->load->view("plantilla/encabezado",$data);
         let $tblDatos = $("#tblDatos"),
             $btnNuevoEmpleado = $("#btnNuevoEmpleado"),
             $wEmpleadoEdit = $("#wEmpleadoEdit"),
-            _currEmpleado           = {},
-            $cmbSexo = $("#cmbSexo")
+            $frmPersonal = $('#frmPersonal'),
+            $btnGuardarEmpleado = $('#btnGuardarEmpleado'),
+            $cmbDep = $('#cmbDep'),
+            $cmbPuesto = $('#cmbPuesto'),
+            $cmbEntidad = $('#cmbEntidad'),
+            _currEmpleado           = {}
         ;
 
         function cargar_catalogo (url, data) {
@@ -198,7 +201,7 @@ $this->load->view("plantilla/encabezado",$data);
                 $el.val(item.id).html(item.nombre);
                 $obj.append($el);
             });
-            $obj.dropdown();
+
         }
 
         function cargar_catalogo_select (url,data, $obj, placeholder) {
@@ -211,6 +214,11 @@ $this->load->view("plantilla/encabezado",$data);
             });
             return xhr;
         }
+
+        // cargar catalogos
+        cargar_catalogo_select('<?php echo site_url("/empleados/get/catEntidad")?>', {}, $cmbEntidad, 'Estado');
+        cargar_catalogo_select('<?php echo site_url("/empleados/get/catDepartamento")?>', {}, $cmbDep, 'Departamento');
+        cargar_catalogo_select('<?php echo site_url("/empleados/get/catPuesto")?>', {}, $cmbPuesto, 'Puesto');
 
         function getEmpleados(){
             let source =
@@ -299,6 +307,21 @@ $this->load->view("plantilla/encabezado",$data);
             $wEmpleadoEdit.modal("show");
         });
 
+        $wEmpleadoEdit.on('hide.bs.modal', function () {
+            _currEmpleado = {};
+            $frmPersonal.get(0).reset();
+            $btnGuardarEmpleado.removeClass("loading");
+            $frmPersonal.removeClass('loading');
+        });
+
+        $wEmpleadoEdit.on('shown.bs.modal', function() {
+            const $head = $wEmpleadoEdit.find('.modal-title span');
+            if(_currEmpleado.hasOwnProperty('cat_rh_empleado_id')){
+                $head.html(' - ' + _currEmpleado.cat_rh_empleado_id) ;
+            }else{
+                $head.html(' - Nuevo');
+            }
+        });
 
 
     });  //end document ready
