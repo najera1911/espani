@@ -994,12 +994,12 @@
                             'right':    $element.css('right'),
                             'bottom':   $element.css('bottom'),
                             'left':     $element.css('left'),
-                            'width':    '100%',
+                            'width':    $element.css('100%'),
                         });
 
                         // if parent element has its "display" property set to "block"
                         // the wrapper has to have its "width" set
-                        if ($element.css('display') == 'block') icon_wrapper.css('width', $element.outerWidth(true));
+                        if ($element.css('display') == 'block') ;
 
                         // put wrapper around the element
                         // also, make sure we set some important css properties for it

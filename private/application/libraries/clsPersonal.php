@@ -3,39 +3,31 @@
 class clsPersonal
 {
     var
-        $cat_area_id,
-        $apellido_paterno,
-        $apellido_materno,
+        $cat_rh_departamento,
+        $cat_rh_puesto,
+        $apellido_p,
+        $apellido_m,
         $nombre,
-        $fh_nacimiento,
+        $fcha_nac,
         $sexo,
         $rfc,
         $curp,
-        $profesion,
-        $profesion_cedula,
-        $especialidad,
-        $especialidad_cedula,
-        $telefono1,
-        $telefono2,
+        $nss,
+        $telefono,
         $email,
-        $fh_baja,
-        $usuario,
-        $clave,
-        $cat_perfil_id,
-        $cambia_clave,
-        $calle,
+        $calle_num,
         $colonia,
-        $cp,
-        $cat_localidad_id,
-        $cat_municipio_id,
-        $cat_estado_id
+        $cat_localidad,
+        $cat_municipio,
+        $cat_entidad,
+        $fcha_ingreso,
+        $estatus,
+        $cat_usuario_alta_id
     ;
 
 
     function __construct()
     {
-        $this->profesion_cedula= "";
-        $this->especialidad_cedula = "";
-        $this->cat_area_id  = FALSE;
+
     }
 }

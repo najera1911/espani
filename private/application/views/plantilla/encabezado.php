@@ -17,6 +17,7 @@
 
 
     <script src="<?php echo base_url('assets/js/')?>jquery-3.2.1.min.js?v=3.2.1"></script>
+    <script src="<?php echo base_url('assets/js/')?>jquery.validate.min.js"></script>
     <link href="<?php echo base_url('assets/css/')?>datepicker.min.css?v=1" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>bootstrap.css?v=4.1.3" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>bootstrap.min.css?v=4.1.3" rel="stylesheet">
