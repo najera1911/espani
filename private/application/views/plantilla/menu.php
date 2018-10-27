@@ -8,7 +8,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
 
 </style>
 
-<nav id="header" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav id="header" class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
             <img src="<?php echo base_url('assets/img/')?>icon2.png" alt="maquiladora logo">

@@ -2981,58 +2981,42 @@ of the horizontal scrollbar.*/
 /*left, right, up and down arrow icons.*/
 .jqx-left-arrow
 {
-    background: transparent;
-    background-image: url('images/icon-left.png');
+    background: transparent url('images/icon-left.png');
     cursor: pointer;
 }
 .jqx-right-arrow
 {
-    background: transparent;
-    background-image: url('images/icon-right.png');
+    background: transparent url('images/icon-right.png');
     cursor: pointer;
 }
 .jqx-icon-delete
 {
-    background-image: url('images/icon-delete.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-delete.png') no-repeat center;
 }
 .jqx-icon-edit
 {
-    background-image: url('images/icon-edit.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-edit.png') no-repeat center;
 }
 .jqx-icon-save
 {
-    background-image: url('images/icon-save.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-save.png') no-repeat center;
 }
 .jqx-icon-cancel
 {
-    background-image: url('images/icon-cancel.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-cancel.png') no-repeat center;
 }
 .jqx-icon-arrow-up, .jqx-icon-arrow-up-hover, .jqx-icon-arrow-up-selected
 {
-    background-image: url('images/icon-up.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-up.png') no-repeat center;
 }
 .jqx-icon-arrow-down, .jqx-icon-arrow-down-hover, .jqx-icon-arrow-down-selected
 {
-    background-image: url('images/icon-down.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-down.png') no-repeat center;
 }
 
 .jqx-icon-arrow-left, .jqx-icon-arrow-left-hover, .jqx-icon-arrow-left-selected
 {
-    background-image: url('images/icon-left.png');
-    background-repeat: no-repeat;
-    background-position: center;
+    background: url('images/icon-left.png') no-repeat center;
 }
 .jqx-icon-arrow-right, .jqx-icon-arrow-right-hover, .jqx-icon-arrow-right-selected
 {
@@ -3802,7 +3786,18 @@ of the horizontal scrollbar.*/
 /*applied to containers to set a background and border color. Tabs, NavigationBar, Calendar content.*/
 .jqx-widget-content {-moz-box-sizing: content-box; box-sizing: content-box; -ms-touch-action: none; -moz-background-clip: padding; -webkit-text-size-adjust: none; background-clip: padding-box; -webkit-background-clip: padding-box; -webkit-tap-highlight-color: rgba(0,0,0,0); font-family: Verdana,Arial,sans-serif; font-style: normal; font-size: 13px; border-color: #c7c7c7; background: #fff; }
 /*applied to header areas. Tabs, Menu, Window, Calendar.*/
-.jqx-widget-header {-moz-box-sizing: content-box; box-sizing: content-box; -ms-touch-action: none;-moz-background-clip: padding; -webkit-text-size-adjust: none; background-clip: padding-box; -webkit-background-clip: padding-box; -webkit-tap-highlight-color: rgba(0,0,0,0); border-color: #c5c5c5; background: #e8e8e8; }
+.jqx-widget-header {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    -ms-touch-action: none;
+    -moz-background-clip: padding;
+    -webkit-text-size-adjust: none;
+    background-clip: padding-box;
+    -webkit-background-clip: padding-box;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    border-color: #c5c5c5;
+    background: #706f6f;
+}
 
 .jqx-fill-state-normal{-moz-box-sizing: content-box; box-sizing: content-box; -ms-touch-action: none;font-family: Verdana,Arial,sans-serif; font-style: normal; font-size: 13px; border-color:#aaa; background: #efefef; }
 .jqx-fill-state-hover {-moz-box-sizing: content-box; box-sizing: content-box; border-color:#999;  background: #e8e8e8;}
@@ -3820,7 +3815,7 @@ of the horizontal scrollbar.*/
 }
 .jqx-grid-column-header a:link, .jqx-grid-column-header a:visited
 {
-   *color: expression(this.parentNode.currentStyle['color']);    
+   *color: expression(this.parentNode.currentStyle['color']);
 }
 .jqx-grid-bottomright, .jqx-panel-bottomright, .jqx-listbox-bottomright
 {
@@ -5909,7 +5904,7 @@ ol li .jqx-listmenu-item-label:before
     box-sizing: border-box;
     opacity: 0.6;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-    *filter: alpha(opacity=60);
+    /**filter: alpha(opacity);*/
     display: none;
 }
 .jqx-layout-resize-feedback-horizontal
@@ -5966,7 +5961,7 @@ ol li .jqx-listmenu-item-label:before
     z-index: 99999;
     opacity: 0.9;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-    *filter: alpha(opacity=90);
+    /**filter: alpha(opacity=90);*/
 }
 .jqx-docking-layout-overlay
 {
@@ -6067,7 +6062,7 @@ ol li .jqx-listmenu-item-label:before
     background-color: #6495ED;
     opacity: 0.5;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-    *filter: alpha(opacity=50);
+    /**filter: alpha(opacity=50);*/
     z-index: 10000;
 }
 .jqx-docking-layout-square-disabled

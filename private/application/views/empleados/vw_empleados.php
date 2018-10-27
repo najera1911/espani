@@ -54,31 +54,31 @@ $this->load->view("plantilla/encabezado", $data);
                     <div class="col-9">
                         <form id="frmPersonal" role="form" autocomplete="off">
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="">Nombre</label>
                                     <input type="text" class="form-control text-uppercase" id="txtName" name="txtName" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtAPaterno">Apellido Paterno</label>
                                     <input type="text" class="form-control text-uppercase" id="txtAPaterno" name="txtAPaterno"
                                            required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtAMaterno">Apellido Materno</label>
                                     <input type="text" class="form-control text-uppercase" id="txtAMaterno" name="txtAMaterno"
                                            required>
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtCURP">CURP</label>
                                     <input type="text" class="form-control text-uppercase" id="txtCURP" name="txtCURP" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtRFC">RFC</label>
                                     <input type="text" class="form-control text-uppercase" id="txtRFC" name="txtRFC" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="cmbSexo">Sexo</label>
                                     <select class="form-control custom-select" id="cmbSexo" name="cmbSexo" required>
                                         <option value="">Sexo</option>
@@ -88,53 +88,53 @@ $this->load->view("plantilla/encabezado", $data);
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtFchaNac">Fecha Nacimiento</label>
                                     <input type="text" class="form-control" id="txtFchaNac" name="txtFchaNac" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtEmail">Correo Electronio</label>
                                     <input type="email" class="form-control" id="txtEmail" name="txtEmail" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtFon">Telefono</label>
                                     <input type="text" class="form-control" id="txtFon" name="txtFon" required>
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtNSS">NSS</label>
                                     <input type="text" class="form-control" id="txtNSS" name="txtNSS" required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtCalleNum">Calle / Num</label>
                                     <input type="text" class="form-control text-uppercase" id="txtCalleNum" name="txtCalleNum"
                                            required>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtColonia">Colonia</label>
                                     <input type="text" class="form-control text-uppercase" id="txtColonia" name="txtColonia" required>
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="cmbEntidad custom-select">Estado</label>
                                     <select class="form-control" id="cmbEntidad" name="cmbEntidad" required>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="cmbMunicipio">Municipio</label>
                                     <select class="form-control" id="cmbMunicipio" name="cmbMunicipio" required>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="cmbLocalidad">Localidad</label>
                                     <select class="form-control" id="cmbLocalidad" name="cmbLocalidad" required>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="cmbDep">Departamento</label>
                                     <select class="form-control" id="cmbDep" name="cmbDep" required>
                                     </select>
@@ -144,9 +144,9 @@ $this->load->view("plantilla/encabezado", $data);
                                     <select class="form-control" id="cmbPuesto" name="cmbPuesto" required>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-lg-4">
                                     <label for="txtFchaIngreso">Fecha Ingreso</label>
-                                    <input type="txt" class="form-control" id="txtFchaIngreso" name="txtFchaIngreso"
+                                    <input type="text" class="form-control" id="txtFchaIngreso" name="txtFchaIngreso"
                                            required>
                                 </div>
                             </div>

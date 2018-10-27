@@ -56,6 +56,74 @@ class Clientes extends CI_Controller {
 //        }
 
         switch($what){
+            case 'clientes':
+                $txtName = filter_input(INPUT_POST, 'txtName');
+                $txtAPaterno = filter_input(INPUT_POST, 'txtAPaterno');
+                $txtAMaterno = filter_input(INPUT_POST, 'txtAMaterno');
+                $txtNombreCorto = filter_input(INPUT_POST, 'txtNombreCorto');
+                $rfc = filter_input(INPUT_POST,'txtRFC');
+                $txtemail           = filter_input(INPUT_POST, 'txtEmail');
+                $txtTelefono1       = filter_input(INPUT_POST, 'txtFon');
+                $txtCalle           = filter_input(INPUT_POST, 'txtCalleNum');
+                $txtColonia         = filter_input(INPUT_POST, 'txtColonia');
+                $cmbEntidad              = filter_input(INPUT_POST, 'cmbEntidad');
+                $cmbMunicipio       = filter_input(INPUT_POST, 'cmbMunicipio');
+                $cmbLocalidad       = filter_input(INPUT_POST, 'cmbLocalidad');
+
+                $idEmpleado = filter_input(INPUT_POST, '_id_', FILTER_VALIDATE_INT);
+
+                if(empty($txtName)){
+                    $this->cliError('Campo nombre vacio');
+                }
+                if(empty($txtAPaterno)){
+                    $this->cliError('Campo apellido paterno vacio');
+                }
+                if(empty($txtAMaterno)){
+                    $this->cliError('Campo apellido materno vacio');
+                }
+                if(empty($txtNombreCorto)){
+                    $this->cliError('Campo nombre corto vacio');
+                }
+                if(empty($rfc)){
+                    $this->cliError('Faltan agregar RFC');
+                }
+                if(empty($txtCalle || $txtColonia)){
+                    $this->cliError('Debe de introducir calle y colonia');
+                }
+                if(empty($cmbEntidad||$cmbMunicipio||$cmbLocalidad)){
+                    $this->cliError('Debe de introducir una Estado, Municipio y Localidad');
+                }
+
+                $data = array(
+                    'apellido_p' => $txtAPaterno,
+                    'apellido_m' => $txtAMaterno,
+                    'nombre' => $txtName,
+                    'nombre_corto' => $txtNombreCorto,
+                    'rfc' => $rfc,
+                    'calle_num' => $txtCalle,
+                    'colonia' =>$txtColonia,
+                    'cat_entidad_id' => $cmbEntidad,
+                    "cat_municipio_id" => $cmbMunicipio,
+                    "cat_localidad_id" => $cmbLocalidad,
+                    "email" => $txtemail,
+                    "telefono" => $txtTelefono1,
+                    'estatus' => true,
+                    "cat_usuario_id" => $this->session->userdata('idU')
+                );
+
+                if(!empty($idEmpleado)){
+                    $res = $this->clientes_model->updateClient($idEmpleado, $data);
+                }else{
+                    $res = $this->clientes_model->addClient($data);
+                }
+
+                if($res){
+                    exit(json_encode(["status" => "Ok" ]));
+                }else{
+                    $this->cliError("Ocurrio un error");
+                }
+
+                break;
             default : $this->cliError();
         }
     }

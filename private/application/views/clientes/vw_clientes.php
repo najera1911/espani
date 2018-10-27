@@ -49,45 +49,64 @@ $this->load->view("plantilla/encabezado", $data);
                         <div class="col-12">
                             <form id="frmClientes" role="form" autocomplete="off">
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-lg-4">
                                         <label for="txtName">Nombre</label>
                                         <input type="text" class="form-control text-uppercase" id="txtName" name="txtName" required>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-lg-4">
                                         <label for="txtAPaterno">Apellido Paterno</label>
                                         <input type="text" class="form-control text-uppercase" id="txtAPaterno" name="txtAPaterno"
                                                required>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-lg-4">
                                         <label for="txtAMaterno">Apellido Materno</label>
                                         <input type="text" class="form-control text-uppercase" id="txtAMaterno" name="txtAMaterno"
                                                required>
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label for="cmbSexo">Sexo</label>
-                                        <select class="form-control custom-select" id="cmbSexo" name="cmbSexo" required>
-                                            <option value="">Sexo</option>
-                                            <option value="M">MUJER</option>
-                                            <option value="H">HOMBRE</option>
-                                        </select>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtNombreCorto">Nombre corto</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtNombreCorto" name="txtNombreCorto" required>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="txtUser">Usuario</label>
-                                        <input type="text" class="form-control" id="txtUser" name="txtUser"
-                                               required>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtRFC">RFC</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtRFC" name="txtRFC" required>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label for="txtPass">Contraseña</label>
-                                        <input type="text" class="form-control" id="txtPass" name="txtPass"
-                                               required>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtEmail">Correo Electronio</label>
+                                        <input type="email" class="form-control" id="txtEmail" name="txtEmail" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label for="cmbPerfil">Perfil</label>
-                                        <select class="form-control" id="cmbPerfil" name="cmbPerfil" required>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtFon">Telefono</label>
+                                        <input type="text" class="form-control" id="txtFon" name="txtFon" required>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtCalleNum">Calle / Num</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtCalleNum" name="txtCalleNum"
+                                               required>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtColonia">Colonia</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtColonia" name="txtColonia" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-lg-4">
+                                        <label for="cmbEntidad custom-select">Estado</label>
+                                        <select class="form-control" id="cmbEntidad" name="cmbEntidad" required>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="cmbMunicipio">Municipio</label>
+                                        <select class="form-control" id="cmbMunicipio" name="cmbMunicipio" required>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="cmbLocalidad">Localidad</label>
+                                        <select class="form-control" id="cmbLocalidad" name="cmbLocalidad" required>
                                         </select>
                                     </div>
                                 </div>
@@ -114,6 +133,9 @@ $this->load->view("plantilla/encabezado", $data);
                 $wClientesEdit = $("#wClientesEdit"),
                 $frmClientes = $("#frmClientes"),
                 $btnGuardarCliente = $("#btnGuardarCliente"),
+                $cmbEntidad = $('#cmbEntidad'),
+                $cmbMunicipio = $('#cmbMunicipio'),
+                $cmbLocalidad = $('#cmbLocalidad'),
                 _gridState = null,
                 _currEmpleado = {}
             ;
@@ -157,7 +179,20 @@ $this->load->view("plantilla/encabezado", $data);
             }
 
             //agregar select
-            //cargar_catalogo_select('<?php echo site_url("/administrador/get/catPerfil")?>', {}, $cmbPerfil, 'Perfil');
+            cargar_catalogo_select('<?php echo site_url("/empleados/get/catEntidad")?>', {}, $cmbEntidad, 'Estado');
+            $cmbEntidad.change(function () {
+                $cmbMunicipio.html('');
+                $cmbLocalidad.html('');
+                cargar_catalogo_select('<?php echo site_url("/empleados/get/catMunicipio")?>', {cat_estado_id: $cmbEntidad.val()}, $cmbMunicipio, 'Municipio');
+            });
+
+            $cmbMunicipio.change(function () {
+                $cmbLocalidad.html('');
+                cargar_catalogo_select('<?php echo site_url("/empleados/get/catLocalidad")?>', {
+                    cat_estado_id: $cmbEntidad.val(),
+                    cat_municipio: $cmbMunicipio.val()
+                }, $cmbLocalidad, 'Localidad');
+            });
 
             $btnNuevoCliente.click(function () {
                 $wClientesEdit.modal("show");
@@ -178,6 +213,64 @@ $this->load->view("plantilla/encabezado", $data);
                     $head.html(' Nuevo');
                 }
             });
+
+            $btnGuardarCliente.click(function () {
+                if ($btnGuardarCliente.hasClass('loading')) { return false; }
+                $btnGuardarCliente.addClass('loading');
+                $frmClientes.addClass('loading');
+                setCliente();
+            });
+
+            function setCliente() {
+                let data = new FormData($frmClientes.get(0));
+                if (_currEmpleado.hasOwnProperty('tbl_clientes_id')) {
+                    data.append('_id_', _currEmpleado.tbl_clientes_id);
+                }
+
+                _gridState = $tblDatos.jqxGrid('savestate');
+
+                $.ajax({
+                    type: 'post',
+                    url: '<?php echo site_url("/clientes/set/clientes")?>',
+                    xhr: function () {  // Custom XMLHttpRequest
+                        const myXhr = $.ajaxSettings.xhr();
+                        if (myXhr.upload) { // Check if upload property exists
+                            myXhr.upload.addEventListener('progress', function (e) {
+                                if (e.lengthComputable) {
+                                }
+                            }, false); // For handling the progress of the upload
+                        }
+                        return myXhr;
+                    },
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (e) {
+                        if (e.length) {
+                            if (e.length) {
+                                let obj = JSON.parse(e);
+                                if (obj.hasOwnProperty('status') && obj.status === "Ok") {
+                                    $frmClientes.get(0).reset();
+                                    $wClientesEdit.modal('hide');
+                                    swal("Correcto", "Datos del cliente guardados exitosamente", "success");
+                                    //$tblDatos.jqxGrid({source: getEmpleados()});
+                                }
+                            } else {
+                                swal("Error", e , "error");
+                                $frmClientes.get(0).reset();
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        toastr.error("Error al procesar la petición " + e.responseText);
+                    },
+                    complete: function () {
+                        $btnGuardarCliente.removeClass('loading');
+                        $frmClientes.removeClass('loading');
+                    }
+                });
+            }
 
         }); // end document ready
     </script>

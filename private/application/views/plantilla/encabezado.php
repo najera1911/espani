@@ -24,7 +24,6 @@
     <link href="<?php echo base_url('assets/css/')?>navbar.css" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>all.css" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>sweetalert.css" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/')?>jquery.dataTables.css?v1" rel="stylesheet" />
     <?php
     if(isset($css)){
         for($i=0; $i<count($css);$i++){
