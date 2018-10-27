@@ -6,15 +6,14 @@ date_default_timezone_set('America/Mexico_City');
  * @property Acl acl
  * @property CI_Loader load
  * @property clsTinyButStrong clsTinyButStrong
- * @property Administrador_model administrador_model
- * @property  pdf_master_fichaempleado pdf_master_fichaempleado
+ * @property Clientes_model clientes_model
  */
 
 class Clientes extends CI_Controller {
 
     public function __construct(){
         parent::__construct();
-        $this->load->model('administrador_model');
+        $this->load->model('clientes_model');
 
         if( $this->session->userdata('isLoggedIn') ) {
             $this->acl->setUserId($this->session->userdata('idU'));
@@ -28,11 +27,11 @@ class Clientes extends CI_Controller {
     }
 
     function index($pagina = ''){
-        if (!file_exists(VIEWPATH . 'administrador/vw_' . $pagina . '.php')) {
+        if (!file_exists(VIEWPATH . 'clientes/vw_' . $pagina . '.php')) {
             show_404();
         }
 
-        $this->load->view('administrador/vw_' . $pagina);
+        $this->load->view('clientes/vw_' . $pagina);
     }
 
     function get($what=''){

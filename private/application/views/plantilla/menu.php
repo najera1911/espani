@@ -28,7 +28,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     <a class="nav-link" href="<?php echo base_url()?>empleados/index/empleados"><span class="fas fa-users"></span> Empleados</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#main"><span class="fas fa-user-tie"></span> Clientes </a>
+                    <a class="nav-link" href="<?php echo base_url()?>clientes/index/clientes"><span class="fas fa-user-tie"></span> Clientes </a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -45,12 +45,12 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="fas fa-cogs"></span> Admin</a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="<?php echo base_url()?>administrador/index/usuarios"><span class="fas fa-cogs"></span> Usuarios </a>
-                        <a class="dropdown-item" href=""><span class="fas fa-gift"></span> two</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>administrador/index/usuarios"><span class="fas fa-users-cog"></span> Usuarios </a>
+                        <a class="dropdown-item" href=""><span class="fas fa-user-tie"></span>Perfiles</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo  site_url(("inicio/cerrar_sesion"));?>"><span class="fas fa-sign-out-alt"></span> Salir</a>
+                    <a class="nav-link" href="<?php echo  site_url(("inicio/cerrar_sesion"));?>"><span class="fas fa-sign-out-alt"></span>Salir</a>
                 </li>
                 <!--                <li class="nav-item">-->
                 <!--                    <a class="nav-link text-platzi" href="#" data-target="#modalCompra" data-toggle="modal">Comprar tickets</a>-->

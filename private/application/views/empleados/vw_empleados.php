@@ -19,15 +19,12 @@ $this->load->view("plantilla/encabezado", $data);
             <h3 class="txt-Subtitulos"> Administración de Empleados </h3>
         </div>
     </div>
-    <div class="row justify-content-end mb-3">
-        <div class="col-1">
-            <button type="button" class="btn btn-success" id="btnNuevoEmpleado">Nuevo</button>
-        </div>
-        <div class="col-1">
-            <button type="button" class="btn btn-secondary" id="btndelete">Eliminar</button>
-        </div>
-        <div class="col-1">
-            <button type="button" class="btn btn-warning btn-circle"><i class="fas fa-file-excel"></i></button>
+    <div class="row mb-3">
+        <div class="col">
+            <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
+                        class="fas fa-file-excel"></i></button>
+            <button type="button" class="btn btn-secondary float-right ml-2" id="btndelete">Eliminar</button>
+            <button type="button" class="btn btn-success float-right" id="btnNuevoEmpleado">Nuevo</button>
         </div>
     </div>
     <div class="row">
@@ -176,6 +173,7 @@ $this->load->view("plantilla/encabezado", $data);
         let $tblDatos = $("#tblDatos"),
             $btnNuevoEmpleado = $("#btnNuevoEmpleado"),
             $btndelete              =  $("#btndelete"),
+            $btnExportExcel = $("#btnExportExcel"),
             $wEmpleadoEdit = $("#wEmpleadoEdit"),
             $frmPersonal = $('#frmPersonal'),
             $btnGuardarEmpleado = $('#btnGuardarEmpleado'),
@@ -307,12 +305,11 @@ $this->load->view("plantilla/encabezado", $data);
 
         $tblDatos.jqxGrid({
             width: '100%',
-            height: '600px',
+            height: 350,
             theme: "espani",
             localization: lang_es(),
             sortable: true,
             pageable: true,
-            autoheight: true,
             columnsresize: true,
             enabletooltips: true,
             filterable: true,
@@ -451,12 +448,14 @@ $this->load->view("plantilla/encabezado", $data);
                             if (obj.hasOwnProperty('status') && obj.status === "Ok") {
                                 $frmPersonal.get(0).reset();
                                 $wEmpleadoEdit.modal('hide');
-                                toastr.success("Datos de empleado guardados. <br> No. Empleado: " + (obj.numEmpleado || '??'));
+                                swal("Correcto", "Datos de empleado guardados, No. Empleado:" + (obj.numEmpleado || "??"), "success");
+                                //toastr.success("Datos de empleado guardados. <br> No. Empleado: " + (obj.numEmpleado || '??'));
                                 $tblDatos.jqxGrid({source: getEmpleados()});
 
                             }
                         } else {
-                            toastr.info(e);
+                            swal("Error", e , "error");
+                            //toastr.info(e);
                             $frmPersonal.get(0).reset();
                         }
                     }
@@ -507,17 +506,25 @@ $this->load->view("plantilla/encabezado", $data);
             $txtRFC.val($txtCURP.val().substr(0,10));
         });
 
+        function isIE() {
+            var ua   = window.navigator.userAgent;
+            var msie = ua.indexOf('MSIE ') > 0;
+            var ie11 = ua.indexOf('Trident/') > 0;
+            var ie12 = ua.indexOf('Edge/') > 0;
+            return msie || ie11 || ie12;
+        }
+
         function exportarExcel(nombre, strData) {
             nombre = nombre || 'PV-DATA';
 
-            var contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            var extension   = ".xls";
+            const contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            const extension   = ".xls";
 
-            var blob = new Blob([strData], {
+            const blob = new Blob([strData], {
                 type: contentType
             });
 
-            var nombreArchivo = nombre  + extension;
+            let nombreArchivo = nombre  + extension;
             if (isIE()) {
                 window.navigator.msSaveOrOpenBlob(blob, nombreArchivo);
             } else {
@@ -605,13 +612,12 @@ $this->load->view("plantilla/encabezado", $data);
             }
         });
 
-//         $btnExportar.click(function () {
-//             let data = $tblDatos.jqxGrid("exportdata",'xls');
-// //                console.log(data);
-//             if(data){
-//                 exportarExcel("Plantilla",data);
-//             }
-//         });
+        $btnExportExcel.click(function () {
+            let data = $tblDatos.jqxGrid("exportdata",'xls');
+            if(data){
+                exportarExcel("Plantilla",data);
+            }
+        });
 
 
     });  //end document ready
