@@ -20,6 +20,7 @@ $anio=2018;
 <script src="<?php echo base_url('assets/js/')?>datepicker.min.js?v=1"></script>
 <script src="<?php echo base_url('assets/js/i18n/')?>datepicker.es.js?v=1"></script>
 <script src="<?php echo base_url('assets/js/')?>bootstrap.min.js?v=4.1.3"></script>
+<script src="<?php echo base_url('assets/js/')?>sweetalert.min.js"></script>
 
 <script>
 

@@ -23,6 +23,7 @@
     <link href="<?php echo base_url('assets/css/')?>bootstrap.min.css?v=4.1.3" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>navbar.css" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>all.css" rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/')?>sweetalert.css" rel="stylesheet">
     <?php
     if(isset($css)){
         for($i=0; $i<count($css);$i++){

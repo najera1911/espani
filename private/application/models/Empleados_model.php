@@ -111,4 +111,15 @@ class Empleados_model extends CI_Model{
         return $res;
     }
 
+    function deleteEmpleado($idEmpleado,$txtFhBjaja){
+        $data = array(
+            'estatus' => false,
+            'fcha_baja' => $txtFhBjaja
+        );
+        $this->db->where('cat_rh_empleado_id', $idEmpleado);
+        $res = $this->db->update('cat_rh_empleados', $data);
+
+        return $res;
+    }
+
 }

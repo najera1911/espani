@@ -240,6 +240,21 @@ class Empleados extends CI_Controller{
                 // primero comprobamos si existe el RFC, si ya existe entonces acutaliza los datos, de lo contrario es un empleado nuevo
 
                 break;
+            case 'deleteUsuario':
+                $data = filter_input(INPUT_POST,'datos');
+                $txtFhBjaja = filter_input(INPUT_POST,'txtFhBjaja');
+//                $fcBaja = date_create_from_format('Y/m/d', $txtFhBjaja);
+//                $fcBaja = $fcBaja->format('Y-m-d');
+
+
+                    $res = $this->empleados_model->deleteEmpleado($data,$txtFhBjaja);
+                    if ($res) {
+                        exit('OK');
+                    } else {
+                        $this->cliError('No se pudo eliminar el Empleado');
+                    }
+
+                break;
             default : $this->cliError();
         }
     }

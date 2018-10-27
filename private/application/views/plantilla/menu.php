@@ -30,19 +30,24 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                 <li class="nav-item">
                     <a class="nav-link" href="#main"><span class="fas fa-user-tie"></span> Clientes </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#main"><span class="fas fa-dolly-flatbed"></span> Orden de Corte </a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="fas fa-clipboard-list"></span> Catalogos</a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#one"><span class="fas fa-cogs"></span> Operaciones</a>
-                        <a class="dropdown-item" href="#two"><span class="fas fa-gift"></span> two</a>
+                        <a class="dropdown-item" href=""><span class="fas fa-cogs"></span> Operaciones</a>
+                        <a class="dropdown-item" href=""><span class="fas fa-gift"></span> two</a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#conviertet-en-orador"><span class="fas fa-cogs"></span> Admin</a>
+                    <a class="nav-link" href=""><span class="fas fa-dolly-flatbed"></span> Orden de Corte </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="fas fa-cogs"></span> Admin</a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="<?php echo base_url()?>administrador/index/usuarios"><span class="fas fa-cogs"></span> Usuarios </a>
+                        <a class="dropdown-item" href=""><span class="fas fa-gift"></span> two</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo  site_url(("inicio/cerrar_sesion"));?>"><span class="fas fa-sign-out-alt"></span> Salir</a>

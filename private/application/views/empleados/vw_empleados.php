@@ -26,6 +26,9 @@ $this->load->view("plantilla/encabezado", $data);
         <div class="col-1">
             <button type="button" class="btn btn-secondary" id="btndelete">Eliminar</button>
         </div>
+        <div class="col-1">
+            <button type="button" class="btn btn-warning btn-circle"><i class="fas fa-file-excel"></i></button>
+        </div>
     </div>
     <div class="row">
         <div class="col-12">
@@ -39,7 +42,7 @@ $this->load->view("plantilla/encabezado", $data);
     <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold">Usuarios - Datos Generales <span></span></h4>
+                <h4 class="modal-title w-100 font-weight-bold">Empleados - Datos Generales <span></span></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -166,6 +169,7 @@ $this->load->view("plantilla/encabezado", $data);
         </div>
     </div>
 </div>
+
 
 <script>
     $(document).ready(function () {
@@ -527,6 +531,60 @@ $this->load->view("plantilla/encabezado", $data);
             }
         }
 
+        function PersonalDelete(data){
+
+            let sendData = JSON.stringify(data);
+
+            swal({
+                    title: "Eliminar Empleado",
+                    text: "Desea eliminar a: "+ data.NombreC +"",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Eliminar",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        swal({
+                            title: "Are you sure you want to delete your account?",
+                            text: "If you are sure, type in your password:",
+                            type: "input",
+                            inputType: "date",
+                            showCancelButton: true,
+                            closeOnConfirm: false
+                        }, function(inputValue) {
+                            if (inputValue === false) return false;
+                            if (inputValue === "") {
+                                swal.showInputError("You need to write something!");
+                                return false
+                            }
+
+                            $.ajax({
+                                url: '<?php echo base_url("empleados/set/deleteUsuario")?>',
+                                type: "POST",
+                                data: {datos: data.cat_rh_empleado_id, txtFhBjaja: inputValue },
+                                dataType: "html",
+                                success: function (e) {
+                                    if (e === 'OK') {
+                                        swal("Bien", "El empleado se ha eliminado correctamente", "success");
+                                        $tblDatos.jqxGrid({source: getEmpleados()});
+                                    }
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    swal("Error deleting!", "Please try again", "error");
+                                }
+                            });
+
+                        });
+                    } else {
+                        swal("Cancelado", data.NombreC + " no se elimino", "error");
+                    }
+                });
+        }
+
         $btndelete.click(function (e) {
             e.preventDefault();
             let data = $tblDatos.jqxGrid('getrowdata', $tblDatos.jqxGrid('getselectedrowindex'));
@@ -536,15 +594,7 @@ $this->load->view("plantilla/encabezado", $data);
                 let datos = [];
 
                 if(ids.length == 1) {
-                    $wPersonalDelete.modal({
-                        closable : false,
-                        onDeny   : function () {
-                            return true;
-                        },
-                        onApprove: function () {
-                            PersonalDelete();
-                        }
-                    }).modal('show');
+                    PersonalDelete(data);
                 } else if (ids.length < 1) {
                     toastr.error('Seleccione a un empleado', {timeOut: 0});
                 } else {
