@@ -12,12 +12,9 @@ class Catpuesto extends CI_Controller {
 
     public function index()
     {
-
         $data['obtner_todos']=$this->puesto_model->obtner_todos();
         $this->load->view('puesto_view',$data);
-       
     }
-
     public function insertar_puesto()
 		{
 			$data = array(
