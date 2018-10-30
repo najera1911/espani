@@ -53,7 +53,7 @@ $this->load->view("plantilla/encabezado",$data);
                     </div>
                     <div class="col-md-2">
                         <div class="li">
-                            <a href="<?php echo base_url()?>pacientes/index/pacientes">
+                            <a href="<?php echo base_url()?>catalogosm/index/catalogosm">
                                 <div class="ca-imagen">
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/catalogos.png">
                                 </div>

@@ -24,3 +24,4 @@ application/logs/*
 .idea/ceredi3.iml
 private/application/config/database.php
 .idea/vcs.xml
+private/application/config/database.php
