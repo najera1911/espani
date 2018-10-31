@@ -49,8 +49,8 @@ $this->load->view("plantilla/encabezado",$data);
                        <td><?php echo $puestos->descripcion;?></td>
                        <td><?php echo $puestos->estatus;?></td>
                             <td>
-                                <button class="btn btn-warning" onclick="editar(<?php echo $puestos->cat_rh_puesto_id;?>)"><i class="glyphicon glyphicon-plus"></i></button>
-                                <button class="btn btn-danger" onclick="eliminar(<?php echo $puestos->cat_rh_puesto_id;?>)"><i class="glyphicon glyphicon-remove"></i></button>
+                                <button class="btn btn-warning" onclick="editar(<?php echo $puestos->cat_rh_puesto_id;?>)"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                <button class="btn btn-danger" onclick="eliminar(<?php echo $puestos->cat_rh_puesto_id;?>)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                             </td >
                     </tr>
            <?php }?>
