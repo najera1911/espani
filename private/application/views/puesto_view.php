@@ -17,13 +17,8 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado",$data);
 ?>
 
-<<<<<<< HEAD
  <!-- <link href="<?php// echo base_url('assets/assests/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet">-->
-    <link href="<?php echo base_url('assets/assests/datatables/css/dataTables.bootstrap.css')?>" rel="stylesheet"
-=======
-  <!--<link href="<?php// echo base_url('assets/assests/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet">-->
-    <link href="<?php  echo base_url('assets/assests/datatables/css/dataTables.bootstrap.css')?>" rel="stylesheet">
->>>>>>> 3588cb83f7c56c420a8cb9c55056ba1f9a7f8d29
+<link href="<?php echo base_url('assets/assests/datatables/css/dataTables.bootstrap.css')?>" rel="stylesheet">
 
 
 
