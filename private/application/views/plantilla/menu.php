@@ -34,8 +34,9 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="fas fa-clipboard-list"></span> Catalogos</a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href=""><span class="fas fa-cogs"></span> Operaciones</a>
-                        <a class="dropdown-item" href=""><span class="fas fa-gift"></span> two</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>catpuesto/index/catpuesto"><span class="fas fa-wrench"></span> Operaciones</a>
+                        <a class="dropdown-item" href=""><span class="fa fa-street-view"></span> Puestos</a>
+                        <a class="dropdown-item" href=""><span class="fa fa-sitemap"></span> Areas</a>
                     </div>
                 </li>
                 <li class="nav-item">

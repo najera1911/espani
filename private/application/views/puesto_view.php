@@ -17,8 +17,8 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado",$data);
 ?>
 
-  <link href="<?php echo base_url('assets/assests/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/assests/datatables/css/dataTables.bootstrap.css')?>" rel="stylesheet"
+  <!--<link href="<?php// echo base_url('assets/assests/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet">-->
+    <link href="<?php  echo base_url('assets/assests/datatables/css/dataTables.bootstrap.css')?>" rel="stylesheet">
 
 
 
@@ -28,7 +28,7 @@ $this->load->view("plantilla/encabezado",$data);
     <h3 class="txt-Subtitulos"> Catalogo de puestos </h3>
  </div>
   <br />
-  <button class="btn btn-success" onclick="insertar_puesto()"><i class="glyphicon glyphicon-plus"></i> Agregar Puesto</button>
+  <button class="btn btn-success" onclick="insertar_puesto()"><i class="fa fa-user-plus" aria-hidden="true"></i> Agregar Puesto</button>
   <br />
   <br />
   <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%">
