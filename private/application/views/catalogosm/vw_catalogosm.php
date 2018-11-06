@@ -31,22 +31,22 @@ $this->load->view("plantilla/encabezado",$data);
                         <div class="li">
                             <a href="<?php echo base_url()?>catpuesto/index/catpuesto">
                                 <div class="ca-imagen">
-                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/emp.png">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/puestos.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main">Operaciones</h2>
+                                    <h2 class="ca-main">Puestos</h2>
                                 </div>
                             </a>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="li">
-                            <a href="<?php echo base_url()?>clientes/index/clientes">
+                            <a href="<?php echo base_url()?>areas/index/areas">
                                 <div class="ca-imagen">
-                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/client.png">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/dptos.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main">Perfiles</h2>
+                                    <h2 class="ca-main">Departamentos</h2>
                                 </div>
                             </a>
                         </div>
@@ -55,10 +55,10 @@ $this->load->view("plantilla/encabezado",$data);
                         <div class="li">
                             <a href="<?php echo base_url()?>operaciones/index/operaciones">
                                 <div class="ca-imagen">
-                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/catalogos.png">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/op.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main">No me acuerdo</h2>
+                                    <h2 class="ca-main">Operaciones</h2>
                                 </div>
                             </a>
                         </div>

@@ -1,10 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Operaciones_model extends CI_Model
+class Areas_model extends CI_Model
 {
-
-    var $table = 'cat_operaciones';
+    var $table = 'cat_rh_departamento';
 
     public function __construct()
 	{
@@ -13,11 +12,11 @@ class Operaciones_model extends CI_Model
     }
     public function obtner_todos()
     {
-        $this->db->from('cat_operaciones');
+        $this->db->from('cat_rh_departamento');
         $query=$this->db->get();
         return $query->result();
     }
-    public function insertar_operacion($data)
+    public function insertar_area($data)
 	{
 		$this->db->insert($this->table, $data);
 		return $this->db->insert_id();
@@ -25,18 +24,19 @@ class Operaciones_model extends CI_Model
     public function get_by_id($id)
 	{
 		$this->db->from($this->table);
-		$this->db->where('cat_operaciones_id',$id);
+		$this->db->where('cat_rh_departamento_id',$id);
 		$query = $this->db->get();
 		return $query->row();
     }
-	public function actualizar($where, $data)
+    public function actualizar($where, $data)
 	{
 		$this->db->update($this->table, $data, $where);
 		return $this->db->affected_rows();
     }
     public function eliminar($id)
 	{
-		$this->db->where('cat_operaciones_id', $id);
+		$this->db->where('cat_rh_departamento_id', $id);
 		$this->db->delete($this->table);
 	}
+
 }
