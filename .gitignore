@@ -24,6 +24,9 @@ application/logs/*
 .idea/ceredi3.iml
 private/application/config/database.php
 .idea/vcs.xml
+<<<<<<< HEAD
 .idea/workspace.xml
 private/application/config/database.php
+=======
+>>>>>>> 8b094e1047bc9546186db7bc01979a8637a55c10
 private/application/config/database.php

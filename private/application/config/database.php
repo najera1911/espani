@@ -75,10 +75,18 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
+<<<<<<< HEAD
 //	'hostname' => '189.254.11.166',
 //    'username' => 'uEspani',
 //    'password' => 'uEspani',
 //    'database' => 'dbespani',
+=======
+//  'hostname' => '189.254.11.166',
+
+  //'username' => 'uEspani',
+ // 'password' => 'uEspani',
+ // 'database' => 'dbespani',
+>>>>>>> 8b094e1047bc9546186db7bc01979a8637a55c10
 	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => '',
