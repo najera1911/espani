@@ -18,23 +18,20 @@ $this->load->view("plantilla/encabezado", $data);
             <h3 class="txt-Subtitulos"> Administración de Usuarios</h3>
         </div>
     </div>
-    <div class="row justify-content-center mb-3">
-        <div class="col-8">
+    <div class="row mb-5 pr-5">
+        <div class="col-12">
             <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
                         class="fas fa-file-excel"></i></button>
-            <button type="button" class="btn btn-success float-right" id="btnNuevoUsuario">Nuevo</button>
+            <button class="btn btn-success float-right" id="btnNuevoUsuario">
+                <i class="fa fa-user-plus" aria-hidden="true"></i> Agregar Usuario
+            </button>
         </div>
     </div>
-    <div class="row">
+    <div class="row pr-5 pl-5">
         <div class="col-12 text-uppercase">
             <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="table-info"></thead>
             </table>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-8">
-            <div id="tblDatos"></div>
         </div>
     </div>
 </section>

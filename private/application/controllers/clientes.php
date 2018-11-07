@@ -43,6 +43,11 @@ class Clientes extends CI_Controller {
 //        }
 
         switch($what){
+            case 'clientes':
+                $data = $this->clientes_model->get_clientes(array('estatus'=>1));
+                $data = array('data'=>$data);
+                exit(json_encode($data));
+                break;
             default : $this->cliError();
         }
     }
@@ -121,6 +126,16 @@ class Clientes extends CI_Controller {
                     exit(json_encode(["status" => "Ok" ]));
                 }else{
                     $this->cliError("Ocurrio un error");
+                }
+
+                break;
+            case 'deleteCliente':
+                $data = filter_input(INPUT_POST,'datos');
+                $res = $this->clientes_model->deleteCliente($data);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar el usuario');
                 }
 
                 break;

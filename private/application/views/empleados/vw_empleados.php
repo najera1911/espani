@@ -22,7 +22,9 @@ $this->load->view("plantilla/encabezado", $data);
         <div class="col">
             <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
                         class="fas fa-file-excel"></i></button>
-            <button type="button" class="btn btn-success float-right" id="btnNuevoEmpleado">Nuevo</button>
+            <button class="btn btn-success float-right" id="btnNuevoEmpleado">
+                <i class="fa fa-user-plus" aria-hidden="true"></i> Agregar Empleado
+            </button>
         </div>
     </div>
     <div class="row">
@@ -555,7 +557,6 @@ $this->load->view("plantilla/encabezado", $data);
         "zebra_datepicker.src.js",
         "../datatables/datatables.min.js",
         "js1/moment.min.js"
-
     );
     $this->load->view("plantilla/pie", $data);
     ?>

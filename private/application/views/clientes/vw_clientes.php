@@ -4,10 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $data['title'] = ":: Clientes";
 $data['css'] = array(
-    "jw/jqx.base.css",
-    "jw/jqx.espani.css",
     "toastr.min.css",
-    "zebra.css"
+    "zebra.css",
+    "../datatables/datatables.min.css"
 );
 
 $this->load->view("plantilla/encabezado", $data);
@@ -19,14 +18,23 @@ $this->load->view("plantilla/encabezado", $data);
                 <h3 class="txt-Subtitulos"> Administración de Clientes</h3>
             </div>
         </div>
-        <div class="row justify-content-center mb-3">
-            <div class="col-8">
+        <div class="row mb-3">
+            <div class="col-12">
                 <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
                             class="fas fa-file-excel"></i></button>
-                <button type="button" class="btn btn-secondary float-right ml-2" id="btndelete">Eliminar</button>
-                <button type="button" class="btn btn-success float-right" id="btnNuevoCliente">Nuevo</button>
+                <button class="btn btn-success float-right" id="btnNuevoCliente">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i> Agregar Cliente
+                </button>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12 text-uppercase">
+                <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead class="table-info"></thead>
+                </table>
+            </div>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-8">
                 <div id="tblDatos"></div>
@@ -95,7 +103,7 @@ $this->load->view("plantilla/encabezado", $data);
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-lg-4">
-                                        <label for="cmbEntidad custom-select">Estado</label>
+                                        <label for="cmbEntidad">Estado</label>
                                         <select class="form-control" id="cmbEntidad" name="cmbEntidad" required>
                                         </select>
                                     </div>
@@ -125,18 +133,17 @@ $this->load->view("plantilla/encabezado", $data);
 
 
     <script>
+        let MY = {
+        };
         $(document).ready(function (){
             let $btnNuevoCliente = $("#btnNuevoCliente"),
-                $btndelete = $("#btndelete"),
-                $btnExportExcel = $("#btnExportExcel"),
-                $tblDatos =$("#tblDatos"),
+                $tblDatos2 = $("#tblDatos2"),
                 $wClientesEdit = $("#wClientesEdit"),
                 $frmClientes = $("#frmClientes"),
                 $btnGuardarCliente = $("#btnGuardarCliente"),
                 $cmbEntidad = $('#cmbEntidad'),
                 $cmbMunicipio = $('#cmbMunicipio'),
                 $cmbLocalidad = $('#cmbLocalidad'),
-                _gridState = null,
                 _currEmpleado = {}
             ;
 
@@ -221,13 +228,81 @@ $this->load->view("plantilla/encabezado", $data);
                 setCliente();
             });
 
+            getEmpleados2();
+
+            function getEmpleados2() {
+                MY.table = $tblDatos2.DataTable( {
+                    processing: true,
+                    serverSide: true,
+                    ordering: true,
+                    info: false,
+                    ajax: {
+                        "url": "<?php echo site_url('/clientes/get/clientes')?>",
+                        "type": "POST"
+                    },
+                    columns: [
+                        { "title": "Nombre", "data":"NombreC" },
+                        { "title": "Nombre Corto", "data": "nombre_corto"},
+                        { "title": "RFC", "data": "rfc" },
+                        { "title": "Dirección", "data": "dirC" },
+                        { "title": "E-mail", "data":"email" },
+                        { "title": "Telefono", "data":"telefono" },
+                        { "title": "Editar", data:null,
+                            render:function(data, type,row){
+                                return '<button class="btn btn-success btn-sm">Editar</button>';
+                            }
+                        },
+                        { "title": "Eliminar", data:null,
+                            render:function(data, type,row){
+                                return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                            }
+                        }
+                    ],
+                    order: [],
+                    language: {
+                        "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
+                    }
+                } );
+            }
+
+            $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+                let data = MY.table.rows($(this).closest("tr")).data();
+                _currEmpleado = data[0];
+
+                $('input[name="txtName"]').val(_currEmpleado.nombre);
+                $('input[name="txtAPaterno"]').val(_currEmpleado.apellido_p);
+                $('input[name="txtAMaterno"]').val(_currEmpleado.apellido_m);
+                $('input[name="txtNombreCorto"]').val(_currEmpleado.nombre_corto);
+                $('input[name="txtRFC"]').val(_currEmpleado.rfc);
+                $('input[name="txtEmail"]').val(_currEmpleado.email);
+                $('input[name="txtFon"]').val(_currEmpleado.telefono);
+                $('input[name="txtNSS"]').val(_currEmpleado.nss);
+                $('input[name="txtCalleNum"]').val(_currEmpleado.calle_num);
+                $('input[name="txtColonia"]').val(_currEmpleado.colonia);
+                $('select[name="cmbEntidad"]').val(_currEmpleado.cat_entidad_id).change();
+
+                setTimeout(function () {
+                    $('select[name="cmbMunicipio"]').val(_currEmpleado.cat_municipio_id).change();
+                }, 100);
+
+                setTimeout(function () {
+                    $('select[name="cmbLocalidad"]').val(_currEmpleado.cat_localidad_id).change();
+                }, 200);
+
+                $wClientesEdit.modal('show');
+            });
+
+            $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
+                let data = MY.table.rows($(this).closest("tr")).data();
+                data = data[0];
+                PersonalDelete(data);
+            });
+
             function setCliente() {
                 let data = new FormData($frmClientes.get(0));
                 if (_currEmpleado.hasOwnProperty('tbl_clientes_id')) {
                     data.append('_id_', _currEmpleado.tbl_clientes_id);
                 }
-
-                _gridState = $tblDatos.jqxGrid('savestate');
 
                 $.ajax({
                     type: 'post',
@@ -254,7 +329,7 @@ $this->load->view("plantilla/encabezado", $data);
                                     $frmClientes.get(0).reset();
                                     $wClientesEdit.modal('hide');
                                     swal("Correcto", "Datos del cliente guardados exitosamente", "success");
-                                    //$tblDatos.jqxGrid({source: getEmpleados()});
+                                    MY.table.ajax.reload();
                                 }
                             } else {
                                 swal("Error", e , "error");
@@ -272,33 +347,50 @@ $this->load->view("plantilla/encabezado", $data);
                 });
             }
 
+            function PersonalDelete(data){
+                swal({
+                        title: "Eliminar un cliente",
+                        text: "Desea eliminar a: "+ data.NombreC +"",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Eliminar",
+                        cancelButtonText: "Cancelar",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            $.ajax({
+                                url: '<?php echo base_url("clientes/set/deleteCliente")?>',
+                                type: "POST",
+                                data: {datos: data.cat_usuario_id},
+                                dataType: "html",
+                                success: function (e) {
+                                    if (e === 'OK') {
+                                        swal("Bien", "El cliente se ha eliminado correctamente", "success");
+                                        MY.table.ajax.reload();
+                                    }
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    swal("Error", "Error al eliminar usuario", "error");
+                                }
+                            });
+                        } else {
+                            swal("Cancelado", data.nombreC + " no se elimino", "error");
+                        }
+                    });
+            }
+
         }); // end document ready
     </script>
 <?php
 $data['scripts'] = array(
-    "jqw/jqxcore.js",
-    "jqw/jqxdata.js",
-    "jqw/jqxcheckbox.js",
-    "jqw/jqxbuttons.js",
-    "jqw/jqxscrollbar.js",
-    "jqw/jqxmenu.js",
-    "jqw/jqxlistbox.js",
-    "jqw/jqxdropdownlist.js",
-    "jqw/jqxgrid.js",
-    "jqw/jqxgrid.pager.js",
-    "jqw/jqxgrid.columnsresize.js",
-    "jqw/jqxdata.export.js",
-    "jqw/jqxgrid.export.js",
-    "jqw/jqxgrid.grouping.js",
-    "jqw/jqxgrid.selection.js",
-    "jqw/jqxgrid.sort.js",
-    "jqw/jqxgrid.filter.js",
-    "jqw/jqxgrid.storage.js",
-    "jqw/jqxpanel.js",
     "jqw/localized-es.js",
     "toastr.min.js",
-    "zebra_datepicker.src.js"
-
+    "zebra_datepicker.src.js",
+    "../datatables/datatables.min.js",
+    "js1/moment.min.js"
 );
 $this->load->view("plantilla/pie", $data);
 ?>
