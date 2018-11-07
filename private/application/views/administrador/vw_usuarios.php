@@ -4,17 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $data['title'] = ":: Usuarios";
 $data['css'] = array(
-    "jw/jqx.base.css",
-    "jw/jqx.espani.css",
     "toastr.min.css",
     "zebra.css",
+    "../datatables/datatables.min.css"
 );
 
 $this->load->view("plantilla/encabezado", $data);
 ?>
 
-<section class="ml-5 mr-5" id="Usuarios">
-    <div class="row mt-5 mb-5">
+<section class="ml-5 mr-5 pb-5 pt-2" id="Usuarios">
+    <div class="row mt-5 mb-3">
         <div class="col text-center text-uppercase">
             <h3 class="txt-Subtitulos"> Administración de Usuarios</h3>
         </div>
@@ -23,8 +22,14 @@ $this->load->view("plantilla/encabezado", $data);
         <div class="col-8">
             <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
                         class="fas fa-file-excel"></i></button>
-            <button type="button" class="btn btn-secondary float-right ml-2" id="btndelete">Eliminar</button>
             <button type="button" class="btn btn-success float-right" id="btnNuevoUsuario">Nuevo</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-uppercase">
+            <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead class="table-info"></thead>
+            </table>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -105,16 +110,16 @@ $this->load->view("plantilla/encabezado", $data);
 </div>
 
 <script>
+    let MY = {
+    };
     $(document).ready(function (){
         let $btnNuevoUsuario = $("#btnNuevoUsuario"),
-            $btndelete = $("#btndelete"),
-            $btnExportExcel = $("#btnExportExcel"),
             $tblDatos =$("#tblDatos"),
+            $tblDatos2 = $("#tblDatos2"),
             $wUsuariosEdit = $("#wUsuariosEdit"),
             $frmUsuario = $("#frmUsuario"),
             $btnGuardarUsuario = $("#btnGuardarUsuario"),
             $cmbPerfil = $("#cmbPerfil"),
-            _gridState = null,
             _currEmpleado = {}
             ;
 
@@ -179,51 +184,44 @@ $this->load->view("plantilla/encabezado", $data);
             }
         });
 
-        function getUser() {
-            let source =
-                {
-                    datatype: "json",
-                    datafields: [
-                        {name: 'cat_usuario_id', type: 'int'},
-                        {name: 'cat_perfil_id', type: 'int'},
-                        {name: 'apellido_p', type: 'string'},
-                        {name: 'apellido_m', type: 'string'},
-                        {name: 'nombre', type: 'string'},
-                        {name: 'sexo', type: 'string'},
-                        {name: 'usuario', type: 'string'},
-                        {name: 'descripcion', type: 'string'},
-                        {name: 'nombreC', type: 'string'}
-                    ],
-                    url: '<?php echo site_url("/administrador/get/user")?>',
-                    type: 'post',
-                    id: 'cat_usuario_id'
-                };
-            return new $.jqx.dataAdapter(source);
-        } // END getUser
+        getEmpleados2();
 
-        $tblDatos.jqxGrid({
-            width: '100%',
-            height: 300,
-            theme: "espani",
-            localization: lang_es(),
-            sortable: true,
-            pageable: true,
-            columnsresize: true,
-            enabletooltips: true,
-            filterable: true,
-            showfilterrow: true,
-            selectionmode: 'multiplerowsextended',
-            columns: [
-                {text: 'Nombre', dataField: 'nombreC', width: "40%"},
-                {text: 'Sexo', dataField: 'sexo', width: "20%"},
-                {text: 'Usuario', dataField: 'usuario', width: "20%"},
-                {text: 'Perfil', dataField: 'descripcion', filtertype: 'checkedlist', width: "20%"}
-            ],
-            source: getUser()
-        }).on('rowdoubleclick', function (e) {
-            _currEmpleado = e.args.row.bounddata;
-            _currEmpleado._currRow = e.args.row;
+        function getEmpleados2() {
+            MY.table = $tblDatos2.DataTable( {
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                info: false,
+                ajax: {
+                    "url": '<?php echo site_url("/administrador/get/user")?>',
+                    "type": "POST"
+                },
+                columns: [
+                    { "title": "Nombre", "data":"nombreC" },
+                    { "title": "Sexo", "data": "sexo"},
+                    { "title": "Usuario", "data":"usuario" },
+                    { "title": "Perfil", "data": "descripcion" },
+                    { "title": "Editar", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-success btn-sm">Editar</button>';
+                        }
+                    },
+                    { "title": "Eliminar", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                        }
+                    }
+                ],
+                order: [],
+                language: {
+                    "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
+                }
+            } );
+        }
 
+        $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            _currEmpleado = data[0];
             $('input[name="txtName"]').val(_currEmpleado.nombre);
             $('input[name="txtAPaterno"]').val(_currEmpleado.apellido_p);
             $('input[name="txtAMaterno"]').val(_currEmpleado.apellido_m);
@@ -233,10 +231,16 @@ $this->load->view("plantilla/encabezado", $data);
             $('input[name="cmbPerfil"]').val(_currEmpleado.cat_perfil_id).change();
 
             $wUsuariosEdit.modal('show');
-        }); //end
+        });
+
+        $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            PersonalDelete(data);
+        });
+
 
         $btnGuardarUsuario.click(function () {
-
             if ($btnGuardarUsuario.hasClass('loading')) {
                 return false;
             }
@@ -253,8 +257,6 @@ $this->load->view("plantilla/encabezado", $data);
             if (_currEmpleado.hasOwnProperty('cat_usuario_id')) {
                 data.append('_id_', _currEmpleado.cat_usuario_id);
             }
-
-            _gridState = $tblDatos.jqxGrid('savestate');
 
             $.ajax({
                 type: 'post',
@@ -282,7 +284,7 @@ $this->load->view("plantilla/encabezado", $data);
                                 $frmUsuario.get(0).reset();
                                 $wUsuariosEdit.modal('hide');
                                 swal("Correcto", "Usuario guardado Exitosamente", "success");
-                                $tblDatos.jqxGrid({source: getUser()});
+                                MY.table.ajax.reload();
                             }
                         } else {
                             toastr.info(e);
@@ -309,30 +311,6 @@ $this->load->view("plantilla/encabezado", $data);
             return msie || ie11 || ie12;
         }
 
-        function exportarExcel(nombre, strData) {
-            nombre = nombre || 'PV-DATA';
-
-            const contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            const extension   = ".xls";
-
-            const blob = new Blob([strData], {
-                type: contentType
-            });
-
-            let nombreArchivo = nombre  + extension;
-            if (isIE()) {
-                window.navigator.msSaveOrOpenBlob(blob, nombreArchivo);
-            } else {
-                var link      = document.createElement("a");
-                link.href     = window.URL.createObjectURL(blob);
-                link.style    = "visibility:hidden";
-                link.download = nombreArchivo;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
         function PersonalDelete(data){
             swal({
                     title: "Eliminar un usuario",
@@ -355,7 +333,7 @@ $this->load->view("plantilla/encabezado", $data);
                             success: function (e) {
                                 if (e === 'OK') {
                                     swal("Bien", "El usuario se ha eliminado correctamente", "success");
-                                    $tblDatos.jqxGrid({source: getUser()});
+                                    MY.table.ajax.reload();
                                 }
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
@@ -368,59 +346,15 @@ $this->load->view("plantilla/encabezado", $data);
                 });
         }
 
-        $btndelete.click(function (e) {
-            e.preventDefault();
-            let data = $tblDatos.jqxGrid('getrowdata', $tblDatos.jqxGrid('getselectedrowindex'));
-            if (data) {
-                //obtiene00 los datos seleccionados
-                let ids = $tblDatos.jqxGrid('getselectedrowindexes');
-                let datos = [];
-
-                if(ids.length == 1) {
-                    PersonalDelete(data);
-                } else if (ids.length < 1) {
-                    toastr.error('Seleccione a un empleado', {timeOut: 0});
-                } else {
-                    toastr.error('Seleccione solo a un Empleado', {timeOut: 0});
-                }
-            }else{
-                toastr.error('Seleccione a un empleado', {timeOut: 0});
-            }
-        });
-
-        $btnExportExcel.click(function () {
-            let data = $tblDatos.jqxGrid("exportdata",'xls');
-            if(data){
-                exportarExcel("usuarios",data);
-            }
-        });
-
     }); // end document ready
 </script>
 <?php
 $data['scripts'] = array(
-    "jqw/jqxcore.js",
-    "jqw/jqxdata.js",
-    "jqw/jqxcheckbox.js",
-    "jqw/jqxbuttons.js",
-    "jqw/jqxscrollbar.js",
-    "jqw/jqxmenu.js",
-    "jqw/jqxlistbox.js",
-    "jqw/jqxdropdownlist.js",
-    "jqw/jqxgrid.js",
-    "jqw/jqxgrid.pager.js",
-    "jqw/jqxgrid.columnsresize.js",
-    "jqw/jqxdata.export.js",
-    "jqw/jqxgrid.export.js",
-    "jqw/jqxgrid.grouping.js",
-    "jqw/jqxgrid.selection.js",
-    "jqw/jqxgrid.sort.js",
-    "jqw/jqxgrid.filter.js",
-    "jqw/jqxgrid.storage.js",
-    "jqw/jqxpanel.js",
     "jqw/localized-es.js",
     "toastr.min.js",
-    "zebra_datepicker.src.js"
+    "zebra_datepicker.src.js",
+    "../datatables/datatables.min.js",
+    "js1/moment.min.js"
 );
 $this->load->view("plantilla/pie", $data);
 ?>

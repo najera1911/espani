@@ -48,6 +48,7 @@ class Empleados extends CI_Controller{
         switch($what){
             case 'empleados':
                 $data = $this->empleados_model->get_empleados(array('estatus'=>1));
+                $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;
             case 'catEntidad':

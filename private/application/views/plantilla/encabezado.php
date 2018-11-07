@@ -25,7 +25,7 @@
     <link href="<?php echo base_url('assets/css/')?>all.css" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>sweetalert.css" rel="stylesheet">
 
-    <link href="<?php echo base_url('assets/datatables/css/')?>dataTables.bootstrap.css" rel="stylesheet">
+
 
 
     <?php

@@ -73,6 +73,16 @@
     border: 1px solid #094215 !important;
 }
 
+#tblDatos2 tr th {
+    font-size: 14px !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#tblDatos2 tr td {
+    font-size: 14px !important;
+}
+
 @media (min-width: 992px){
     .modal-lg {
         max-width: 1000px !important;

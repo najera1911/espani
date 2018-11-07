@@ -4,17 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $data['title'] = ":: RRHH - Plantilla";
 $data['css'] = array(
-    "jw/jqx.base.css",
-    "jw/jqx.espani.css",
     "toastr.min.css",
-    "zebra.css"
+    "zebra.css",
+    "../datatables/datatables.min.css"
 );
 
 $this->load->view("plantilla/encabezado", $data);
 ?>
 
 <section class="ml-5 mr-5" id="empleados">
-    <div class="row mt-5 mb-5">
+    <div class="row mt-3 mb-3">
         <div class="col text-center text-uppercase">
             <h3 class="txt-Subtitulos"> Administración de Empleados </h3>
         </div>
@@ -23,13 +22,14 @@ $this->load->view("plantilla/encabezado", $data);
         <div class="col">
             <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
                         class="fas fa-file-excel"></i></button>
-            <button type="button" class="btn btn-secondary float-right ml-2" id="btndelete">Eliminar</button>
             <button type="button" class="btn btn-success float-right" id="btnNuevoEmpleado">Nuevo</button>
         </div>
     </div>
     <div class="row">
-        <div class="col-12">
-            <div id="tblDatos"></div>
+        <div class="col-12 text-uppercase">
+            <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead class="table-info"></thead>
+            </table>
         </div>
     </div>
 </section>
@@ -169,11 +169,12 @@ $this->load->view("plantilla/encabezado", $data);
 
 
 <script>
+    let MY = {
+    };
+
     $(document).ready(function () {
-        let $tblDatos = $("#tblDatos"),
+        let $tblDatos2 = $("#tblDatos2"),
             $btnNuevoEmpleado = $("#btnNuevoEmpleado"),
-            $btndelete              =  $("#btndelete"),
-            $btnExportExcel = $("#btnExportExcel"),
             $wEmpleadoEdit = $("#wEmpleadoEdit"),
             $frmPersonal = $('#frmPersonal'),
             $btnGuardarEmpleado = $('#btnGuardarEmpleado'),
@@ -188,7 +189,6 @@ $this->load->view("plantilla/encabezado", $data);
             $txtFchaIngreso = $("#txtFchaIngreso"),
             $txtCURP                = $("#txtCURP"),
             $txtRFC                 = $("#txtRFC"),
-            _gridState = null,
             _currEmpleado = {}
         ;
 
@@ -257,81 +257,54 @@ $this->load->view("plantilla/encabezado", $data);
             }, $cmbLocalidad, 'Localidad');
         });
 
-        function getEmpleados() {
-            let source =
-                {
-                    datatype: "json",
-                    datafields: [
-                        {name: 'cat_rh_empleado_id', type: 'int'},
-                        {name: 'cat_rh_departamento', type: 'int'},
-                        {name: 'cat_rh_puesto', type: 'int'},
-                        {name: 'apellido_p', type: 'string'},
-                        {name: 'apellido_m', type: 'string'},
-                        {name: 'nombre', type: 'string'},
-                        {name: 'fcha_nac', type: 'date'},
-                        {name: 'sexo', type: 'string'},
-                        {name: 'rfc', type: 'string'},
-                        {name: 'curp', type: 'string'},
-                        {name: 'nss', type: 'string'},
-                        {name: 'telefono', type: 'string'},
-                        {name: 'email', type: 'string'},
-                        {name: 'calle_num', type: 'string'},
-                        {name: 'colonia', type: 'string'},
-                        {name: 'localidad', type: 'string'},
-                        {name: 'municipio', type: 'string'},
-                        {name: 'entidad', type: 'int'},
-                        {name: 'dirC', type: 'string'},
-                        {name: 'cat_localidad', type: 'int'},
-                        {name: 'cat_municipio', type: 'int'},
-                        {name: 'cat_entidad', type: 'int'},
-                        {name: 'fcha_ingreso', type: 'date'},
-                        {name: 'departamento', type: 'string'},
-                        {name: 'puesto', type: 'string'},
-                        {name: 'NombreC', type: 'string'}
-                    ],
-                    url: '<?php echo site_url("/empleados/get/empleados")?>',
-                    type: 'post',
-                    id: 'cat_rh_empleado_id'
-                };
-            return new $.jqx.dataAdapter(source);
-        } // END getEmpleado
+        getEmpleados2();
 
-        let photorenderer = function (row, column, value) {
-            let id = $tblDatos.jqxGrid('getrowdata', row).cat_rh_empleado_id;
-            let imgurl = '<?php echo base_url("empleados/get/foto?csid=")?>' + id;
-            let img = '<div style="background: white;"><img style="margin:2px; margin-left: 10px;" width="32" height="32" src="' + imgurl + '"></div>';
-            return img;
-        };
+        function getEmpleados2() {
+            MY.table = $tblDatos2.DataTable( {
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                info: false,
+                ajax: {
+                    "url": "<?php echo site_url('/empleados/get/empleados')?>",
+                    "type": "POST"
+                    },
+                columns: [
+                    { "title": "Nombre", "data":"NombreC" },
+                    { "title": "Fecha Nacim", "data": "fcha_nac",
+                        render: function(data, type, row){
+                            if(type === "sort" || type === "type"){
+                                return data;
+                            }
+                            return moment(data).format("DD-MM-YYYY");
+                        }
+                    },
+                    { "title": "Sexo", "data":"sexo" },
+                    { "title": "NSS", "data": "nss" },
+                    { "title": "CURP", "data":"curp" },
+                    { "title": "RFC", "data": "rfc" },
+                    { "title": "Dirección", "data": "dirC" },
+                    { "title": "Editar", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-success btn-sm">Editar</button>';
+                        }
+                    },
+                    { "title": "Eliminar", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                        }
+                    }
+                ],
+                order: [],
+                language: {
+                    "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
+                }
+            } );
+        }
 
-        $tblDatos.jqxGrid({
-            width: '100%',
-            height: 350,
-            theme: "espani",
-            localization: lang_es(),
-            sortable: true,
-            pageable: true,
-            columnsresize: true,
-            enabletooltips: true,
-            filterable: true,
-            showfilterrow: true,
-            selectionmode: 'multiplerowsextended',
-            columns: [
-                { text: 'Image', width: 60, cellsrenderer: photorenderer },
-                {text: 'Nombre', dataField: 'NombreC', width: "22%"},
-                {text: 'Fh Nacimiento', dataField: 'fcha_nac', cellsformat: 'dd/MM/yyyy', width: "8%"},
-                {text: 'Sexo', dataField: 'sexo', width: "3%"},
-                {text: 'NSS', dataField: 'nss', width: "9%"},
-                {text: 'CURP', dataField: 'curp', width: "15%"},
-                {text: 'RFC', dataField: 'rfc', width: "10%"},
-                {text: 'Domicilio', dataField: 'dirC', width: "30%"},
-                {text: 'Departamento', dataField: 'departamento', filtertype: 'checkedlist', width: "10%"},
-                {text: 'Puesto', dataField: 'puesto', filtertype: 'checkedlist', width: "10%"}
-            ],
-            source: getEmpleados()
-        }).on('rowdoubleclick', function (e) {
-            _currEmpleado = e.args.row.bounddata;
-            _currEmpleado._currRow = e.args.row;
-
+        $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            _currEmpleado = data[0];
 
             $('input[name="txtName"]').val(_currEmpleado.nombre);
             $('input[name="txtAPaterno"]').val(_currEmpleado.apellido_p);
@@ -356,297 +329,233 @@ $this->load->view("plantilla/encabezado", $data);
 
             $('select[name="cmbDep"]').val(_currEmpleado.cat_rh_departamento);
             $('select[name="cmbPuesto"]').val(_currEmpleado.cat_rh_puesto);
-            $txtFchaNac.data('Zebra_DatePicker').set_date(_currEmpleado.fcha_nac);
-            $txtFchaIngreso.data('Zebra_DatePicker').set_date(_currEmpleado.fcha_ingreso);
+
+            $txtFchaNac.data('Zebra_DatePicker').set_date(new Date(_currEmpleado.fcha_nac));
+            $txtFchaIngreso.data('Zebra_DatePicker').set_date(new Date(_currEmpleado.fcha_ingreso));
 
             $wEmpleadoEdit.modal('show');
-        }); //end
-
-        $btnGuardarEmpleado.click(function () {
-
-            if ($btnGuardarEmpleado.hasClass('loading')) {
-                return false;
-            }
-
-            // if($frmPersonal.form('is valid')){
-            $btnGuardarEmpleado.addClass('loading');
-            $frmPersonal.addClass('loading');
-            setEmpleado();
-            // }else{
-            //     $frmPersonal.submit();
-            // }
         });
 
-        $txtImagenUsuario.change(function () {
-            let el = $(this).get(0);
-            let file = el.files[0];
-
-            if (typeof FileReader !== 'undefined' && (/image/i).test(file.type)) {
-                let reader = new FileReader();
-                let img = '';
-                reader.onload = (function (e) {
-                    return function (e) {
-                        let src = e.target.result;
-                        $imgFoto.attr('src', src);
-                    };
-                })(img);
-                reader.readAsDataURL(file);
-            }
+        $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            PersonalDelete(data);
         });
 
-        function setEmpleado() {
+             let photorenderer = function (row, column, value) {
+                let id = $tblDatos.jqxGrid('getrowdata', row).cat_rh_empleado_id;
+                let imgurl = '<?php echo base_url("empleados/get/foto?csid=")?>' + id;
+                let img = '<div style="background: white;"><img style="margin:2px; margin-left: 10px;" width="32" height="32" src="' + imgurl + '"></div>';
+                return img;
+            };
 
-            let data = new FormData($frmPersonal.get(0));
+            $btnGuardarEmpleado.click(function () {
 
-            let limit = 5;
-            let allowedTypes = ['JPG', 'JPEG', 'GIF', 'PNG'];
-
-            let file = $txtImagenUsuario.get(0);
-            if (file.files.length) {
-                file = file.files[0];
-                let format = (file.type.split('/'));
-                format = format[1].toUpperCase();
-
-                if (!(allowedTypes.indexOf(format) >= 0 && file.size < (limit * 1024 * 1024))) {
-                    toastr.error("La imagen no tiene el formato o pesa más de " + limit + "Mb");
-                    $btnGuardarEmpleado.removeClass("loading");
-                    $frmPersonal.removeClass('loading');
+                if ($btnGuardarEmpleado.hasClass('loading')) {
                     return false;
                 }
 
-            }
+                // if($frmPersonal.form('is valid')){
+                $btnGuardarEmpleado.addClass('loading');
+                $frmPersonal.addClass('loading');
+                setEmpleado();
+                // }else{
+                //     $frmPersonal.submit();
+                // }
+            });
 
-            if (_currEmpleado.hasOwnProperty('cat_rh_empleado_id')) {
-                data.append('_id_', _currEmpleado.cat_rh_empleado_id);
-            }
+            $txtImagenUsuario.change(function () {
+                let el = $(this).get(0);
+                let file = el.files[0];
 
-
-            _gridState = $tblDatos.jqxGrid('savestate');
-
-            $.ajax({
-                type: 'post',
-                url: '<?php echo site_url("/empleados/set/empleado")?>',
-                xhr: function () {  // Custom XMLHttpRequest
-                    var myXhr = $.ajaxSettings.xhr();
-                    if (myXhr.upload) { // Check if upload property exists
-                        myXhr.upload.addEventListener('progress', function (e) {
-                            if (e.lengthComputable) {
-//                                console.log(e);
-                            }
-                        }, false); // For handling the progress of the upload
-                    }
-                    return myXhr;
-                },
-                data: data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (e) {
-                    if (e.length) {
-                        if (e.length) {
-                            let obj = JSON.parse(e);
-                            if (obj.hasOwnProperty('status') && obj.status === "Ok") {
-                                $frmPersonal.get(0).reset();
-                                $wEmpleadoEdit.modal('hide');
-                                swal("Correcto", "Datos de empleado guardados, No. Empleado:" + (obj.numEmpleado || "??"), "success");
-                                //toastr.success("Datos de empleado guardados. <br> No. Empleado: " + (obj.numEmpleado || '??'));
-                                $tblDatos.jqxGrid({source: getEmpleados()});
-
-                            }
-                        } else {
-                            swal("Error", e , "error");
-                            //toastr.info(e);
-                            $frmPersonal.get(0).reset();
-                        }
-                    }
-                },
-                error: function (e) {
-                    toastr.error("Error al procesar la petición " + e.responseText);
-                },
-                complete: function () {
-                    $btnGuardarEmpleado.removeClass('loading');
-                    $frmPersonal.removeClass('loading');
+                if (typeof FileReader !== 'undefined' && (/image/i).test(file.type)) {
+                    let reader = new FileReader();
+                    let img = '';
+                    reader.onload = (function (e) {
+                        return function (e) {
+                            let src = e.target.result;
+                            $imgFoto.attr('src', src);
+                        };
+                    })(img);
+                    reader.readAsDataURL(file);
                 }
             });
-        }
 
+            function setEmpleado() {
 
-        $btnNuevoEmpleado.click(function () {
-            $wEmpleadoEdit.modal("show");
-        });
+                let data = new FormData($frmPersonal.get(0));
 
+                let limit = 5;
+                let allowedTypes = ['JPG', 'JPEG', 'GIF', 'PNG'];
 
-        $wEmpleadoEdit.on('hide.bs.modal', function () {
-            _currEmpleado = {};
-            $frmPersonal.get(0).reset();
-            $btnGuardarEmpleado.removeClass("loading");
-            $frmPersonal.removeClass('loading');
-        });
+                let file = $txtImagenUsuario.get(0);
+                if (file.files.length) {
+                    file = file.files[0];
+                    let format = (file.type.split('/'));
+                    format = format[1].toUpperCase();
 
-        $wEmpleadoEdit.on('shown.bs.modal', function () {
-            const $head = $wEmpleadoEdit.find('.modal-title span');
-            if (_currEmpleado.hasOwnProperty('cat_rh_empleado_id')) {
-                $head.html(' - ' + _currEmpleado.cat_rh_empleado_id);
-                $imgFoto.attr('src', '<?php echo base_url("empleados/get/foto?csid=")?>' + _currEmpleado.cat_rh_empleado_id);
-            } else {
-                $head.html(' - Nuevo');
-                $imgFoto.attr('src', '<?php echo base_url("assets/img/users/empty.jpg")?>');
-            }
-        });
+                    if (!(allowedTypes.indexOf(format) >= 0 && file.size < (limit * 1024 * 1024))) {
+                        toastr.error("La imagen no tiene el formato o pesa más de " + limit + "Mb");
+                        $btnGuardarEmpleado.removeClass("loading");
+                        $frmPersonal.removeClass('loading');
+                        return false;
+                    }
 
-        let $ms='';
+                }
 
-        $txtCURP.on('keyup', function (e) {
-            $txtCURP.val($txtCURP.val().toUpperCase());
-            $('select[name="cmbSexo"]').val($txtCURP.val().substr(10,1));
-            $ms = $txtCURP.val().substr(4,2) + '-'+ $txtCURP.val().substr(6,2) +'-' +$txtCURP.val().substr(8,2) ;
-            $ms = Date.parse($ms);
-            let $fecha = new Date($ms);
-            $txtFchaNac.data('Zebra_DatePicker').set_date($fecha);
-            $txtRFC.val($txtCURP.val().substr(0,10));
-        });
+                if (_currEmpleado.hasOwnProperty('cat_rh_empleado_id')) {
+                    data.append('_id_', _currEmpleado.cat_rh_empleado_id);
+                }
 
-        function isIE() {
-            var ua   = window.navigator.userAgent;
-            var msie = ua.indexOf('MSIE ') > 0;
-            var ie11 = ua.indexOf('Trident/') > 0;
-            var ie12 = ua.indexOf('Edge/') > 0;
-            return msie || ie11 || ie12;
-        }
-
-        function exportarExcel(nombre, strData) {
-            nombre = nombre || 'PV-DATA';
-
-            const contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            const extension   = ".xls";
-
-            const blob = new Blob([strData], {
-                type: contentType
-            });
-
-            let nombreArchivo = nombre  + extension;
-            if (isIE()) {
-                window.navigator.msSaveOrOpenBlob(blob, nombreArchivo);
-            } else {
-                var link      = document.createElement("a");
-                link.href     = window.URL.createObjectURL(blob);
-                link.style    = "visibility:hidden";
-                link.download = nombreArchivo;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
-        function PersonalDelete(data){
-
-            let sendData = JSON.stringify(data);
-
-            swal({
-                    title: "Eliminar Empleado",
-                    text: "Desea eliminar a: "+ data.NombreC +"",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Eliminar",
-                    cancelButtonText: "Cancelar",
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        swal({
-                            title: "Are you sure you want to delete your account?",
-                            text: "If you are sure, type in your password:",
-                            type: "input",
-                            inputType: "date",
-                            showCancelButton: true,
-                            closeOnConfirm: false
-                        }, function(inputValue) {
-                            if (inputValue === false) return false;
-                            if (inputValue === "") {
-                                swal.showInputError("You need to write something!");
-                                return false
-                            }
-
-                            $.ajax({
-                                url: '<?php echo base_url("empleados/set/deleteUsuario")?>',
-                                type: "POST",
-                                data: {datos: data.cat_rh_empleado_id, txtFhBjaja: inputValue },
-                                dataType: "html",
-                                success: function (e) {
-                                    if (e === 'OK') {
-                                        swal("Bien", "El empleado se ha eliminado correctamente", "success");
-                                        $tblDatos.jqxGrid({source: getEmpleados()});
-                                    }
-                                },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    swal("Error deleting!", "Please try again", "error");
+                $.ajax({
+                    type: 'post',
+                    url: '<?php echo site_url("/empleados/set/empleado")?>',
+                    xhr: function () {  // Custom XMLHttpRequest
+                        var myXhr = $.ajaxSettings.xhr();
+                        if (myXhr.upload) { // Check if upload property exists
+                            myXhr.upload.addEventListener('progress', function (e) {
+                                if (e.lengthComputable) {
+    //                                console.log(e);
                                 }
-                            });
-
-                        });
-                    } else {
-                        swal("Cancelado", data.NombreC + " no se elimino", "error");
+                            }, false); // For handling the progress of the upload
+                        }
+                        return myXhr;
+                    },
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (e) {
+                        if (e.length) {
+                            if (e.length) {
+                                let obj = JSON.parse(e);
+                                if (obj.hasOwnProperty('status') && obj.status === "Ok") {
+                                    $frmPersonal.get(0).reset();
+                                    $wEmpleadoEdit.modal('hide');
+                                    swal("Correcto", "Datos de empleado guardados, No. Empleado:" + (obj.numEmpleado || "??"), "success");
+                                    MY.table.ajax.reload();
+                                }
+                            } else {
+                                swal("Error", e , "error");
+                                $frmPersonal.get(0).reset();
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        toastr.error("Error al procesar la petición " + e.responseText);
+                    },
+                    complete: function () {
+                        $btnGuardarEmpleado.removeClass('loading');
+                        $frmPersonal.removeClass('loading');
                     }
                 });
-        }
+            }
 
-        $btndelete.click(function (e) {
-            e.preventDefault();
-            let data = $tblDatos.jqxGrid('getrowdata', $tblDatos.jqxGrid('getselectedrowindex'));
-            if (data) {
-                //obtiene00 los datos seleccionados
-                let ids = $tblDatos.jqxGrid('getselectedrowindexes');
-                let datos = [];
 
-                if(ids.length == 1) {
-                    PersonalDelete(data);
-                } else if (ids.length < 1) {
-                    toastr.error('Seleccione a un empleado', {timeOut: 0});
+            $btnNuevoEmpleado.click(function () {
+                $wEmpleadoEdit.modal("show");
+            });
+
+
+            $wEmpleadoEdit.on('hide.bs.modal', function () {
+                _currEmpleado = {};
+                $frmPersonal.get(0).reset();
+                $btnGuardarEmpleado.removeClass("loading");
+                $frmPersonal.removeClass('loading');
+            });
+
+            $wEmpleadoEdit.on('shown.bs.modal', function () {
+                const $head = $wEmpleadoEdit.find('.modal-title span');
+                if (_currEmpleado.hasOwnProperty('cat_rh_empleado_id')) {
+                    $head.html(' - ' + _currEmpleado.cat_rh_empleado_id);
+                    $imgFoto.attr('src', '<?php echo base_url("empleados/get/foto?csid=")?>' + _currEmpleado.cat_rh_empleado_id);
                 } else {
-                    toastr.error('Seleccione solo a un Empleado', {timeOut: 0});
+                    $head.html(' - Nuevo');
+                    $imgFoto.attr('src', '<?php echo base_url("assets/img/users/empty.jpg")?>');
                 }
-            }else{
-                toastr.error('Seleccione a un empleado', {timeOut: 0});
+            });
+
+            let $ms='';
+
+            $txtCURP.on('keyup', function (e) {
+                $txtCURP.val($txtCURP.val().toUpperCase());
+                $('select[name="cmbSexo"]').val($txtCURP.val().substr(10,1));
+                $ms = $txtCURP.val().substr(4,2) + '-'+ $txtCURP.val().substr(6,2) +'-' +$txtCURP.val().substr(8,2) ;
+                $ms = Date.parse($ms);
+                let $fecha = new Date($ms);
+                $txtFchaNac.data('Zebra_DatePicker').set_date($fecha);
+                $txtRFC.val($txtCURP.val().substr(0,10));
+            });
+
+            function isIE() {
+                var ua   = window.navigator.userAgent;
+                var msie = ua.indexOf('MSIE ') > 0;
+                var ie11 = ua.indexOf('Trident/') > 0;
+                var ie12 = ua.indexOf('Edge/') > 0;
+                return msie || ie11 || ie12;
             }
-        });
 
-        $btnExportExcel.click(function () {
-            let data = $tblDatos.jqxGrid("exportdata",'xls');
-            if(data){
-                exportarExcel("Plantilla",data);
+            function PersonalDelete(data){
+                swal({
+                        title: "Eliminar Empleado",
+                        text: "Desea eliminar a: "+ data.NombreC +"",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Eliminar",
+                        cancelButtonText: "Cancelar",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                title: "",
+                                text: "Ingrese fecha de fin de contrato",
+                                type: "input",
+                                inputType: "date",
+                                showCancelButton: true,
+                                closeOnConfirm: false
+                            }, function(inputValue) {
+                                if (inputValue === false) return false;
+                                if (inputValue === "") {
+                                    swal.showInputError("Ingrese fecha");
+                                    return false
+                                }
+
+                                $.ajax({
+                                    url: '<?php echo base_url("empleados/set/deleteUsuario")?>',
+                                    type: "POST",
+                                    data: {datos: data.cat_rh_empleado_id, txtFhBjaja: inputValue },
+                                    dataType: "html",
+                                    success: function (e) {
+                                        if (e === 'OK') {
+                                            swal("Bien", "El empleado se ha eliminado correctamente", "success");
+                                        }
+                                        MY.table.ajax.reload();
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        swal("Error deleting!", "Please try again", "error");
+                                    }
+                                });
+
+                            });
+                        } else {
+                            swal("Cancelado", data.NombreC + " no se elimino", "error");
+                        }
+                    });
             }
-        });
 
+        });  //end document ready
+    </script>
+    <?php
+    $data['scripts'] = array(
+        "jqw/localized-es.js",
+        "toastr.min.js",
+        "zebra_datepicker.src.js",
+        "../datatables/datatables.min.js",
+        "js1/moment.min.js"
 
-    });  //end document ready
-</script>
-<?php
-$data['scripts'] = array(
-    "jqw/jqxcore.js",
-    "jqw/jqxdata.js",
-    "jqw/jqxcheckbox.js",
-    "jqw/jqxbuttons.js",
-    "jqw/jqxscrollbar.js",
-    "jqw/jqxmenu.js",
-    "jqw/jqxlistbox.js",
-    "jqw/jqxdropdownlist.js",
-    "jqw/jqxgrid.js",
-    "jqw/jqxgrid.pager.js",
-    "jqw/jqxgrid.columnsresize.js",
-    "jqw/jqxdata.export.js",
-    "jqw/jqxgrid.export.js",
-    "jqw/jqxgrid.grouping.js",
-    "jqw/jqxgrid.selection.js",
-    "jqw/jqxgrid.sort.js",
-    "jqw/jqxgrid.filter.js",
-    "jqw/jqxgrid.storage.js",
-    "jqw/jqxpanel.js",
-    "jqw/localized-es.js",
-    "toastr.min.js",
-    "zebra_datepicker.src.js"
-
-);
-$this->load->view("plantilla/pie", $data);
-?>
+    );
+    $this->load->view("plantilla/pie", $data);
+    ?>

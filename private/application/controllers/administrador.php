@@ -49,6 +49,7 @@ class Administrador extends CI_Controller {
                 break;
             case 'user':
                 $data = $this->administrador_model->get_user(array('estatus'=>1,'cat_usuario_id >'=>1));
+                $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;
             default : $this->cliError();
