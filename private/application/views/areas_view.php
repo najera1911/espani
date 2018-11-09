@@ -45,8 +45,8 @@ $this->load->view("plantilla/encabezado",$data);
     <tfoot>
       <tr>
         <th>ID</th>
-        <th>Descripcion</th>
-        <th>Estatus</th>
+        <th>Descripcionnn</th>
+        <th>ESTATUS</th>
         <th>Accion</th>
       </tr>
     </tfoot>
