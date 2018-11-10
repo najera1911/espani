@@ -113,7 +113,7 @@ $this->load->view("plantilla/encabezado", $data);
                                         </select>
                                     </div>
                                     <div class="form-group col-lg-4">
-                                        <label for="cmbLocalidad">Localidad</label>
+                                        <label for="cmbLocalidad">LocalidaD</label>
                                         <select class="form-control" id="cmbLocalidad" name="cmbLocalidad" required>
                                         </select>
                                     </div>
