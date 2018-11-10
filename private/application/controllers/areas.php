@@ -3,43 +3,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Areas extends CI_Controller
 {
-    public function __construct()
-    {
+    public function __construct(){
         parent::__construct();
-        $this->load->helper('url');
         $this->load->model('areas_model');
-    }
-    public function index()
+
+        if( $this->session->userdata('isLoggedIn') ) {
+            $this->acl->setUserId($this->session->userdata('idU'));
+        }
+    } 
+    function cliError($msg = "Bad Request", $num = "0x0")
     {
-        $data['obtner_todos']=$this->areas_model->obtner_todos();
-        $this->load->view('areas_view',$data);
+        set_status_header(500);
+        exit($msg . trim(" " . $num ));
     }
-    public function insertar_area()
-		{
-			$data = array(
-					'descripcion' => $this->input->post('descripcion'),
-					'estatus' => $this->input->post('estatus'),
-				);
-			$insert = $this->areas_model-> insertar_area($data);
-			echo json_encode(array("status" => TRUE));
+    function index($pagina = ''){
+        if (!file_exists(VIEWPATH . 'areas/vw_' . $pagina . '.php')) {
+            show_404();
         }
-     public function ajax_edit($id)
-		{
-			$data = $this->areas_model->get_by_id($id);
-			echo json_encode($data);
-        }
-    public function actualizar_area()
-        {
-            $data = array(
-                    'descripcion' => $this->input->post('descripcion'),
-                    'estatus' => $this->input->post('estatus'),
-                );
-            $this->areas_model->actualizar(array('cat_rh_departamento_id' => $this->input->post('cat_rh_departamento_id')), $data);
-            echo json_encode(array("status" => TRUE));
-        }
-    public function borrar_area($id)
-        {
-            $this->area_model->eliminar($id);
-            echo json_encode(array("status" => TRUE));
-        }    
+
+        $this->load->view('areas/vw_' . $pagina);
+    }
 }
