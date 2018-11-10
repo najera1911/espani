@@ -49,7 +49,39 @@ class Areas extends CI_Controller
         }
         switch($data){
             case 'areas':
+            $txtDescripcion = filter_input(INPUT_POST, 'txtDescripcion');    
+            if(empty($txtDescripcion)){
+                $this->cliError('Campo vacio');
                 
+            }
+            $idEmpleado = filter_input(INPUT_POST, '_id_', FILTER_VALIDATE_INT);
+
+            $data = array(
+                "descripcion" => $txtDescripcion,
+                "estatus" => true
+            );
+
+            if(!empty($idEmpleado)){
+                $res = $this->areas_model->updateArea($idEmpleado, $data);
+            }else{
+                $res = $this->areas_model->addArea($data);
+            }
+            if ($res){
+                exit(json_encode(["status"=>"Ok"]));
+            } else{
+                $this->cliError("ocurrio un error");
+            }
+
+               break;
+            case 'deleteArea':
+               $data = filter_input(INPUT_POST,'datos');
+               $res = $this->areas_model->deleteArea($data);
+               if ($res) {
+                   exit('OK');
+               } else {
+                   $this->cliError('No se pudo eliminar el departamento');
+               }
+
                break;
                default: $this->cliError(); 
         }
