@@ -43,7 +43,40 @@ $(document).ready(function(){
     let $btnNuevaArea = $("#btnNuevaArea"),
         $tblDatos2 = $("#tblDatos2");
 
+    getAreas();
+    function getAreas(){
+        MY.table = $tblDatos2.DataTable({
+            processsing: true,
+            serverSide: true,
+            ordering: true,
+            info: false,
+            ajax: {
+                "url": "<?php echo site_url('/areas/get/areas')?>",
+                "type": "POST"
+            },
+            columns: [
+                {"title": "Id", "data":"cat_rh_departamento_id" },
+                {"title": "Descripcion", "data":"descripcion"},
+                { "title": "Editar", data:null,
+                            render:function(data, type,row){
+                                return '<button class="btn btn-success btn-sm">Editar</button>';
+                            }
+                        },
+                        { "title": "Eliminar", data:null,
+                            render:function(data, type,row){
+                                return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                            }
+                        }
+            ],
+            order: [],
+            language: {
+                        "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
+                    }
+        });
+    }
+
 });
+
 </script>
 
 <?php

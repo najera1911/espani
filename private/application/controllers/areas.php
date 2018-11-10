@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property Acl acl
  * @property CI_Loader load
  * @property clsTinyButStrong clsTinyButStrong
- * @property Clientes_model clientes_model
+ * @property Areas_model areas_model
  */
 
 class Areas extends CI_Controller
@@ -46,6 +46,9 @@ class Areas extends CI_Controller
         }
         switch($data){
             case 'areas':
+                $res = $this->areas_model->obtenter_todos();
+                
+                exit(json_encode($res));
                break;
                default: $this->cliError(); 
         }
