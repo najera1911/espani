@@ -36,6 +36,9 @@ class Areas extends CI_Controller
         }
         switch($data){
             case 'areas':
+            $res = $this->areas_model->obtenter_todos();
+                $res = array('data'=>$res);
+                exit(json_encode($res));
                break;
                default: $this->cliError(); 
         }
@@ -46,9 +49,7 @@ class Areas extends CI_Controller
         }
         switch($data){
             case 'areas':
-                $res = $this->areas_model->obtenter_todos();
                 
-                exit(json_encode($res));
                break;
                default: $this->cliError(); 
         }
