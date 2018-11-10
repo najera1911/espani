@@ -34,12 +34,6 @@ $this->load->view("plantilla/encabezado", $data);
                 </table>
             </div>
         </div>
-
-        <div class="row justify-content-center">
-            <div class="col-8">
-                <div id="tblDatos"></div>
-            </div>
-        </div>
     </section>
 
     <div class="modal fade" id="wClientesEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -113,7 +107,7 @@ $this->load->view("plantilla/encabezado", $data);
                                         </select>
                                     </div>
                                     <div class="form-group col-lg-4">
-                                        <label for="cmbLocalidad">LocalidaD</label>
+                                        <label for="cmbLocalidad">Localidad</label>
                                         <select class="form-control" id="cmbLocalidad" name="cmbLocalidad" required>
                                         </select>
                                     </div>
