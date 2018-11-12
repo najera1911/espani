@@ -3,40 +3,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Operaciones_model extends CI_Model
 {
-
-    var $table = 'cat_operaciones';
-
-    public function __construct()
-	{
-		parent::__construct();
-		$this->load->database();
-    }
-    public function obtner_todos()
+	function obtenter_todos()
     {
-        $this->db->from('cat_operaciones');
-        $query=$this->db->get();
-        return $query->result();
-    }
-    public function insertar_operacion($data)
-	{
-		$this->db->insert($this->table, $data);
-		return $this->db->insert_id();
-    }
-    public function get_by_id($id)
-	{
-		$this->db->from($this->table);
-		$this->db->where('cat_operaciones_id',$id);
-		$query = $this->db->get();
-		return $query->row();
-    }
-	public function actualizar($where, $data)
-	{
-		$this->db->update($this->table, $data, $where);
-		return $this->db->affected_rows();
-    }
-    public function eliminar($id)
-	{
-		$this->db->where('cat_operaciones_id', $id);
-		$this->db->delete($this->table);
+		$this->db->where("cat_operaciones_id",TRUE);
+		return $this->db->get("cat_operaciones")->result();		
+	}
+	function updateOperacion($idEmpleado, $data){
+		if(empty($idEmpleado)){
+		return FALSE;
+		}
+		$this->db->set($data);
+		$this->db->where("cat_operaciones_id", $idEmpleado);
+		$res = $this->db->update("cat_operaciones");
+		return $res;
+	}
+	function addOperacion($data){
+		$res = $this->db->insert("cat_operaciones",$data);
+		return $res;
+	}
+	function deleteOperacion($id){
+		$data = array(
+		"cat_operaciones_id" => false 
+		);
+		$this->db->set($data);
+		$this->db->where("cat_operaciones_id", $id);
+		$res = $this->db->update("cat_operaciones");
+		return $res;
 	}
 }

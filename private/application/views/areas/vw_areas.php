@@ -118,6 +118,8 @@ $(document).ready(function(){
 
                 $('input[name="txtDescripcion"]').val($_arregloArea.descripcion);
                 
+
+                
                 $wAreasEdit.modal('show');
             });
 

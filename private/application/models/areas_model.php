@@ -33,7 +33,5 @@ class Areas_model extends CI_Model
 		$res = $this->db->update("cat_rh_departamento");
 		
 		return $res;
-
 	}
-
 }
