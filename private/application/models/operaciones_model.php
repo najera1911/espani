@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Operaciones_model extends CI_Model
 {
 
-    var $table = 'cat_operaciones';
+
 
     public function __construct()
 	{
