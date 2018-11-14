@@ -35,7 +35,7 @@ class Operaciones extends CI_Controller {
         }
         switch($data){
             case 'operaciones':
-            $res = $this->operaciones_model->obtenter_todos();
+            $res = $this->operaciones_model->obtener_todos();
                 $res = array('data'=>$res);
                 exit(json_encode($res));
                break;

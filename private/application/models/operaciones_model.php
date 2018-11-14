@@ -11,7 +11,7 @@ class Operaciones_model extends CI_Model
 		parent::__construct();
 		$this->load->database();
     }
-    public function obtner_todos()
+    public function obtener_todos()
     {
 		$this->db->where("cat_operaciones_id",TRUE);
 		return $this->db->get("cat_operaciones")->result();
