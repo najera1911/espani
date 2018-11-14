@@ -8,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property CI_Loader load
  * @property clsTinyButStrong clsTinyButStrong
  * @property Operaciones_model operaciones_model
- */   
+ */
 
 
 class Operaciones extends CI_Controller {
@@ -16,13 +16,16 @@ class Operaciones extends CI_Controller {
     public function __construct(){
         parent::__construct();
         $this->load->model('operaciones_model');
+        if( $this->session->userdata('isLoggedIn') ) {
+            $this->acl->setUserId($this->session->userdata('idU'));
+        }
     }
-    
+
     function cliError($msg = "Bad Request", $num = "0x0")//
     {
         set_status_header(500);
         exit($msg . trim(" " . $num ));
-    }   
+    }
     function index($pagina = ''){
         if (!file_exists(VIEWPATH . 'operaciones/vw_' . $pagina . '.php')) {
             show_404();
@@ -39,7 +42,7 @@ class Operaciones extends CI_Controller {
                 $res = array('data'=>$res);
                 exit(json_encode($res));
                break;
-               default: $this->cliError(); 
+               default: $this->cliError();
         }
     }
     function set($data=''){
@@ -49,12 +52,12 @@ class Operaciones extends CI_Controller {
         switch($data){
             case 'operacion':
             $txtOperacion = filter_input(INPUT_POST, 'txtOperacion');
-            $txtDescripcion = filter_input(INPUT_POST, 'txtDescripcion');  
+            $txtDescripcion = filter_input(INPUT_POST, 'txtDescripcion');
             $txtTarifa_con = filter_input(INPUT_POST, 'txtTarifa_con');
-            $txtTarifa_sin = filter_input(INPUT_POST, 'txttarifa_sin');
+            $txtTarifa_sin = filter_input(INPUT_POST, 'txtTarifa_sin');
             $idEmpleado = filter_input(INPUT_POST, '_id_', FILTER_VALIDATE_INT);
 
-            
+
            /* if(empty($txtOperacion)){
                 $this->cliError('Campo operacion no puede estar vacio');
             }
@@ -65,7 +68,7 @@ class Operaciones extends CI_Controller {
                 $this->cliError('Tarifa con 7° no puede ser vacio');
             }
             if(empty($txtTarifa_sin)){
-                $this->cliError('Tarifa sin 7° no puede ser vacio');    
+                $this->cliError('Tarifa sin 7° no puede ser vacio');
             }*/
             $data = array(
                 "descripcion" => $txtDescripcion,
@@ -95,7 +98,7 @@ class Operaciones extends CI_Controller {
                }
 
                break;
-               default: $this->cliError(); 
+               default: $this->cliError();
         }
-    } 
+    }
 }
