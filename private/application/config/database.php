@@ -76,15 +76,6 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 
-<<<<<<< HEAD
-// 	'hostname' => '189.254.11.166',
-//  	'username' => 'uEspani',
-//  	'password' => 'uEspani',
-//  	'database' => 'dbespani',
-	'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-=======
  //	'hostname' => '189.254.11.166',
   //	'username' => 'uEspani',
   //	'password' => 'uEspani',
@@ -92,7 +83,6 @@ $db['default'] = array(
 	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => '',
->>>>>>> a27642df3a03c99e6c0117eea1240713350b10d9
 	'database' => 'dbespani',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
