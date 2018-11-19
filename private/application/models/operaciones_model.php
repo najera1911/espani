@@ -14,7 +14,7 @@ class Operaciones_model extends CI_Model
     public function obtener_todos()
     {
 		$this->db->where("estatus",TRUE);
-		return $this->db->get("cat_operaciones")->result();
+		return $this->db->get("cat_operacion_view")->result();
     }
 	function updateOperacion($idEmpleado, $data){
 		if(empty($idEmpleado)){
@@ -71,6 +71,11 @@ class Operaciones_model extends CI_Model
         $this->db->where("cat_tipo_corte_id", $id);
         $res = $this->db->update("cat_tipo_corte");
         return $res;
+    }
+
+    function catTipoCorte(){
+        $this->db->select("cat_tipo_corte_id as id, descripcion as nombre,'' as txt")->where('estatus',true);
+        return $this->db->get("cat_tipo_corte")->result();
     }
 
 }

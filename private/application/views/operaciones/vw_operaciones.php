@@ -9,7 +9,7 @@ $data['css'] = array(
 );
 $this->load->view("plantilla/encabezado", $data);
 ?>
-<section class="ml-5 mr-5" id="Operaciones">
+    <section class="ml-5 mr-5" id="Operaciones">
         <div class="row mt-5 mb-5">
             <div class="col text-center text-uppercase">
                 <h3 class="txt-Subtitulos">Operaciones</h3>
@@ -27,135 +27,224 @@ $this->load->view("plantilla/encabezado", $data);
         <div class="row">
             <div class="col-12 text-uppercase">
                 <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                    <thead class="table-info"></thead>
+                    <thead class="table-info text-center"></thead>
                 </table>
             </div>
         </div>
- </section>
+    </section>
 
-<div class="modal fade" id="wOperacionesEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" id="wOperacionesEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
-    <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold">Operaciones<span></span> - Datos Generales </h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body mx-3">
-                <div class="row">
-                    <div class="col-12">
-                        <form id="frmOperaciones" role="form" autocomplete="off">
-                            <div class="form-row">
-                                <div class="form-group col-lg-4">
-                                    <label for="txtName">Operacion</label>
-                                    <input type="text" class="form-control text-uppercase" id="txtOperacion" name="txtOperacion" required>
+        <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Operaciones<span></span> - Datos Generales </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="frmOperaciones" role="form" autocomplete="off">
+                                <div class="form-row">
+                                    <div class="form-group col-lg-4">
+                                        <label for="cmbTipoCorte">Tipo de Corte</label>
+                                        <select class="form-control" id="cmbTipoCorte" name="cmbTipoCorte"
+                                                required></select>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtOperacion">Clave operacion</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtOperacion"
+                                               name="txtOperacion" required>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label for="txtDescripcion">Descripcion</label>
+                                        <input type="text" class="form-control text-uppercase" id="txtDescripcion"
+                                               name="txtDescripcion" required>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label class="sr-only" for="txtTarifa_sin">Tarifa sin 7o</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">$</div>
+                                            </div>
+                                            <input type="number" class="form-control" id="txtTarifa_sin"
+                                                   name="txtTarifa_sin" placeholder="Tarifa sin 7o">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                        <label class="sr-only" for="txtTarifa_con">Tarifa con 7o</label>
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">$</div>
+                                            </div>
+                                            <input type="number" class="form-control" id="txtTarifa_con"
+                                                   name="txtTarifa_con" placeholder="Tarifa con 7o">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group col-lg-4">
-                                    <label for="txtName">Descripcion</label>
-                                    <input type="text" class="form-control text-uppercase" id="txtDescripcion" name="txtDescripcion" required>
-                                </div>
-                                <div class="form-group col-lg-4">
-                                    <label for="txtName">Tarifa_con</label>
-                                    <input type="text" class="form-control text-uppercase" id="txtTarifa_con" name="txtTarifa_con" required>
-                                </div>
-                                <div class="form-group col-lg-4">
-                                    <label for="txtName">Tarifa_sin</label>
-                                    <input type="text" class="form-control text-uppercase" id="txtTarifa_sin" name="txtTarifa_sin" required>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="modal-footer d-flex justify-content-center">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-success" id="btnGuardarOperacion">Guardar</button>
+
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success" id="btnGuardarOperacion">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-let MY = {
-};
-$(document).ready(function(){
-    let $btnNuevaOperacion = $("#btnNuevaOperacion"),
-        $tblDatos2 = $("#tblDatos2"),
-        $wOperacionesEdit = $("#wOperacionesEdit"),
-        $frmOperaciones = $("#frmOperaciones"),
-        $btnGuardarOperacion = $("#btnGuardarOperacion"),
-        $_arregloOperacion = {};
+    <script>
+        let MY = {};
 
-    $btnNuevaOperacion.click(function () {
-        $wOperacionesEdit.modal("show");
-    });
+        $(document).ready(function () {
+            let $btnNuevaOperacion = $("#btnNuevaOperacion"),
+                $tblDatos2 = $("#tblDatos2"),
+                $wOperacionesEdit = $("#wOperacionesEdit"),
+                $frmOperaciones = $("#frmOperaciones"),
+                $btnGuardarOperacion = $("#btnGuardarOperacion"),
+                $cmbTipoCorte = $("#cmbTipoCorte"),
+                $txtTarifa_con = $("#txtTarifa_con"),
+                $txtTarifa_sin = $("#txtTarifa_sin"),
+                $_arregloOperacion = {};
 
-    $wOperacionesEdit.on('hide.bs.modal', function () {
-        $_arregloOperacion = {};
-        $frmOperaciones.get(0).reset();
-        $btnGuardarOperacion.removeClass("loading");
-        $frmOperaciones.removeClass('loading');
-    });
+            $txtTarifa_con.change(function () {
+                $txtTarifa_con.val(parseFloat($txtTarifa_con.val()).toFixed(5))
+            });
 
-    $wOperacionesEdit.on('shown.bs.modal', function () {
-    const $head = $wOperacionesEdit.find('.modal-title span');
-        if ($_arregloOperacion.hasOwnProperty('cat_usuario_id')) {
-            $head.html(' ' + $_arregloOperacion.operacion);
+            $txtTarifa_sin.change(function () {
+                $txtTarifa_sin.val(parseFloat($txtTarifa_sin.val()).toFixed(5))
+            });
+
+            function cargar_catalogo(url, data) {
+                return $.getJSON(url, data, function (e) {
+                    if (window._debug) {
+                        console.groupCollapsed('Request');
+                        console.log('Catalog URL: ', url);
+                        console.log('Catalog Data: ', data);
+                        console.log('Catalog returned: ', e);
+                        console.groupEnd();
+                    }
+                });
+            }
+
+            function show_cat_select($items, $obj, placeholder) {
+                if (typeof $obj !== 'object') {
+                    return;
+                }
+                placeholder = placeholder || 'Elige';
+                $obj.html('<option value="">' + placeholder + '</option>');
+                $.each($items, function (ix, item) {
+                    let $el = $('<option/>');
+                    $el.val(item.id).html(item.nombre);
+                    $obj.append($el);
+                    $obj.addClass("custom-select");
+                });
+
+            }
+
+            function cargar_catalogo_select(url, data, $obj, placeholder) {
+                if (typeof $obj !== 'object') {
+                    return;
+                }
+                let xhr = cargar_catalogo(url, data);
+                xhr.done(function (e) {
+                    show_cat_select(e, $obj, placeholder);
+                });
+                return xhr;
+            }
+
+            //agregar select
+            cargar_catalogo_select('<?php echo site_url("/operaciones/get/catTipoCorte")?>', {}, $cmbTipoCorte, 'Tipo Corte');
+
+            $btnNuevaOperacion.click(function () {
+                $wOperacionesEdit.modal("show");
+            });
+
+            $wOperacionesEdit.on('hide.bs.modal', function () {
+                $_arregloOperacion = {};
+                $frmOperaciones.get(0).reset();
+                $btnGuardarOperacion.removeClass("loading");
+                $frmOperaciones.removeClass('loading');
+            });
+
+            $wOperacionesEdit.on('shown.bs.modal', function () {
+                const $head = $wOperacionesEdit.find('.modal-title span');
+                if ($_arregloOperacion.hasOwnProperty('cat_usuario_id')) {
+                    $head.html(' ' + $_arregloOperacion.operacion);
                 } else {
                     $head.html(' Nuevo');
                 }
-    });
+            });
 
-    $btnGuardarOperacion.click(function () {
-    if ($btnGuardarOperacion.hasClass('loading')) { return false; }
-    $btnGuardarOperacion.addClass('loading');
-    $frmOperaciones.addClass('loading');
-    setOperacion();
-    });
+            $btnGuardarOperacion.click(function () {
+                if ($btnGuardarOperacion.hasClass('loading')) {
+                    return false;
+                }
+                $btnGuardarOperacion.addClass('loading');
+                $frmOperaciones.addClass('loading');
+                setOperacion();
+            });
 
 
-    getOperacion();
-    function getOperacion(){
-        MY.table = $tblDatos2.DataTable({
-            processsing: true,
-            serverSide: true,
-            ordering: true,
-            info: false,
-            ajax: {
-                "url": "<?php echo site_url('/operaciones/get/operaciones')?>",
-                "type": "POST"
-            },
-            columns: [
-                { "title": "Id", "data":"cat_operacion_id" },
-                { "title": "Operacion", "data":"operacion"},
-                { "title": "Descripcion", "data": "descripcion" },
-                { "title": "tarifa con 7° ", "data": "tarifa_con" },
-                { "title": "tarifa sin 7° ", "data": "tarifa_sin" },
-                { "title": "Editar", data:null,
-                            render:function(data, type,row){
-                                return '<button class="btn btn-success btn-sm">Editar</button>';
-                            }
+            getOperacion();
+
+            function getOperacion() {
+                MY.table = $tblDatos2.DataTable({
+                    processsing: true,
+                    serverSide: true,
+                    ordering: true,
+                    info: false,
+                    ajax: {
+                        "url": "<?php echo site_url('/operaciones/get/operaciones')?>",
+                        "type": "POST"
+                    },
+                    columns: [
+                        {"title": "Tipo Corte", "data": "tipoCorte"},
+                        {"title": "Operacion", "data": "operacion", "className": "text-center"},
+                        {"title": "Descripcion", "data": "descripcion"},
+                        {
+                            "title": "tarifa sin 7° ", "data": "tarifa_sin",
+                            render: function (data, type, row) {
+                                data = parseFloat(data).toFixed(5);
+                                return '$ ' + data;
+                            }, "className": "text-center"
                         },
-                        { "title": "Eliminar", data:null,
-                            render:function(data, type,row){
+                        {
+                            "title": "tarifa con 7° ", "data": "tarifa_con",
+                            render: function (data, type, row) {
+                                data = parseFloat(data).toFixed(5);
+                                return '$ ' + data;
+                            }, "className": "text-center"
+                        },
+                        {
+                            "title": "Editar", data: null,
+                            render: function (data, type, row) {
+                                return '<button class="btn btn-success btn-sm">Editar</button>';
+                            }, "className": "text-center"
+                        },
+                        {
+                            "title": "Eliminar", data: null,
+                            render: function (data, type, row) {
                                 return '<button class="btn btn-warning btn-sm">Eliminar</button>';
-                            }
+                            }, "className": "text-center"
                         }
-            ],
-            order: [],
-            language: {
+                    ],
+                    order: [],
+                    language: {
                         "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
-                    }                
-        });
-    }
+                    }
+                });
+            }
 
-        $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+            $("#tblDatos2 tbody").on('click', 'td .btn-success', function () {
                 let data = MY.table.rows($(this).closest("tr")).data();
                 $_arregloOperacion = data[0];
 
+                $('select[name="cmbTipoCorte"]').val($_arregloOperacion.cat_tipo_corte_id).change();
                 $('input[name="txtOperacion"]').val($_arregloOperacion.operacion);
                 $('input[name="txtDescripcion"]').val($_arregloOperacion.descripcion);
                 $('input[name="txtTarifa_con"]').val($_arregloOperacion.tarifa_con);
@@ -163,7 +252,7 @@ $(document).ready(function(){
                 $wOperacionesEdit.modal('show');
             });
 
-            $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
+            $("#tblDatos2 tbody").on('click', 'td .btn-warning', function () {
                 let data = MY.table.rows($(this).closest("tr")).data();
                 data = data[0];
                 PersonalDelete(data);
@@ -199,11 +288,11 @@ $(document).ready(function(){
                                 if (obj.hasOwnProperty('status') && obj.status === "Ok") {
                                     $frmOperaciones.get(0).reset();
                                     $wOperacionesEdit.modal('hide');
-                                    swal("Correcto", "Datos del cliente guardados exitosamente", "success");
+                                    swal("Correcto", "Datos se guardados exitosamente", "success");
                                     MY.table.ajax.reload();
                                 }
                             } else {
-                                swal("Error", e , "error");
+                                swal("Error", e, "error");
                                 $frmOperaciones.get(0).reset();
                             }
                         }
@@ -218,10 +307,10 @@ $(document).ready(function(){
                 });
             }
 
-            function PersonalDelete(data){
+            function PersonalDelete(data) {
                 swal({
                         title: "Eliminar un cliente",
-                        text: "Desea eliminar a: "+ data.operacion +"",
+                        text: "Desea eliminar a: " + data.operacion + "",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn-danger",
@@ -230,7 +319,7 @@ $(document).ready(function(){
                         closeOnConfirm: false,
                         closeOnCancel: false
                     },
-                    function(isConfirm) {
+                    function (isConfirm) {
                         if (isConfirm) {
                             $.ajax({
                                 url: '<?php echo base_url("operaciones/set/deleteCliente")?>',
@@ -252,9 +341,9 @@ $(document).ready(function(){
                         }
                     });
             }
-});
+        });
 
-</script>
+    </script>
 
 
 <?php

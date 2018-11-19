@@ -47,6 +47,10 @@ class Operaciones extends CI_Controller {
                 $res = array('data'=>$res);
                 exit(json_encode($res));
                 break;
+            case 'catTipoCorte':
+                $res = $this->operaciones_model->catTipoCorte();
+                exit(json_encode($res));
+                break;
                default: $this->cliError();
         }
     }
@@ -58,14 +62,17 @@ class Operaciones extends CI_Controller {
         }
         switch ($data) {
             case 'operacion':
+                $cmbTipoCorte = filter_input(INPUT_POST, 'cmbTipoCorte');
                 $txtOperacion = filter_input(INPUT_POST, 'txtOperacion');
                 $txtDescripcion = filter_input(INPUT_POST, 'txtDescripcion');
-                $txtTarifa_con = filter_input(INPUT_POST, 'txtTarifa_con');
                 $txtTarifa_sin = filter_input(INPUT_POST, 'txtTarifa_sin');
+                $txtTarifa_con = filter_input(INPUT_POST, 'txtTarifa_con');
                 $idEmpleado = filter_input(INPUT_POST, '_id_', FILTER_VALIDATE_INT);
 
-
-                /* if(empty($txtOperacion)){
+                if(empty($cmbTipoCorte)){
+                    $this->cliError('seleccione un tipo de corte');
+                }
+                 if(empty($txtOperacion)){
                      $this->cliError('Campo operacion no puede estar vacio');
                  }
                  if(empty($txtDescripcion)){
@@ -76,13 +83,17 @@ class Operaciones extends CI_Controller {
                  }
                  if(empty($txtTarifa_sin)){
                      $this->cliError('Tarifa sin 7° no puede ser vacio');
-                 }*/
+                 }
+
                 $data = array(
-                    "descripcion" => $txtDescripcion,
-                    "operacion" => $txtOperacion,
+                    "cat_tipo_corte_id" => $cmbTipoCorte,
+                    "operacion" => strtoupper($txtOperacion),
+                    "descripcion" => strtoupper($txtDescripcion),
                     "tarifa_con" => $txtTarifa_con,
-                    "tarifa_sin" => $txtTarifa_sin
+                    "tarifa_sin" => $txtTarifa_sin,
+                    "estatus" => true
                 );
+
                 if (!empty($idEmpleado)) {
                     $res = $this->operaciones_model->updateOperacion($idEmpleado, $data);
                 } else {
@@ -114,7 +125,7 @@ class Operaciones extends CI_Controller {
                 $idEmpleado = filter_input(INPUT_POST, '_id_', FILTER_VALIDATE_INT);
 
                 $data = array(
-                    "descripcion" => $txtDescripcion,
+                    "descripcion" => strtoupper($txtDescripcion),
                     "estatus" => true
                 );
 

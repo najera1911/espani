@@ -53,6 +53,18 @@ $this->load->view("plantilla/encabezado",$data);
                     </div>
                     <div class="col-md-2">
                         <div class="li">
+                            <a href="<?php echo base_url()?>operaciones/index/modelosCortes">
+                                <div class="ca-imagen">
+                                    <img class="object move-right" src="<?php echo base_url()?>assets/img/model-cortes.png">
+                                </div>
+                                <div class="ca-content">
+                                    <h2 class="ca-main" style="font-size: 25px !important;">Modelos Cortes</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="li">
                             <a href="<?php echo base_url()?>puestos/index/puestos">
                                 <div class="ca-imagen">
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/puestos.png">

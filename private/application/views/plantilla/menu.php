@@ -37,6 +37,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                         <a class="dropdown-item" href="<?php echo base_url()?>catalogosm/index/catalogosm"><span class="fas fa-clipboard-list"></span> Menú Catalogos</a>
                         <a class="dropdown-item" href="<?php echo base_url()?>operaciones/index/operaciones"><span class="fas fa-wrench"></span> Operaciones</a>
                         <a class="dropdown-item" href="<?php echo base_url()?>operaciones/index/tipoCorte"><span class="fas fa-box-open"></span> Tipo Corte</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>operaciones/index/modelosCortes"><span class="fas fa-shopping-bag"></span> Modelos de Corte</a>
                         <a class="dropdown-item" href="<?php echo base_url()?>puestos/index/puestos"><span class="fa fa-street-view"></span> Puestos</a>
                         <a class="dropdown-item" href="<?php echo base_url()?>areas/index/areas"><span class="fa fa-sitemap"></span> Departamentos</a>
                     </div>
