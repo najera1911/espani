@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$data['title'] = ":: Clientes";
+$data['title'] = ":: Operaciones";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",

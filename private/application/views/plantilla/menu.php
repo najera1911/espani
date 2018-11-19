@@ -31,12 +31,14 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     <a class="nav-link" href="<?php echo base_url()?>clientes/index/clientes"><span class="fas fa-user-tie"></span> Clientes </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="<?php echo base_url()?>catalogosm/index/catalogosm" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="fas fa-clipboard-list"></span> Catalogos</a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="<?php echo base_url()?>catpuesto/index/catpuesto"><span class="fas fa-wrench"></span> Operaciones</a>
-                        <a class="dropdown-item" href=""><span class="fa fa-street-view"></span> Puestos</a>
-                        <a class="dropdown-item" href=""><span class="fa fa-sitemap"></span> Departamentos</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>catalogosm/index/catalogosm"><span class="fas fa-clipboard-list"></span> Menú Catalogos</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>operaciones/index/operaciones"><span class="fas fa-wrench"></span> Operaciones</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>operaciones/index/tipoCorte"><span class="fas fa-box-open"></span> Tipo Corte</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>puestos/index/puestos"><span class="fa fa-street-view"></span> Puestos</a>
+                        <a class="dropdown-item" href="<?php echo base_url()?>areas/index/areas"><span class="fa fa-sitemap"></span> Departamentos</a>
                     </div>
                 </li>
                 <li class="nav-item">

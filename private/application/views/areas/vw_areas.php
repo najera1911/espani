@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$data['title'] = ":: Clientes";
+$data['title'] = ":: Departamentos";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",
@@ -35,7 +35,7 @@ $this->load->view("plantilla/encabezado", $data);
 
 <div class="modal fade" id="wAreasEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
+        <div class="modal-dialog modal-fluid modal-full-height modal-top modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h4 class="modal-title w-100 font-weight-bold">Clientes <span></span> - Datos Generales </h4>

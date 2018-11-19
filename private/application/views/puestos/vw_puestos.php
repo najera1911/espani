@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$data['title'] = ":: Clientes";
+$data['title'] = ":: Puestos";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",
@@ -10,7 +10,7 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado", $data);
 ?>
 
-<section class="ml-5 mr-5" id="Areas">
+    <section class="ml-5 mr-5" id="Areas">
         <div class="row mt-5 mb-5">
             <div class="col text-center text-uppercase">
                 <h3 class="txt-Subtitulos">Puestos</h3>
@@ -36,7 +36,7 @@ $this->load->view("plantilla/encabezado", $data);
     <!--INICIA MODAL-->
     <div class="modal fade" id="wPuestoEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
+        <div class="modal-dialog modal-fluid modal-full-height modal-top modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h4 class="modal-title w-100 font-weight-bold">Puestos <span></span> - Datos Generales </h4>
@@ -51,13 +51,13 @@ $this->load->view("plantilla/encabezado", $data);
                                 <div class="form-row">
                                     <div class="form-group col-lg-12">
                                         <label for="txtName">Descripcion</label>
-                                        <input type="text" class="form-control text-uppercase" id="txtDescripcion" name="txtDescripcion" required>
+                                        <input type="text" class="form-control text-uppercase" id="txtDescripcion"
+                                               name="txtDescripcion" required>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -110,6 +110,7 @@ $(document).ready(function(){
                     }                
         });
     } // end tabled
+
     $("#tblDatos2 tbody").on('click','td .btn-success',function(){
                 let data = MY.table.rows($(this).closest("tr")).data();
                 $_arregloPuesto = data[0];

@@ -8,6 +8,7 @@ class Puestos_model extends CI_Model
 		$this->db->where("estatus",TRUE);
 		return $this->db->get("cat_rh_puesto")->result();		
 	}
+
 	function updatePuesto($idEmpleado, $data){
 		if(empty($idEmpleado)){
 			return FALSE;
