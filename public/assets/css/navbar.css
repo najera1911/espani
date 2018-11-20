@@ -55,6 +55,17 @@
     background-color: #495057bf !important;
 }
 
+#header .navbar-brand{
+    line-height: 1 !important;
+}
+
+#header .navbar-brand img{
+    width: 50px;
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+}
+
 #footer{
     background-color: #03033c !important;
     color: white !important;

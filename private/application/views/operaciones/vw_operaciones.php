@@ -111,13 +111,16 @@ $this->load->view("plantilla/encabezado", $data);
                 $txtTarifa_sin = $("#txtTarifa_sin"),
                 $_arregloOperacion = {};
 
-            $txtTarifa_con.change(function () {
-                $txtTarifa_con.val(parseFloat($txtTarifa_con.val()).toFixed(5))
+            $txtTarifa_sin.change(function () {
+                $txtTarifa_sin.val(parseFloat($txtTarifa_sin.val()).toFixed(5));
+                let tcs = ($txtTarifa_sin.val() / 6 ) * 7;
+                $txtTarifa_con.val(tcs.toFixed(5));
             });
 
-            $txtTarifa_sin.change(function () {
-                $txtTarifa_sin.val(parseFloat($txtTarifa_sin.val()).toFixed(5))
+            $txtTarifa_con.change(function () {
+                $txtTarifa_con.val(parseFloat($txtTarifa_con.val()).toFixed(5));
             });
+
 
             function cargar_catalogo(url, data) {
                 return $.getJSON(url, data, function (e) {
@@ -229,7 +232,7 @@ $this->load->view("plantilla/encabezado", $data);
                         {
                             "title": "Eliminar", data: null,
                             render: function (data, type, row) {
-                                return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                                return '<button class="btn btn-danger btn-sm">Eliminar</button>';
                             }, "className": "text-center"
                         }
                     ],
@@ -252,7 +255,7 @@ $this->load->view("plantilla/encabezado", $data);
                 $wOperacionesEdit.modal('show');
             });
 
-            $("#tblDatos2 tbody").on('click', 'td .btn-warning', function () {
+            $("#tblDatos2 tbody").on('click', 'td .btn-danger', function () {
                 let data = MY.table.rows($(this).closest("tr")).data();
                 data = data[0];
                 PersonalDelete(data);

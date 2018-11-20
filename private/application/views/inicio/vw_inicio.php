@@ -70,7 +70,7 @@ $this->load->view("plantilla/encabezado",$data);
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/oPago.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main">Orden de Pago</h2>
+                                    <h2 class="ca-main">Orden de Corte</h2>
                                 </div>
                             </a>
                         </div>

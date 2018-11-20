@@ -46,7 +46,7 @@ $this->load->view("plantilla/encabezado",$data);
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/tipo_corte.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main" style="font-size: 25px !important;">Tipo de Cortes</h2>
+                                    <h2 class="ca-main" style="font-size: 25px !important;">Filtros de Cortes</h2>
                                 </div>
                             </a>
                         </div>
@@ -58,7 +58,7 @@ $this->load->view("plantilla/encabezado",$data);
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/model-cortes.png">
                                 </div>
                                 <div class="ca-content">
-                                    <h2 class="ca-main" style="font-size: 25px !important;">Modelos Cortes</h2>
+                                    <h2 class="ca-main" style="font-size: 25px !important;">Modelos de Cortes</h2>
                                 </div>
                             </a>
                         </div>

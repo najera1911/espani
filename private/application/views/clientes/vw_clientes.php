@@ -248,7 +248,7 @@ $this->load->view("plantilla/encabezado", $data);
                         },
                         { "title": "Eliminar", data:null,
                             render:function(data, type,row){
-                                return '<button class="btn btn-warning btn-sm">Eliminar</button>';
+                                return '<button class="btn btn-danger btn-sm">Eliminar</button>';
                             }
                         }
                     ],
@@ -286,7 +286,7 @@ $this->load->view("plantilla/encabezado", $data);
                 $wClientesEdit.modal('show');
             });
 
-            $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
+            $("#tblDatos2 tbody").on('click','td .btn-danger',function(){
                 let data = MY.table.rows($(this).closest("tr")).data();
                 data = data[0];
                 PersonalDelete(data);
