@@ -26,8 +26,6 @@
     <link href="<?php echo base_url('assets/css/')?>sweetalert.css" rel="stylesheet">
 
 
-
-
     <?php
     if(isset($css)){
         for($i=0; $i<count($css);$i++){

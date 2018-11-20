@@ -10,11 +10,11 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
 
 <nav id="header" class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand text-uppercase" href="#">
             <img src="<?php echo base_url('assets/img/')?>icon2.png" alt="maquiladora logo">
-            <span style="margin-left: 30px;">MAQUILADORA ESPANI S.A DE C.V. </span>
+            <span style="margin-left: 30px;">MAQUILADORA Espani S.A DE C.V. </span>
             <br>
-            <span class="uppercase" style="font-size: 1rem; padding-left: 30px;"><?php echo $this->session->userdata('nombreCompleto') ?></span>
+            <span style="font-size: 1rem; padding-left: 30px;"><?php echo $this->session->userdata('nombreCompleto') ?></span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

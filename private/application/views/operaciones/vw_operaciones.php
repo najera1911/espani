@@ -201,6 +201,17 @@ $this->load->view("plantilla/encabezado", $data);
                     serverSide: true,
                     ordering: true,
                     info: false,
+                    buttons: [
+                        {
+                            extend: 'pdf',
+                            text: 'Save current page',
+                            exportOptions: {
+                                modifier: {
+                                    page: 'current'
+                                }
+                            }
+                        }
+                    ],
                     ajax: {
                         "url": "<?php echo site_url('/operaciones/get/operaciones')?>",
                         "type": "POST"
@@ -355,6 +366,7 @@ $data['scripts'] = array(
     "toastr.min.js",
     "zebra_datepicker.src.js",
     "../datatables/datatables.min.js",
+    "../datatables/Buttons/js/dataTables.buttons.min.js",
     "js1/moment.min.js"
 );
 $this->load->view("plantilla/pie", $data);
