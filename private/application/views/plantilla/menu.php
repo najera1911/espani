@@ -45,7 +45,7 @@ $this->acl->setUserId($this->session->userdata('idU'));//EXTRAE SOLO UNA PARTE D
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href=""><span class="fas fa-dolly-flatbed"></span> Orden de Corte </a>
+                    <a class="nav-link" href="<?php echo base_url()?>ordenCorte/index/ordenCorte"><span class="fas fa-dolly-flatbed"></span> Orden de Corte </a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
