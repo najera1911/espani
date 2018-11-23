@@ -17,6 +17,9 @@ $this->load->view("plantilla/encabezado", $data);
         padding: 2%;
         height: 100%;
     }
+    .modal-lg {
+        max-width: 95% !important;
+    }
 </style>
 
 <section class="ml-5 mr-5" id="modelosCortes">
