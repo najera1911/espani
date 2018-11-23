@@ -4,7 +4,7 @@
  * Time: 10:57 AM
  */
 ?><!DOCTYPE html>
-<html lang="es">
+<html lang="es_MX">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

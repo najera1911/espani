@@ -6,7 +6,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property  CI_Session session
  * @property Acl acl
  * @property CI_Loader load
- * @property clsTinyButStrong clsTinyButStrong
  * @property Operaciones_model operaciones_model
  */
 
@@ -26,12 +25,14 @@ class Operaciones extends CI_Controller {
         set_status_header(500);
         exit($msg . trim(" " . $num ));
     }
+
     function index($pagina = ''){
         if (!file_exists(VIEWPATH . 'operaciones/vw_' . $pagina . '.php')) {
             show_404();
         }
         $this->load->view('operaciones/vw_' . $pagina);
     }
+
     function get($data=''){
         if(!$this->session->userdata('isLoggedIn')){
             $this->cliError('Default response');
@@ -51,7 +52,18 @@ class Operaciones extends CI_Controller {
                 $res = $this->operaciones_model->catTipoCorte();
                 exit(json_encode($res));
                 break;
-               default: $this->cliError();
+            case 'datosModelosCortes':
+                $res = $this->operaciones_model->getModelosCorte();
+                $res = array('data'=>$res);
+                exit(json_encode($res));
+                break;
+            case 'datosModelosCortesDetalle':
+                $idModel = filter_input(INPUT_POST, 'idModel');
+                $res = $this->operaciones_model->datosModelosCortesDetalle($idModel);
+                $res = array('data'=>$res);
+                exit(json_encode($res));
+                break;
+            default: $this->cliError();
         }
     }
 
@@ -148,6 +160,48 @@ class Operaciones extends CI_Controller {
                 } else {
                     $this->cliError('No se pudo eliminar el tipo de corte');
                 }
+                break;
+            case 'modelosCortes':
+                $descripcion = filter_input(INPUT_POST, 'name');
+                $id = filter_input(INPUT_POST, '_id_');
+
+                if(isset($_REQUEST['arr'])){
+                    $myArray = $_REQUEST['arr'];
+                }else{
+                    $myArray = [];
+                }
+
+                if(empty($descripcion)){
+                    $this->cliError('Debe de Ingresar un nombre');
+                }
+                if(empty($myArray)){
+                    $this->cliError('Debe seleccionar al menos una operación');
+                }
+
+                $data = array(
+                    "descripcion" => $descripcion,
+                    "estatus" => true
+                );
+
+                if ($id==0) {
+                    $existe = $this->operaciones_model->existeNombre($descripcion);
+
+                    if($existe){
+                        $this->cliError('El nombre del modelo ya esiste');
+                    }
+
+                    $res = $this->operaciones_model->addModeloCorte($data, $myArray);
+                } else {
+                    $res = $this->operaciones_model->UpdateModeloCorte($id,$data, $myArray);
+                    //$res = $this->operaciones_model->updateTipoCorte($id, $data);
+                }
+
+                if ($res) {
+                    exit(json_encode(["status" => "Ok"]));
+                } else {
+                    $this->cliError("ocurrio un error");
+                }
+
                 break;
             default:
                 $this->cliError();
