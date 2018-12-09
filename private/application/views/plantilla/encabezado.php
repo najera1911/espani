@@ -18,8 +18,8 @@
 
     <script src="<?php echo base_url('assets/js/')?>jquery-3.2.1.min.js?v=3.2.1"></script>
     <script src="<?php echo base_url('assets/js/')?>jquery.validate.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+
+
 
     <link href="<?php echo base_url('assets/css/')?>datepicker.min.css?v=1" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>bootstrap.css?v=4.1.3" rel="stylesheet">
@@ -37,6 +37,11 @@
         }
     }
     ?>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.4/css/buttons.bootstrap4.min.css"/>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
 
 </head>
 <body>
