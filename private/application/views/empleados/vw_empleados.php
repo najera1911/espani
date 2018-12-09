@@ -326,6 +326,11 @@ $this->load->view("plantilla/encabezado", $data);
                     {
                         extend:'colvis',
                         text: '<i class="fas fa-search-plus"></i>  MOSTRAR COLUMNAS'
+                    },
+                    {
+                        extend: 'colvisGroup',
+                        text: 'MOSTRAR TODAS',
+                        show: ':hidden'
                     }
                 ],
                 ajax: {
