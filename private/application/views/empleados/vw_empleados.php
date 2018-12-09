@@ -261,9 +261,11 @@ $this->load->view("plantilla/encabezado", $data);
 
         getEmpleados2();
 
+
         function getEmpleados2() {
             MY.table = $tblDatos2.DataTable( {
                 processing: true,
+                scrollY: 400,
                 serverSide: true,
                 ordering: true,
                 info: false,
@@ -554,8 +556,8 @@ $this->load->view("plantilla/encabezado", $data);
     $data['scripts'] = array(
         "jqw/localized-es.js",
         "toastr.min.js",
-        "zebra_datepicker.src.js",
         "../datatables/datatables.min.js",
+        "zebra_datepicker.src.js",
         "js1/moment.min.js"
     );
     $this->load->view("plantilla/pie", $data);

@@ -2,7 +2,7 @@
 
 class Empleados_model extends CI_Model{
 
-    function get_empleados($where=null, $select=null, $table = 'empleados_view'){
+    function get_empleados($start, $length, $where=null, $select=null, $table = 'empleados_view' ){
         if(!empty($where))
             if(! is_array($where)){
                 return FALSE;
@@ -13,7 +13,14 @@ class Empleados_model extends CI_Model{
         if(!empty($where))
             $this->db->where($where);
 
+        $this->db->limit($length,$start);
         return $this->db->get($table)->result();
+    }
+
+    function  getEmpleadoSearch($start, $length, $value, $column){
+        $this->db->like($column, $value);
+        $this->db->limit($length,$start);
+        return $this->db->get('empleados_view')->result();
     }
 
     function getEntidad(){

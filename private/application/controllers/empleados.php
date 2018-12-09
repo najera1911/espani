@@ -47,7 +47,17 @@ class Empleados extends CI_Controller{
 
         switch($what){
             case 'empleados':
-                $data = $this->empleados_model->get_empleados(array('estatus'=>1));
+                $datasearch = $_POST['search']; //obtiene el valor para buscar
+                $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
+                $start = $_POST['start']; //valor de inicio para el limit
+                $length = $_POST['length'] ;
+            // si no hay valor para buscar entonces llama toda la tablas
+                if (empty($datasearch["value"])){
+                    $data = $this->empleados_model->get_empleados($start,$length,array('estatus'=>1));
+                }else{  //de lo contrario hace una busqueda tipo like
+                    $data = $this->empleados_model->getEmpleadoSearch($start,$length,$datasearch["value"],$nameColumn[0]["data"]);
+                }
+
                 $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;

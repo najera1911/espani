@@ -38,6 +38,14 @@ class OrdenCorte extends CI_Controller{
             $this->cliError('Default response');
         }
         switch($data){
+            case 'clientes':
+                $res = $this->ordenCorte_model->getClientes();
+                exit(json_encode($res));
+                break;
+            case 'modeloCorte':
+                $res = $this->ordenCorte_model->getModelosCorte();
+                exit(json_encode($res));
+                break;
             default: $this->cliError();
         }
     }
