@@ -20,8 +20,6 @@ $this->load->view("plantilla/encabezado", $data);
     </div>
     <div class="row mb-3">
         <div class="col">
-            <button type="button" class="btn btn-warning btn-circle float-right ml-2" id="btnExportExcel"><i
-                        class="fas fa-file-excel"></i></button>
             <button class="btn btn-success float-right" id="btnNuevoEmpleado">
                 <i class="fa fa-user-plus" aria-hidden="true"></i> Agregar Empleado
             </button>
