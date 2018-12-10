@@ -197,15 +197,24 @@ $this->load->view("plantilla/encabezado", $data);
 
             function getOperacion() {
                 MY.table = $tblDatos2.DataTable({
-                    processsing: true,
+                    processing: true,
+                    scrollY: 400,
                     serverSide: true,
                     ordering: true,
                     info: false,
                     dom: 'Bfrtip',
                     buttons: [
                         {
+                            extend: 'excelHtml5',
+                            title: 'CATALOGO DE OPERACIONES',
+                            text: '<i class="fas fa-file-excel"></i>  EXCEL',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
                             extend: 'pdfHtml5',
-                            title: 'CATALOGO DE CLIENTES',
+                            title: 'CATALOGO DE OPERACIONES',
                             text: '<i class="fas fa-file-pdf"></i>  PDF',
                             pageSize: 'A4',
                             download: 'open',
@@ -238,6 +247,22 @@ $this->load->view("plantilla/encabezado", $data);
                                     }
                                 });
                             }
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i>  IMPRIMIR',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
+                            extend:'colvis',
+                            text: '<i class="fas fa-search-plus"></i>  MOSTRAR COLUMNAS'
+                        },
+                        {
+                            extend: 'colvisGroup',
+                            text: 'MOSTRAR TODAS',
+                            show: ':hidden'
                         }
                     ],
                     ajax: {

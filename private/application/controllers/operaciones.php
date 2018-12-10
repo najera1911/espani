@@ -39,7 +39,17 @@ class Operaciones extends CI_Controller {
         }
         switch($data){
             case 'operaciones':
-                $res = $this->operaciones_model->obtener_todos();
+                $datasearch = $_POST['search']; //obtiene el valor para buscar
+                $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
+                $start = $_POST['start']; //valor de inicio para el limit
+                $length = $_POST['length'] ;
+                // si no hay valor para buscar entonces llama toda la tablas
+                if (empty($datasearch["value"])){
+                    $res = $this->operaciones_model->obtener_todos($start,$length);
+                }else{  //de lo contrario hace una busqueda tipo like
+                    $res = $this->operaciones_model->obtener_todosSearch($start,$length,$datasearch["value"],$nameColumn[1]["data"]);
+                }
+
                 $res = array('data'=>$res);
                 exit(json_encode($res));
                break;

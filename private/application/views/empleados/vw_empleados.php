@@ -271,7 +271,7 @@ $this->load->view("plantilla/encabezado", $data);
                 buttons: [
                     {
                         extend: 'excelHtml5',
-                        title: 'CATALOGO DE CLIENTES',
+                        title: 'CATALOGO DE EMPLEADOS',
                         text: '<i class="fas fa-file-excel"></i>  EXCEL',
                         exportOptions: {
                             columns: ':visible'
@@ -279,7 +279,7 @@ $this->load->view("plantilla/encabezado", $data);
                     },
                     {
                         extend: 'pdfHtml5',
-                        title: 'CATALOGO DE CLIENTES',
+                        title: 'CATALOGO DE EMPLEADOS',
                         text: '<i class="fas fa-file-pdf"></i>  PDF',
                         orientation: 'landscape',
                         pageSize: 'LEGAL',
