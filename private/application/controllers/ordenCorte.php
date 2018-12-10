@@ -130,6 +130,8 @@ class OrdenCorte extends CI_Controller{
                 }
 
                 break;
+            case 'ordencorte':
+                break;
             default: $this->cliError();
         }
     }

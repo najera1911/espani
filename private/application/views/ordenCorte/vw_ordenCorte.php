@@ -141,6 +141,7 @@ $this->load->view("plantilla/encabezado", $data);
                     <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
                 </div>
             </div>
+        </form>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="cmbModelo">Buscar Modelo</label>
@@ -167,8 +168,7 @@ $this->load->view("plantilla/encabezado", $data);
                     </table>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary">Guardar</button>
-        </form>
+            <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
         </div>
     </div>
 </section>
@@ -191,6 +191,7 @@ $this->load->view("plantilla/encabezado", $data);
             txtFch = $("#txtFch"),
             buttonTotal = $("#button-Total"),
             btnAddOpera = $("#btnAddOpera"),
+            btnGuadar = $("#btnGuardar"),
             resultadoT = $("#resultadoT"),
             $tblDatos2 = $("#tblDatos2")
 
@@ -443,6 +444,45 @@ $this->load->view("plantilla/encabezado", $data);
                 },
                 complete: function () {
                     btnAddOpera.removeClass('loading');
+                }
+            });
+        }
+
+        btnGuadar.click(function () {
+            if (btnGuadar.hasClass('loading')) {
+                return false;
+            }
+            btnGuadar.addClass('loading');
+            frmOrdenCorte.addClass('loading');
+            setOrdenCorte();
+        });
+
+        function setOrdenCorte() {
+            let data = new FormData(frmOrdenCorte.get(0));
+            $.ajax({
+                type: 'post',
+                url: '<?php echo site_url("/ordenCorte/set/ordenCorte")?>',
+                data: data,
+                success: function (e) {
+                    if (e.length) {
+                        if (e.length) {
+                            let obj = JSON.parse(e);
+                            if (obj.hasOwnProperty('status') && obj.status === "Ok") {
+                                frmOrdenCorte.get(0).reset();
+                                swal("Correcto", "Datos de empleado guardados, No. Empleado:" + (obj.numEmpleado || "??"), "success");
+                            }
+                        } else {
+                            swal("Error", e , "error");
+                            frmOrdenCorte.get(0).reset();
+                        }
+                    }
+                },
+                error: function (e) {
+                    toastr.error("Error al procesar la petición " + e.responseText);
+                },
+                complete: function () {
+                    btnGuadar.removeClass('loading');
+                    frmOrdenCorte.removeClass('loading');
                 }
             });
         }
