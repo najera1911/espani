@@ -11,14 +11,18 @@ class Clientes_model extends CI_Model{
 
         if(!empty($where))
             $this->db->where($where);
-        
-         $this->db->limit($length,$start);    
+
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
         return $this->db->get($table)->result();
     }
 
     function  getClienteSearch($start, $length, $value, $column){
         $this->db->like($column, $value);
-        $this->db->limit($length,$start);
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
         return $this->db->get('clientes_view')->result();
     }
 

@@ -15,13 +15,17 @@ class Operaciones_model extends CI_Model
     public function obtener_todos($start,$length)
     {
 		$this->db->where("estatus",TRUE);
-        $this->db->limit($length,$start);
+		if($length>=0){
+            $this->db->limit($length,$start);
+        }
 		return $this->db->get("cat_operacion_view")->result();
     }
 
     public function  obtener_todosSearch($start, $length, $value, $column){
         $this->db->like($column, $value);
-        $this->db->limit($length,$start);
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
         return $this->db->get('cat_operacion_view')->result();
     }
 

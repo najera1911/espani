@@ -343,10 +343,12 @@ $this->load->view("plantilla/encabezado", $data);
         getModelosDetalle();
         function getModelosDetalle() {
             MY.table = $tblDatos2.DataTable({
+                processing: true,
+                scrollY: 400,
+                serverSide: true,
                 ordering: true,
                 info: false,
-                processing: true,
-                serverSide: true,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
                 ajax: {
                     "url": "<?php echo site_url('/ordenCorte/get/getModelos')?>",
                     "type": "POST",

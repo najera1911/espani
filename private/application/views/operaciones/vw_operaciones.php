@@ -198,11 +198,12 @@ $this->load->view("plantilla/encabezado", $data);
             function getOperacion() {
                 MY.table = $tblDatos2.DataTable({
                     processing: true,
-                    scrollY: 400,
                     serverSide: true,
                     ordering: true,
                     info: false,
-                    dom: 'Bfrtip',
+                    scrollY: 400,
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    dom: 'Blfrtip',
                     buttons: [
                         {
                             extend: 'excelHtml5',

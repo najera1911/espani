@@ -231,8 +231,8 @@ $this->load->view("plantilla/encabezado", $data);
                     scrollY: 400,
                     ordering: true,
                     info: false,
-                    dom: 'Bfrtip',
-                    //////
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    dom: 'Blfrtip',
                     buttons: [
                     {
                         extend: 'excelHtml5',

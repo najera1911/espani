@@ -53,6 +53,13 @@ class Operaciones extends CI_Controller {
                 $res = array('data'=>$res);
                 exit(json_encode($res));
                break;
+            case 'operaciones2':
+                $start = -1;
+                $length = -1;
+                $res = $this->operaciones_model->obtener_todos($start,$length);
+                $res = array('data'=>$res);
+                exit(json_encode($res));
+                break;
             case 'tipoCorte':
                 $res = $this->operaciones_model->obtener_tipoCorte();
                 $res = array('data'=>$res);

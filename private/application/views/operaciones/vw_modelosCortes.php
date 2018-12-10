@@ -231,7 +231,7 @@ $this->load->view("plantilla/encabezado", $data);
 
         getData();
         function getData(){
-            $.getJSON('<?php echo site_url("/operaciones/get/operaciones")?>', function (e) {
+            $.getJSON('<?php echo site_url("/operaciones/get/operaciones2")?>', function (e) {
                 let cont = getContFilter(e);
                 for (let i=0; i<cont.length; i++) {
                     formRowModels.append(`
