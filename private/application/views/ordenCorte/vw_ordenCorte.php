@@ -170,8 +170,7 @@ $this->load->view("plantilla/encabezado", $data);
             txtFch = $("#txtFch"),
             buttonTotal = $("#button-Total"),
             resultadoT = $("#resultadoT"),
-            $tblDatos2 = $("#tblDatos2"),
-            jsonObject = {}
+            $tblDatos2 = $("#tblDatos2")
         ;
 
         txtFch.Zebra_DatePicker({
@@ -306,7 +305,6 @@ $this->load->view("plantilla/encabezado", $data);
         });
 
         cmbModelo.change(function () {
-            jsonObject = {};
             $tblDatos2.dataTable().fnDestroy();
             getModelosDetalle();
         });
@@ -316,45 +314,34 @@ $this->load->view("plantilla/encabezado", $data);
         getModelosDetalle();
         function getModelosDetalle() {
             console.log(cmbModelo.val());
-            $.ajax({
-                type: "POST",
-                url: "<?php echo site_url('/operaciones/get/datosModelosCortesDetalle')?>",
-                dataType: 'json',
-                data: { "idModel": cmbModelo.val() },
-                success: function (obj, textstatus) {
 
-                    console.log(obj);
-                    MY.table = $tblDatos2.DataTable({
-                        ordering: true,
-                        info: false,
-                        data: obj,
-                        //ajax: {
-                        //    "url": "<?php //echo site_url('/operaciones/get/datosModelosCortesDetalle')?>//",
-                        //    "type": "POST",
-                        //    "data": { "idModel": cmbModelo.val() }
-                        //},
-                        columns: [
-                            {"title": "Nombre Modelo", "data": "modeloCorte", "className": "text-center"},
-                            {"title": "Filtro Corte", "data": "tipoCorte", "className": "text-center"},
-                            {"title": "Clave", "data": "operacion", "className": "text-center"},
-                            {"title": "Operación", "data": "nombreOperacion", "className": "text-center"},
-                            {
-                                "title": "Eliminar", data: null,
-                                render: function (data, type, row) {
-                                    return '<button class="btn btn-danger btn-sm">Eliminar</button>';
-                                }, "className": "text-center"
-                            }
-                        ],
-                        order: [],
-                        language: {
-                            "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
-                        }
-                    });
+            MY.table = $tblDatos2.DataTable({
+                ordering: true,
+                info: false,
+                destroy:true,
+                ajax: {
+                    "url": "<?php echo site_url('/operaciones/get/datosModelosCortesDetalle')?>",
+                    "type": "POST",
+                    "data": { "idModel": cmbModelo.val() }
                 },
-                error: function (obj, textstatus) {
-                    alert(obj.msg);
+                columns: [
+                    {"title": "Nombre Modelo", "data": "modeloCorte", "className": "text-center"},
+                    {"title": "Filtro Corte", "data": "tipoCorte", "className": "text-center"},
+                    {"title": "Clave", "data": "operacion", "className": "text-center"},
+                    {"title": "Operación", "data": "nombreOperacion", "className": "text-center"},
+                    {
+                        "title": "Eliminar", data: null,
+                        render: function (data, type, row) {
+                            return '<button class="btn btn-danger btn-sm">Eliminar</button>';
+                        }, "className": "text-center"
+                    }
+                ],
+                order: [],
+                language: {
+                    "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
                 }
             });
+
         }
 
         $("#tblDatos2 tbody").on('click', 'tr', function () {

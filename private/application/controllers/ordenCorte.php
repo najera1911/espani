@@ -46,6 +46,12 @@ class OrdenCorte extends CI_Controller{
                 $res = $this->ordenCorte_model->getModelosCorte();
                 exit(json_encode($res));
                 break;
+            case 'getModelos':
+                $idModel = filter_input(INPUT_POST, 'idModel');
+                $res = $this->ordenCorte_model->datosModelosCortesDetalle($idModel);
+                $res = array('data'=>$res);
+                exit(json_encode($res));
+                break;
             default: $this->cliError();
         }
     }
