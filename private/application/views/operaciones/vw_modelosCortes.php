@@ -15,7 +15,9 @@ $this->load->view("plantilla/encabezado", $data);
         border: 1px solid #4f4f4f;
         box-shadow: 5px 4px 5px #868686;
         padding: 2%;
-        height: 100%;
+        height: 200px;
+        overflow-y: scroll;
+        font-size: 14px !important;
     }
     .modal-lg {
         max-width: 95% !important;
@@ -251,7 +253,7 @@ $this->load->view("plantilla/encabezado", $data);
                             $('#subItem'+i+'').append(`
                             <div class="form-check ml-2">
                                 <input class="form-check-input" type="checkbox" id="${item.cat_operaciones_id}" name="${item.cat_operaciones_id}" value="${item.cat_operaciones_id}">
-                                <label class="form-check-label" id="lb${item.cat_operaciones_id}" for="defaultCheck1">${item.descripcion}</label>
+                                <label class="form-check-label" id="lb${item.cat_operaciones_id}" for="defaultCheck1">${item.operacion} - ${item.descripcion}</label>
                             </div>
                         `);
                         }

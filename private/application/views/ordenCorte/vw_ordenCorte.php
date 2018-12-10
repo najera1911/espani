@@ -485,10 +485,7 @@ $this->load->view("plantilla/encabezado", $data);
                         if (e === 'ok') {
                             swal("Correcto", "Datos se guardados exitosamente", "success");
                             frmOrdenCorte.get(0).reset();
-                            deleteRow = 0;
-                            $tblDatos2.dataTable().fnDestroy();
-                            getModelosDetalle();
-                            deleteRow = 0;
+                            location.href = '<?php echo site_url("/ordenCorte/index/ordenCorteMenu")?>';
                         }
                     },
                     error: function (e) {
@@ -496,7 +493,6 @@ $this->load->view("plantilla/encabezado", $data);
                     },
                     complete: function () {
                         btnGuadar.removeClass('loading');
-                        frmOrdenCorte.get(0).reset();
                     }
                 });
 
