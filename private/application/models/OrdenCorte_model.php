@@ -130,4 +130,36 @@ from tblmodelos_temp';
         }
     }
 
+    function get_OrdenesCorteView($start,$length){
+        if($length>=0){
+            $sql='SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
+A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
+INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
+GROUP by A.tbl_OrdenCorte_id LIMIT ?, ?';
+            return $this->db->query($sql, array((int) $start, (int) $length))->result();
+        }else{
+            $sql='SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
+A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
+INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
+GROUP by A.tbl_OrdenCorte_id';
+            return $this->db->query($sql)->result();
+        }
+    }
+
+    function get_OrdenesCorteViewSearch($value){
+        $sql="SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
+A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
+INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 and A.numero_corte = ?
+GROUP by A.tbl_OrdenCorte_id";
+        return $this->db->query($sql, array((int) $value))->result();
+    }
+
+
+
 }

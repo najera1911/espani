@@ -62,14 +62,6 @@ $this->load->view("plantilla/encabezado",$data);
         </div>
     </menu>
 
-
-    <script>
-        $(document).ready(function(){
-
-
-        });
-    </script>
-
 <?php
 $data['scripts'] = array(
 

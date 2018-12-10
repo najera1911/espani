@@ -86,8 +86,21 @@ class OrdenCorte extends CI_Controller{
                     $res = array('data'=>$res);
                     exit(json_encode($res));
                 }
+                break;
+            case 'ordenesCorteView':
+                $datasearch = $_POST['search']; //obtiene el valor para buscar
+                $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
+                $start = $_POST['start']; //valor de inicio para el limit
+                $length = $_POST['length'] ;
+                // si no hay valor para buscar entonces llama toda la tablas
+                if (empty($datasearch["value"])){
+                    $data = $this->ordenCorte_model->get_OrdenesCorteView($start,$length);
+                }else{  //de lo contrario hace una busqueda tipo like
+                    $data = $this->ordenCorte_model->get_OrdenesCorteViewSearch($datasearch["value"]);
+                }
 
-
+                $data = array('data'=>$data);
+                exit(json_encode($data));
                 break;
             default: $this->cliError();
         }
