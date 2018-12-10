@@ -76,7 +76,7 @@ $this->load->view("plantilla/encabezado", $data);
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-success" type="button" id="button-Total">Total</button>
                             </div>
-                            <input type="text" class="form-control" id="resultadoT" disabled>
+                            <input type="text" class="form-control" id="resultadoT" name="resultadoT" disabled>
                         </div>
                     </div>
                 </div>
@@ -261,9 +261,9 @@ $this->load->view("plantilla/encabezado", $data);
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <th><input type="number" min="1" id="nb0" name="nb1"></th>
-                                        <td><input type="number" min="1" id="tall0" name="nb1"></td>
-                                        <td><input type="number" min="1" id="cant0" name="nb1"></td>
+                                        <th><input type="number" min="1" id="nb0" name="nb0"></th>
+                                        <td><input type="number" min="1" id="tall0" name="tall0"></td>
+                                        <td><input type="number" min="1" id="cant0" name="cant0"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -342,8 +342,6 @@ $this->load->view("plantilla/encabezado", $data);
 
         getModelosDetalle();
         function getModelosDetalle() {
-            console.log(cmbModelo.val());
-
             MY.table = $tblDatos2.DataTable({
                 ordering: true,
                 info: false,
@@ -449,37 +447,59 @@ $this->load->view("plantilla/encabezado", $data);
             });
         }
 
-        btnGuadar.click(function (e) {
-            
-            if (btnGuadar.hasClass('loading')) {
-                return false;
-            }
-            btnGuadar.addClass('loading');
+        btnGuadar.click(function () {
+            console.log(cmbModelo.val());
 
-            if(cmbModelo.val()=== ''){
-                toastr.error("Debe de Seleccionar un Modelo de Corte");
+            if($("#cmbCliente").val()===''){
+                toastr.error("Debe de seleccionar un cliente");
+            }else if ($("#txtFch").val()===''){
+                toastr.error("Debe ingresar una fecha");
+            }else if($("#txtNombreModelo").val()===''){
+                toastr.error("debe ingresar un nombre de modelo");
+            }else if($("#txtNunOrden").val()===''){
+                toastr.error("Debe ingresar un numero de orden");
+            }else if(txtNumBultos.val()===''){
+                toastr.error("Debe de seleccionar al menos un bulto ");
+            }else if($("#nb0").val()==='' || $("#tall0").val()==='' || $("#cant0").val()==='' ){
+                toastr.error("Debe de ingresar al menos un dato en bulto ");
+            }else if(cmbModelo.val()=== ''){
+                toastr.error("Debe de seleccionar un modelo ");
             }else{
+                if (btnGuadar.hasClass('loading')) {
+                    return false;
+                }
+                btnGuadar.addClass('loading');
                 setOrdenCorte();
             }
-
         });
 
         function setOrdenCorte() {
 
-            $.ajax({
-                type: 'post',
-                url: '<?php echo site_url("/ordenCorte/set/ordenCorte2")?>',
-                data: frmOrdenCorte.serialize(),
-                success: function (e) {
+                $.ajax({
+                    type: 'post',
+                    url: '<?php echo site_url("/ordenCorte/set/ordencorte")?>',
+                    data: frmOrdenCorte.serialize(),
+                    success: function (e) {
+                        if (e === 'ok') {
+                            swal("Correcto", "Datos se guardados exitosamente", "success");
+                            frmOrdenCorte.get(0).reset();
+                            deleteRow = 0;
+                            $tblDatos2.dataTable().fnDestroy();
+                            getModelosDetalle();
+                            deleteRow = 0;
+                        }
+                    },
+                    error: function (e) {
+                        toastr.error("Error al procesar la petición " + e.responseText);
+                    },
+                    complete: function () {
+                        btnGuadar.removeClass('loading');
+                        frmOrdenCorte.get(0).reset();
+                    }
+                });
 
-                },
-                error: function (e) {
-                    toastr.error("Error al procesar la petición " + e.responseText);
-                },
-                complete: function () {
-                    btnGuadar.removeClass('loading');
-                }
-            });
+
+
         }
 
 

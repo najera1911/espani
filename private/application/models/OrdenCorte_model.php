@@ -75,4 +75,59 @@ where cat_operaciones_id=?';
         return $res;
     }
 
+    function ifExistNumOrden($txtNunOrden){
+        $this->db->where('numero_corte',$txtNunOrden);
+        $r = $this->db->get('tbl_ordencorte');
+
+        if($r->num_rows()>0){
+            return true;
+        }else{
+            return FALSE;
+        }
+    }
+
+    function addModeloCorte($data, $dataBultos){
+        $this->db->trans_begin();
+
+        $this->db->insert('tbl_ordencorte', $data);
+        $insert_id = $this->db->insert_id();
+
+        $dataDetalle= array();
+        $longitud = count($dataBultos);
+
+        $sum = 0;
+
+        for($i=0; $i<$longitud; $i++)
+        {
+            $array=array();
+            $array['tbl_ordencorte_id'] = $insert_id;
+            $array['num_bulto'] = (int) $dataBultos[$i]['num_bulto'];
+            $array['tallas'] = (int) $dataBultos[$i]['tallas'];
+            $array['cantidad'] = (int) $dataBultos[$i]['cantidad'];
+            $array['resta'] = (int) $dataBultos[$i]['resta'];
+            array_push($dataDetalle ,$array);
+
+            $sum = $sum + (int) $dataBultos[$i]['cantidad'];
+        }
+
+        $this->db->insert_batch('tbl_ordencorte_bultos', $dataDetalle);
+
+        $sql='INSERT INTO tbl_ordencorte_operaciones (tbl_ordencorte_id, cat_operaciones_id, cantidad, resta)
+SELECT ? as tbl_ordencorte_id, cat_operaciones_id, ? as cantidad, ? as resta 
+from tblmodelos_temp';
+
+        $this->db->query($sql, array($insert_id,$sum,$sum));
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
 }
