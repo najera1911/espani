@@ -42,8 +42,8 @@ $this->load->view("plantilla/encabezado", $data);
                     <input type="text" class="form-control" id="txtFch" name="txtFch" required>
                 </div>
                 <div class="form-group col-md-3">
-                    <label for="cmbModelo">Modelo</label>
-                    <select class="form-control" id="cmbModelo" name="cmbModelo" required></select>
+                    <label for="txtNombreModelo">Nombre Modelo</label>
+                    <input type="text" class="form-control" id="txtNombreModelo" name="txtNombreModelo" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label for="txtTela">Tela</label>
@@ -141,15 +141,33 @@ $this->load->view("plantilla/encabezado", $data);
                     <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
                 </div>
             </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="cmbModelo">Buscar Modelo</label>
+                    <select class="form-control" id="cmbModelo" name="cmbModelo" required></select>
+                </div>
+            </div>
             <div class="form-row pt-5">
-                <div class="col-12 text-center"><h5>Lista de Operaciónes</h5></div>
-                <div class="col-12 text-uppercase">
+                <div class="col-12 text-center pb-3"><h5>Lista de Operaciónes</h5></div>
+                <div class="col-1"><label for="cmbFCorte">Filtro Corte</label></div>
+                <div class="col-4">
+                    <select class="form-control" id="cmbFCorte" name="cmbFCorte"></select>
+                </div>
+                <div class="col-1"><label for="cmbOpe">Operación</label></div>
+                <div class="col-4">
+                    <select class="form-control" id="cmbOpe" name="cmbOpe"></select>
+                </div>
+                <div class="col-2">
+                    <label></label>
+                    <button type="button" class="btn btn-success" id="btnAddOpera">Agregar</button>
+                </div>
+                <div class="col-12 text-uppercase pt-3">
                     <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead class="table-info text-center"></thead>
                     </table>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-primary">Guardar</button>
         </form>
         </div>
     </div>
@@ -160,17 +178,22 @@ $this->load->view("plantilla/encabezado", $data);
 
 <script>
     let MY = {};
+    let deleteRow = 0;
 
     $(document).ready(function (){
         let frmOrdenCorte = $("#frmOrdenCorte"),
             cmbCliente = $("#cmbCliente"),
             cmbModelo = $("#cmbModelo"),
+            cmbFCorte = $("#cmbFCorte"),
+            cmbOpe = $("#cmbOpe"),
             txtNumBultos = $("#txtNumBultos"),
             tblBultos = $("#tblBultos"),
             txtFch = $("#txtFch"),
             buttonTotal = $("#button-Total"),
+            btnAddOpera = $("#btnAddOpera"),
             resultadoT = $("#resultadoT"),
             $tblDatos2 = $("#tblDatos2")
+
         ;
 
         txtFch.Zebra_DatePicker({
@@ -305,11 +328,15 @@ $this->load->view("plantilla/encabezado", $data);
         });
 
         cmbModelo.change(function () {
+            cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/filtroCorte")?>', {}, cmbFCorte, 'Elije');
+            cmbFCorte.change(function () {
+                cmbOpe.html('');
+                cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/operac")?>', {id: cmbFCorte.val()}, cmbOpe, 'Elije');
+            });
+            deleteRow = 0;
             $tblDatos2.dataTable().fnDestroy();
             getModelosDetalle();
         });
-
-
 
         getModelosDetalle();
         function getModelosDetalle() {
@@ -318,11 +345,12 @@ $this->load->view("plantilla/encabezado", $data);
             MY.table = $tblDatos2.DataTable({
                 ordering: true,
                 info: false,
-                destroy:true,
+                processing: true,
+                serverSide: true,
                 ajax: {
-                    "url": "<?php echo site_url('/operaciones/get/datosModelosCortesDetalle')?>",
+                    "url": "<?php echo site_url('/ordenCorte/get/getModelos')?>",
                     "type": "POST",
-                    "data": { "idModel": cmbModelo.val() }
+                    "data": { "idModel": cmbModelo.val(), "deleteRow": deleteRow }
                 },
                 columns: [
                     {"title": "Nombre Modelo", "data": "modeloCorte", "className": "text-center"},
@@ -344,19 +372,80 @@ $this->load->view("plantilla/encabezado", $data);
 
         }
 
-        $("#tblDatos2 tbody").on('click', 'tr', function () {
-            if ( $(this).hasClass('selected') ) {
-                $(this).removeClass('selected');
-            }
-            else {
-                MY.table.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-            }
-        });
 
         $("#tblDatos2 tbody").on('click', 'td .btn-danger', function (){
-            MY.table.row('.selected').remove().draw( false );
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            deleteRow=1;
+            OperacionDelete(data);
         } );
+
+        function OperacionDelete(data){
+            swal({
+                    title: "Eliminar un cliente",
+                    text: "Desea eliminar a: "+ data.nombreOperacion +"",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Eliminar",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: '<?php echo base_url("ordenCorte/set/deleteOrden")?>',
+                            type: "POST",
+                            data: {datos: data.cat_operaciones_id},
+                            dataType: "html",
+                            success: function (e) {
+                                if (e === 'OK') {
+                                    swal("Bien", "La operación se ha eliminado correctamente", "success");
+                                    $tblDatos2.dataTable().fnDestroy();
+                                    getModelosDetalle();
+                                    deleteRow = 0;
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                swal("Error", "Error al eliminar la operación", "error");
+                            }
+                        });
+                    } else {
+                        swal("Cancelado", data.nombreOperacion + " no se elimino", "error");
+                    }
+                });
+        }
+
+        btnAddOpera.click(function () {
+            if (btnAddOpera.hasClass('loading')) { return false; }
+            btnAddOpera.addClass('loading');
+            setAddCorte();
+        });
+
+        function setAddCorte() {
+            $nameModel = $("#cmbModelo option:selected").text();
+            $.ajax({
+                type: 'post',
+                url: '<?php echo site_url("/ordenCorte/set/addOperacion")?>',
+                data: {"data": cmbOpe.val(), "cat_modelos_cortes_id" : cmbModelo.val(), "model": $nameModel },
+                success: function (e) {
+                    if (e === 'OK') {
+                        swal("Correcto", "Datos se guardados exitosamente", "success");
+                        deleteRow = 1;
+                        $tblDatos2.dataTable().fnDestroy();
+                        getModelosDetalle();
+                        deleteRow = 0;
+                    }
+                },
+                error: function (e) {
+                    toastr.error("Error al procesar la petición " + e.responseText);
+                },
+                complete: function () {
+                    btnAddOpera.removeClass('loading');
+                }
+            });
+        }
 
 
     }); // end document ready
