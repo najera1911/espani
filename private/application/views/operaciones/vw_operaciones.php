@@ -203,13 +203,12 @@ $this->load->view("plantilla/encabezado", $data);
                     info: false,
                     buttons: [
                         {
-                            extend: 'pdf',
-                            text: 'Save current page',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            }
+                            extend: 'pdfHtml5',
+                            title: 'CATALOGO DE CLIENTES',
+                            text: '<i class="fas fa-file-pdf"></i>  PDF',
+                            orientation: 'landscape',
+                            pageSize: 'LEGAL',
+                            download: 'open'
                         }
                     ],
                     ajax: {
@@ -364,9 +363,8 @@ $this->load->view("plantilla/encabezado", $data);
 $data['scripts'] = array(
     "jqw/localized-es.js",
     "toastr.min.js",
-    "zebra_datepicker.src.js",
     "../datatables/datatables.min.js",
-    "../datatables/Buttons/js/dataTables.buttons.min.js",
+    "zebra_datepicker.src.js",
     "js1/moment.min.js"
 );
 $this->load->view("plantilla/pie", $data);
