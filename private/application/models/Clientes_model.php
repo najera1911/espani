@@ -1,7 +1,7 @@
 <?php
 class Clientes_model extends CI_Model{
 
-    function get_clientes($where=null, $select=null, $table = 'clientes_view'){
+    function get_clientes($start, $length, $where=null, $select=null, $table = 'clientes_view'){
         if(!empty($where))
             if(! is_array($where)){
                 return FALSE;
@@ -11,9 +11,17 @@ class Clientes_model extends CI_Model{
 
         if(!empty($where))
             $this->db->where($where);
-
+        
+         $this->db->limit($length,$start);    
         return $this->db->get($table)->result();
     }
+
+    function  getClienteSearch($start, $length, $value, $column){
+        $this->db->like($column, $value);
+        $this->db->limit($length,$start);
+        return $this->db->get('clientes_view')->result();
+    }
+
 
     function addClient($data){
         $res = $this->db->insert('tbl_clientes',$data);

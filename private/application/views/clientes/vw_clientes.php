@@ -228,6 +228,7 @@ $this->load->view("plantilla/encabezado", $data);
                 MY.table = $tblDatos2.DataTable( {
                     processing: true,
                     serverSide: true,
+                    scrollY: 400,
                     ordering: true,
                     info: false,
                     ajax: {

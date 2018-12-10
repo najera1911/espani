@@ -44,7 +44,16 @@ class Clientes extends CI_Controller {
 
         switch($what){
             case 'clientes':
-                $data = $this->clientes_model->get_clientes(array('estatus'=>1));
+            $datasearch = $_POST['search']; //obtiene el valor para buscar
+            $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
+            $start = $_POST['start']; //valor de inicio para el limit
+            $length = $_POST['length'] ;
+        // si no hay valor para buscar entonces llama toda la tablas
+            if (empty($datasearch["value"])){
+                $data = $this->clientes_model->get_clientes($start,$length,array('estatus'=>1));
+            }else{  //de lo contrario hace una busqueda tipo like
+                $data = $this->clientes_model->getClienteSearch($start,$length,$datasearch["value"],$nameColumn[0]["data"]);
+            }
                 $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;
