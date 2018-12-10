@@ -31,124 +31,125 @@ $this->load->view("plantilla/encabezado", $data);
 <section class="container">
     <div class="row mb-5">
         <div class="col-12">
-        <form id="frmOrdenCorte">
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="cmbCliente">Cliente</label>
-                    <select class="form-control" id="cmbCliente" name="cmbCliente" required></select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtFch">Fecha de Solicitud</label>
-                    <input type="text" class="form-control" id="txtFch" name="txtFch" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtNombreModelo">Nombre Modelo</label>
-                    <input type="text" class="form-control" id="txtNombreModelo" name="txtNombreModelo" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtTela">Tela</label>
-                    <input type="text" class="form-control" id="txtTela" name="txtTela" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="txtNunOrden">Número de Orden de Corte</label>
-                    <input type="number" class="form-control" id="txtNunOrden" name="txtNunOrden" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtMetrosTela">Metros de tela Cortada</label>
-                    <input type="number" class="form-control" id="txtMetrosTela" name="txtMetrosTela" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtColores">Colores</label>
-                    <input type="text" class="form-control" id="txtColores" name="txtColores" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtNumBultos">Número de bultos</label>
-                    <input type="number" min="1" class="form-control" id="txtNumBultos" name="txtNumBultos" required>
-                </div>
-            </div>
-            <div class="form-row justify-content-center" id="tblBultos"></div>
-            <div class="form-row justify-content-end">
-                <div class="col-4">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-outline-success" type="button" id="button-Total">Total</button>
-                        </div>
-                        <input type="text" class="form-control" id="resultadoT" disabled>
+            <form id="frmOrdenCorte" role="form" autocomplete="off">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="cmbCliente">Cliente</label>
+                        <select class="form-control" id="cmbCliente" name="cmbCliente" required></select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtFch">Fecha de Solicitud</label>
+                        <input type="text" class="form-control" id="txtFch" name="txtFch" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtNombreModelo">Nombre Modelo</label>
+                        <input type="text" class="form-control" id="txtNombreModelo" name="txtNombreModelo" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtTela">Tela</label>
+                        <input type="text" class="form-control" id="txtTela" name="txtTela" required>
                     </div>
                 </div>
-            </div>
-            <br>
-            <hr style="color: #231a67;" size="10" />
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    <label for="txtObserv">Observaciones</label>
-                    <textarea class="form-control" id="txtObserv" name="txtObserv" required></textarea>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtNunOrden">Número de Orden de Corte</label>
+                        <input type="number" class="form-control" id="txtNunOrden" name="txtNunOrden" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtMetrosTela">Metros de tela Cortada</label>
+                        <input type="number" class="form-control" id="txtMetrosTela" name="txtMetrosTela" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtColores">Colores</label>
+                        <input type="text" class="form-control" id="txtColores" name="txtColores" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtNumBultos">Número de bultos</label>
+                        <input type="number" min="1" class="form-control" id="txtNumBultos" name="txtNumBultos"
+                               required>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="txtPinzasD">Pinzas delanteras</label>
-                    <input type="text" class="form-control" id="txtPinzasD" name="txtPinzasD" required>
+                <div class="form-row justify-content-center" id="tblBultos"></div>
+                <div class="form-row justify-content-end">
+                    <div class="col-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-success" type="button" id="button-Total">Total</button>
+                            </div>
+                            <input type="text" class="form-control" id="resultadoT" disabled>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label for="txtPinzasT">Pinzas Traseras</label>
-                    <input type="text" class="form-control" id="txtPinzasT" name="txtPinzasT" required>
+                <br>
+                <hr style="color: #231a67;" size="10"/>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtObserv">Observaciones</label>
+                        <textarea class="form-control" id="txtObserv" name="txtObserv" required></textarea>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label for="txtBolsasD">Bolsas Delenteras</label>
-                    <input type="text" class="form-control" id="txtBolsasD" name="txtBolsasD" required>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtPinzasD">Pinzas delanteras</label>
+                        <input type="text" class="form-control" id="txtPinzasD" name="txtPinzasD" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtPinzasT">Pinzas Traseras</label>
+                        <input type="text" class="form-control" id="txtPinzasT" name="txtPinzasT" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtBolsasD">Bolsas Delenteras</label>
+                        <input type="text" class="form-control" id="txtBolsasD" name="txtBolsasD" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtBolsasT">Bolsas Traseras</label>
+                        <input type="text" min="1" class="form-control" id="txtBolsasT" name="txtBolsasT" required>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label for="txtBolsasT">Bolsas Traseras</label>
-                    <input type="text" min="1" class="form-control" id="txtBolsasT" name="txtBolsasT" required>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtTrabas">Trabas</label>
+                        <input type="text" class="form-control" id="txtTrabas" name="txtTrabas" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtPretina">Pretina</label>
+                        <input type="text" class="form-control" id="txtPretina" name="txtPretina" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtCartera">Cartera</label>
+                        <input type="text" class="form-control" id="txtCartera" name="txtCartera" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtSecreta">Secreta</label>
+                        <input type="text" min="1" class="form-control" id="txtSecreta" name="txtSecreta" required>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="txtTrabas">Trabas</label>
-                    <input type="text" class="form-control" id="txtTrabas" name="txtTrabas" required>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtBoton">Botón</label>
+                        <input type="text" class="form-control" id="txtBoton" name="txtBoton" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtCierre">Cierre</label>
+                        <input type="text" class="form-control" id="txtCierre" name="txtCierre" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtHilo">Hilo</label>
+                        <input type="text" class="form-control" id="txtHilo" name="txtHilo" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtEtiqueta">Etiqueta</label>
+                        <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
+                    </div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label for="txtPretina">Pretina</label>
-                    <input type="text" class="form-control" id="txtPretina" name="txtPretina" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtCartera">Cartera</label>
-                    <input type="text" class="form-control" id="txtCartera" name="txtCartera" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtSecreta">Secreta</label>
-                    <input type="text" min="1" class="form-control" id="txtSecreta" name="txtSecreta" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label for="txtBoton">Botón</label>
-                    <input type="text" class="form-control" id="txtBoton" name="txtBoton" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtCierre">Cierre</label>
-                    <input type="text" class="form-control" id="txtCierre" name="txtCierre" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtHilo">Hilo</label>
-                    <input type="text" class="form-control" id="txtHilo" name="txtHilo" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="txtEtiqueta">Etiqueta</label>
-                    <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
-                </div>
-            </div>
-        </form>
-            <div class="form-row">
+            </form>
+            <div class="row">
                 <div class="form-group col-md-6">
                     <label for="cmbModelo">Buscar Modelo</label>
                     <select class="form-control" id="cmbModelo" name="cmbModelo" required></select>
                 </div>
             </div>
-            <div class="form-row pt-5">
+            <div class="row pt-5">
                 <div class="col-12 text-center pb-3"><h5>Lista de Operaciónes</h5></div>
                 <div class="col-1"><label for="cmbFCorte">Filtro Corte</label></div>
                 <div class="col-4">
@@ -448,41 +449,35 @@ $this->load->view("plantilla/encabezado", $data);
             });
         }
 
-        btnGuadar.click(function () {
+        btnGuadar.click(function (e) {
+            
             if (btnGuadar.hasClass('loading')) {
                 return false;
             }
             btnGuadar.addClass('loading');
-            frmOrdenCorte.addClass('loading');
-            setOrdenCorte();
+
+            if(cmbModelo.val()=== ''){
+                toastr.error("Debe de Seleccionar un Modelo de Corte");
+            }else{
+                setOrdenCorte();
+            }
+
         });
 
         function setOrdenCorte() {
-            let data = new FormData(frmOrdenCorte.get(0));
+
             $.ajax({
                 type: 'post',
-                url: '<?php echo site_url("/ordenCorte/set/ordenCorte")?>',
-                data: data,
+                url: '<?php echo site_url("/ordenCorte/set/ordenCorte2")?>',
+                data: frmOrdenCorte.serialize(),
                 success: function (e) {
-                    if (e.length) {
-                        if (e.length) {
-                            let obj = JSON.parse(e);
-                            if (obj.hasOwnProperty('status') && obj.status === "Ok") {
-                                frmOrdenCorte.get(0).reset();
-                                swal("Correcto", "Datos de empleado guardados, No. Empleado:" + (obj.numEmpleado || "??"), "success");
-                            }
-                        } else {
-                            swal("Error", e , "error");
-                            frmOrdenCorte.get(0).reset();
-                        }
-                    }
+
                 },
                 error: function (e) {
                     toastr.error("Error al procesar la petición " + e.responseText);
                 },
                 complete: function () {
                     btnGuadar.removeClass('loading');
-                    frmOrdenCorte.removeClass('loading');
                 }
             });
         }
