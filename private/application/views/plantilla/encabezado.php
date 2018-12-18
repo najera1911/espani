@@ -28,8 +28,6 @@
     <link href="<?php echo base_url('assets/css/')?>all.css" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/')?>sweetalert.css" rel="stylesheet">
 
-
-
     <?php
     if(isset($css)){
         for($i=0; $i<count($css);$i++){
@@ -38,8 +36,6 @@
     }
     ?>
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.4/css/buttons.bootstrap4.min.css"/>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
 
 </head>
 <body>

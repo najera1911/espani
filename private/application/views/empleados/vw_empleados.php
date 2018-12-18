@@ -200,6 +200,7 @@ $this->load->view("plantilla/encabezado", $data);
             show_icon: true
         });
 
+
         function cargar_catalogo(url, data) {
             return $.getJSON(url, data, function (e) {
                 if (window._debug) {

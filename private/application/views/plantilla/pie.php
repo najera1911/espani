@@ -55,7 +55,7 @@ $anio=2018;
         <div class="row text-center">
             <div class="col-12">
                 <h5> ©<?php echo $anio ?> All rights reserved | Maquiladora ESPANI S.A. de C.V </h5>
-                <p>Centro, Fco González Bocanegra 110, Maestranza, 42002 Pachuca de Soto, Hgo.</p>
+                <p>Centro, Fco González Bocanegra 110, Maestranza, 42060 Pachuca de Soto, Hgo.</p>
             </div>
         </div>
     </div>

@@ -99,24 +99,38 @@ where cat_operaciones_id=?';
 
         for($i=0; $i<$longitud; $i++)
         {
-            $array=array();
-            $array['tbl_ordencorte_id'] = $insert_id;
-            $array['num_bulto'] = (int) $dataBultos[$i]['num_bulto'];
-            $array['tallas'] = (int) $dataBultos[$i]['tallas'];
-            $array['cantidad'] = (int) $dataBultos[$i]['cantidad'];
-            $array['resta'] = (int) $dataBultos[$i]['resta'];
-            array_push($dataDetalle ,$array);
 
-            $sum = $sum + (int) $dataBultos[$i]['cantidad'];
-        }
+            $data2 = array(
+                "tbl_ordencorte_id" => $insert_id,
+                "num_bulto" => (int) $dataBultos[$i]['num_bulto'],
+                "tallas" => (int) $dataBultos[$i]['tallas'],
+                "cantidad" => (int) $dataBultos[$i]['cantidad'],
+                "resta" => (int) $dataBultos[$i]['resta']
+            );
 
-        $this->db->insert_batch('tbl_ordencorte_bultos', $dataDetalle);
+            $this->db->insert('tbl_ordencorte_bultos', $data2);
+            $insert_id2 = $this->db->insert_id();
 
-        $sql='INSERT INTO tbl_ordencorte_operaciones (tbl_ordencorte_id, cat_operaciones_id, cantidad, resta)
-SELECT ? as tbl_ordencorte_id, cat_operaciones_id, ? as cantidad, ? as resta 
+            $sql='INSERT INTO tbl_ordencorte_operaciones (tbl_ordencorte_id, cat_ordencorte_bultos_id, cat_operaciones_id, cantidad, resta)
+SELECT ? as tbl_ordencorte_id, ? as cat_ordencorte_bultos_id ,cat_operaciones_id, ? as cantidad, ? as resta 
 from tblmodelos_temp';
 
-        $this->db->query($sql, array($insert_id,$sum,$sum));
+            $this->db->query($sql, array($insert_id, $insert_id2 ,(int) $dataBultos[$i]['resta'],(int) $dataBultos[$i]['resta']));
+
+//            $array=array();
+//            $array['tbl_ordencorte_id'] = $insert_id;
+//            $array['num_bulto'] = (int) $dataBultos[$i]['num_bulto'];
+//            $array['tallas'] = (int) $dataBultos[$i]['tallas'];
+//            $array['cantidad'] = (int) $dataBultos[$i]['cantidad'];
+//            $array['resta'] = (int) $dataBultos[$i]['resta'];
+//            array_push($dataDetalle ,$array);
+//
+//            $sum = $sum + (int) $dataBultos[$i]['cantidad'];
+        }
+
+        //$this->db->insert_batch('tbl_ordencorte_bultos', $dataDetalle);
+
+
 
         if ($this->db->trans_status() === FALSE)
         {
