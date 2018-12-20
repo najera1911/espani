@@ -52,19 +52,23 @@ $this->load->view("plantilla/encabezado", $data);
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-3">
-                        <label for="txtNunOrden">Número de Orden de Corte</label>
-                        <input type="number" class="form-control" id="txtNunOrden" name="txtNunOrden" required>
+                        <label for="txtNunOrdenEspani">Núm. O. de Corte ESPANI</label>
+                        <input type="number" class="form-control" id="txtNunOrdenEspani" name="txtNunOrdenEspani" required>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="txtMetrosTela">Metros de tela Cortada</label>
+                        <label for="txtNunOrdenCliente">Núm. O. de Corte Cliente</label>
+                        <input type="number" class="form-control" id="txtNunOrdenCliente" name="txtNunOrdenCliente" required>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="txtMetrosTela">Mts. de tela Cortada</label>
                         <input type="number" class="form-control" id="txtMetrosTela" name="txtMetrosTela" required>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label for="txtColores">Colores</label>
                         <input type="text" class="form-control" id="txtColores" name="txtColores" required>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="txtNumBultos">Número de bultos</label>
+                    <div class="form-group col-md-2">
+                        <label for="txtNumBultos">Núm. de bultos</label>
                         <input type="number" min="1" class="form-control" id="txtNumBultos" name="txtNumBultos"
                                required>
                     </div>
@@ -458,8 +462,10 @@ $this->load->view("plantilla/encabezado", $data);
                 toastr.error("Debe ingresar una fecha");
             }else if($("#txtNombreModelo").val()===''){
                 toastr.error("debe ingresar un nombre de modelo");
-            }else if($("#txtNunOrden").val()===''){
-                toastr.error("Debe ingresar un numero de orden");
+            }else if($("#txtNunOrdenEspani").val()===''){
+                toastr.error("Debe ingresar un numero de orden de ESPANI");
+            }else if($("#txtNunOrdenCliente").val()===''){
+                toastr.error("Debe ingresar un numero de orden de Cliente");
             }else if(txtNumBultos.val()===''){
                 toastr.error("Debe de seleccionar al menos un bulto ");
             }else if($("#nb0").val()==='' || $("#tall0").val()==='' || $("#cant0").val()==='' ){

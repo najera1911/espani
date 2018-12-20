@@ -174,6 +174,21 @@ GROUP by A.tbl_OrdenCorte_id";
         return $this->db->query($sql, array((int) $value))->result();
     }
 
+    function getbultos($ordenCorte){
+        $this->db->where('tbl_ordencorte_id',$ordenCorte);
+        return $this->db->get("tbl_ordencorte_bultos")->result();
+    }
+
+    function getDataCortes($ordenCorte){
+        $this->db->select("A.tbl_OrdenCorte_id, A.numero_corte, B.nombre_corto, A.fecha_orden, A.modelo");
+        $this->db->from("tbl_ordencorte A")->join("tbl_clientes B","A.cat_clientes_id=b.tbl_clientes_id");
+        $this->db->where('tbl_OrdenCorte_id',$ordenCorte);
+        return $this->db->get()->result();
+    }
+
+    function getOperaciones($ordenCorte){
+
+    }
 
 
 }
