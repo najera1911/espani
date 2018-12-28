@@ -270,7 +270,7 @@ class OrdenCorte extends CI_Controller{
                 $pdf->SetAuthor('ESPANI S.A de C.V');
                 $pdf->SetTitle('MAQUILADORA ESPANI S.A. DE C.V.');
 
-                $PDF_HEADER_STRING="SEgunda linea";
+                $PDF_HEADER_STRING="";
 
 
 

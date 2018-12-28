@@ -136,7 +136,8 @@ $this->load->view("plantilla/encabezado", $data);
             $("#tblDatos2 tbody").on('click','td .btn-info',function(){
                 let data = MY.table.rows($(this).closest("tr")).data();
                 data = data[0];
-                console.log(data);
+                console.log(data.tbl_OrdenCorte_id);
+                window.open("<?php echo site_url('/ordenCorte/set/ordenCortePDF?ordenCorte=')?>"+data.tbl_OrdenCorte_id, '_blank');
             });
 
         });
