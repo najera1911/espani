@@ -180,14 +180,21 @@ GROUP by A.tbl_OrdenCorte_id";
     }
 
     function getDataCortes($ordenCorte){
-        $this->db->select("A.tbl_OrdenCorte_id, A.numero_corte, B.nombre_corto, A.fecha_orden, A.modelo");
+        $this->db->select("A.*, B.nombre_corto");
         $this->db->from("tbl_ordencorte A")->join("tbl_clientes B","A.cat_clientes_id=b.tbl_clientes_id");
         $this->db->where('tbl_OrdenCorte_id',$ordenCorte);
         return $this->db->get()->result();
     }
 
     function getOperaciones($ordenCorte){
-
+        $this->db->distinct();
+        $this->db->select("A.tbl_ordencorte_id as id, C.cat_tipo_corte_id, C.descripcion as tipo_corte, B.operacion, B.descripcion");
+        $this->db->from("tbl_ordencorte_operaciones A");
+        $this->db->join("cat_operaciones B","A.cat_operaciones_id=B.cat_operaciones_id");
+        $this->db->join("cat_tipo_corte C","B.cat_tipo_corte_id=C.cat_tipo_corte_id");
+        $this->db->where('tbl_ordencorte_id',$ordenCorte);
+        $this->db->order_by("cat_tipo_corte_id", "asc");
+        return $this->db->get()->result();
     }
 
 

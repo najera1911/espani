@@ -255,6 +255,11 @@ class OrdenCorte extends CI_Controller{
                 $bultos = $this->ordenCorte_model->getbultos($ordenCorte);
                 $operaciones = $this->ordenCorte_model->getOperaciones($ordenCorte);
 
+                setlocale(LC_TIME, 'spanish');
+                $inicio = strftime("%d de %B del %Y", strtotime($tadacorte[0]->fecha_orden));
+
+                $PDF_HEADER_TITLE="Titulo del PDF";
+
 
 
                 // create new PDF document
@@ -262,14 +267,16 @@ class OrdenCorte extends CI_Controller{
 
                 // set document information
                 $pdf->SetCreator(PDF_CREATOR);
-                $pdf->SetAuthor('Muhammad Saqlain Arif');
-                $pdf->SetTitle('TCPDF Example 001');
-                $pdf->SetSubject('TCPDF Tutorial');
-                $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+                $pdf->SetAuthor('ESPANI S.A de C.V');
+                $pdf->SetTitle('MAQUILADORA ESPANI S.A. DE C.V.');
+
+                $PDF_HEADER_STRING="SEgunda linea";
+
+
 
                 // set default header data
-                $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 001', PDF_HEADER_STRING, array(0,64,255), array(0,64,128));
-                $pdf->setFooterData(array(0,64,0), array(0,64,128));
+                $pdf->SetHeaderData(PDF_HEADER_LOGO, 10, 'MAQUILADORA ESPANI S.A. DE C.V.', $PDF_HEADER_STRING, array(0,0,0), array(0,0,0));
+                $pdf->setFooterData(array(0,0,0), array(0,0,0));
 
                 // set header and footer fonts
                 $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -280,7 +287,7 @@ class OrdenCorte extends CI_Controller{
 
                 // set margins
                 $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-                $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+                $pdf->SetHeaderMargin(5);
                 $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
                 // set auto page breaks
@@ -311,25 +318,28 @@ class OrdenCorte extends CI_Controller{
                 $pdf->AddPage();
 
                 // set text shadow effect
-                $pdf->setTextShadow(array('enabled'=>true, 'depth_w'=>0.2, 'depth_h'=>0.2, 'color'=>array(196,196,196), 'opacity'=>1, 'blend_mode'=>'Normal'));
-
-                $pdf->SetFont('dejavusans', '', 11);
+                $pdf->SetFont('dejavusans', '', 10);
 
                 $tableDatos = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
              <table cellspacing="0" cellpadding="2" border="0">
                     <tr>
-                        <td width="150">Núm. Corte ESPANI</td>
-                        <td width="80">{$tadacorte[0]->numero_corte}</td>
-                        <td width="80">Cliente</td>
-                        <td width="170">{$tadacorte[0]->nombre_corto}</td>
-                        <td width="50">Fecha</td>
-                        <td width="100">{$tadacorte[0]->fecha_orden}</td>
+                        <td width="100" class="bold">Núm. Corte</td>
+                        <td width="70">{$tadacorte[0]->numero_corte}</td>
+                        <td width="70" class="bold">Cliente</td>
+                        <td width="150">{$tadacorte[0]->nombre_corto}</td>
+                        <td width="50" class="bold">Fecha</td>
+                        <td width="200">{$inicio}</td>
                     </tr>
                     <tr>
                         <td height="5" colspan="6"></td>
                     </tr>
                     <tr>
-                        <td colspan="6" align="center">{$tadacorte[0]->modelo}</td>
+                        <td colspan="6" align="center" class="bold">{$tadacorte[0]->modelo}</td>
                     </tr>
               </table>
 EOD;
@@ -341,7 +351,7 @@ EOD;
                 $table = <<<EOD
              <table cellspacing="0" cellpadding="2" border="1">
                 <thead>
-                    <tr style="background-color:#265170;color:#FFFFFF;">
+                    <tr style="font-weight: bold">
                         <td align="center" width="100">Núm. Bulto</td>
                         <td align="center" width="100">Talla</td>
                         <td align="center" width="100">Cantidad</td>
@@ -352,7 +362,7 @@ EOD;
                 $table2 = <<<EOD
              <table cellspacing="0" cellpadding="2" border="1">
                 <thead>
-                    <tr style="background-color:#265170;color:#FFFFFF;">
+                    <tr style="font-weight: bold">
                         <td align="center" width="100">Núm. Bulto</td>
                         <td align="center" width="100">Talla</td>
                         <td align="center" width="100">Cantidad</td>
@@ -387,7 +397,7 @@ EOD;
                 }
 
                 $table2 .= '<tr style="background-color:#d5d0d1;color:#000000;"><td  width="200" align="right">TOTAL:</td>
-                            <td width="100">'.$total.'</td></tr>';
+                            <td width="100" style="font-weight: bold">'.$total.'</td></tr>';
 
                 $table .= '</table>';
                 $table2 .= '</table>';
@@ -401,17 +411,250 @@ EOD;
                     </tr>
 EOD;
 
-
+                //imprime numero de bultos
                 $pdf->writeHTML($tablefin, true, false, true, false, '');
                 //$pdf->writeHTML($table);
 
+            //gereneral las tablas de operaciones
 
+                $tableOp1 = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+EOD;
+
+                $tableOp2 = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+EOD;
+
+                $numItemsOp = count($operaciones);
+                $ant=0; $new=0;
+
+                for($x=0;$x<$numItemsOp;$x++){
+                    $new = (int)$operaciones[$x]->cat_tipo_corte_id;
+
+                    if((int)$operaciones[$x]->cat_tipo_corte_id <= 3 || (int)$operaciones[$x]->cat_tipo_corte_id==6){
+                        if($new!=$ant ){
+                            $tableOp1 .= '
+                        <tr>
+                            <td style="font-weight: bold" width="310" align="center" colspan="2">'.$operaciones[$x]->tipo_corte.'</td>
+                        </tr>
+                    ';
+                            $ant=$new;
+                        }
+
+                        $tableOp1 .= '
+                        <tr>
+                            <td width="50" align="center">'.$operaciones[$x]->operacion.'</td>
+                            <td width="260" align="left">'.$operaciones[$x]->descripcion.'</td>
+                        </tr>
+                    ';
+                    }else{
+
+                        if($new!=$ant ){
+                            $tableOp2 .= '
+                        <tr>
+                            <td style="font-weight: bold" width="310" align="center" colspan="2">'.$operaciones[$x]->tipo_corte.'</td>
+                        </tr>
+                    ';
+                            $ant=$new;
+                        }
+
+                        $tableOp2 .= '
+                        <tr>
+                            <td width="50" align="center">'.$operaciones[$x]->operacion.'</td>
+                            <td width="260" align="left">'.$operaciones[$x]->descripcion.'</td>
+                        </tr>
+                    ';
+                    }
+
+                }
+
+                $tableOp1 .= '</table>';
+                $tableOp2 .= '</table>';
+
+                //tabla grande
+                $tableOperaciones = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1" style="float:left">
+                    <tr>
+                        <td align="center" width="320">{$tableOp1}</td>
+                        <td align="center" width="320">{$tableOp2}</td>
+                    </tr>
+EOD;
+
+                $pdf->writeHTML($tableOperaciones, true, false, true, false, '');
+
+                // Se agrega la pagina numero dos Todos los datos de la orden de corte
+                $pdf->AddPage();
+                //var_dump($tadacorte);
+
+                $pdf->SetFont('dejavusans', '', 9);
+
+                $tableDatos2 = <<<EOD
+                <style>                
+    td {
+        height: 30px;
+    }
+    
+    td.bold{
+    font-weight: bold;
+    }
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="150" class="bold">NOMBRE DEL CLIENTE:</td>
+                        <td width="250">{$tadacorte[0]->nombre_corto}</td>
+                        <td width="80" class="bold">FECHA:</td>
+                        <td width="150">{$inicio}</td>
+                    </tr>
+                    <tr>
+                        <td width="100" class="bold">MODELO:</td>
+                        <td width="215">{$tadacorte[0]->modelo}</td>
+                        <td width="100" class="bold">TELA:</td>
+                        <td width="215">{$tadacorte[0]->tela}</td>
+                    </tr>
+                    <tr>
+                        <td width="200" class="bold">ORDEN DE CORTE CLIENTE:</td>
+                        <td width="115">{$tadacorte[0]->num_corte_cliente}</td>
+                        <td width="200" class="bold">METROS DE TELA CORTADA:</td>
+                        <td width="115">{$tadacorte[0]->mtros_tela_cortada}</td>
+                    </tr>
+              </table>
+EOD;
+
+                $pdf->writeHTML($tableDatos2, true, false, true, false, '');
+                $pdf->Ln(5);
+                //imprime numero de bultos
+                $pdf->writeHTML($tablefin, true, false, true, false, '');
+
+                $tableDatos3 = <<<EOD
+                <style>                
+    td {
+        height: 30px;
+    }
+    
+    td.two{
+    height: 50px;
+    }
+    
+    td.bold{
+    font-weight: bold;
+    }
+                </style>
+             <table cellspacing="0" cellpadding="2" border="1">
+                    <tr>
+                        <td width="315" class="bold" align="center">COLORES:</td>
+                        <td width="315" class="bold" align="center">OBSERVACIONES:</td>
+                    </tr>
+                    <tr>
+                        <td width="315" class="two">{$tadacorte[0]->colores}</td>
+                        <td width="315" class="two">{$tadacorte[0]->observaciones}</td>
+                    </tr>
+              </table>
+EOD;
+
+                $pdf->writeHTML($tableDatos3, true, false, true, false, '');
 
                 // ---------------------------------------------------------
 
+                $tableDatos4 = <<<EOD
+                <style>                
+    td {
+        height: 20px;
+        border-bottom: 1px solid #494949;
+        text-align: center;
+    }
+    
+    td.bold{
+    font-weight: bold;
+    border-bottom: none;
+    text-align: left;
+    }
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="150" class="bold" >PINZAS DELANTERAS:</td>
+                        <td width="480">{$tadacorte[0]->pinzas_delanteras}</td>
+                    </tr>
+                    <tr>
+                        <td width="150" class="bold" >PINZAS TRASERAS:</td>
+                        <td width="480">{$tadacorte[0]->pinzas_traseras}</td>                        
+                    </tr>
+                    <tr>
+                        <td width="150" class="bold" >BOLSAS DELANTERAS:</td>
+                        <td width="480">{$tadacorte[0]->bolsas_detanteras}</td>
+                    </tr>
+                    <tr>
+                        <td width="150" class="bold" >BOLSAS TRASERAS:</td>
+                        <td width="480">{$tadacorte[0]->bolsas_traseras}</td>                        
+                    </tr>
+                    <tr>
+                        <td width="80" class="bold" >TRABAS:</td>
+                        <td width="235">{$tadacorte[0]->trabas}</td>  
+                        <td width="82" class="bold" >PRETINA:</td>
+                        <td width="235">{$tadacorte[0]->pretina}</td>                       
+                    </tr>
+                    <tr>
+                        <td width="80" class="bold" >CARTERAS:</td>
+                        <td width="235">{$tadacorte[0]->carteras}</td>  
+                        <td width="80" class="bold" >SECRETA:</td>
+                        <td width="235">{$tadacorte[0]->secreta}</td>                       
+                    </tr>
+              </table>
+EOD;
+
+                $pdf->writeHTML($tableDatos4, true, false, true, false, '');
+
+                $tableDatos5 = <<<EOD
+                <style>   
+                table{
+                border: 1px solid #000000;
+                }    
+                         
+    td {
+        height: 50px;
+        border-right: 1px solid #000000;
+        text-align: center;
+    }
+    
+    td.bold{
+    height: 30px;
+    font-weight: bold;
+    border-bottom: none;
+    text-align: center;
+    }
+                </style>
+             <table cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="210" class="bold" >TELA:</td>
+                        <td width="210" class="bold" >BOTÓN:</td>
+                        <td width="210" class="bold" >CIERRE:</td>
+                    </tr>
+                    <tr>
+                        <td width="210">{$tadacorte[0]->tela}</td>
+                        <td width="210">{$tadacorte[0]->boton}</td> 
+                        <td width="210">{$tadacorte[0]->cierre}</td>                       
+                    </tr>                   
+              </table>
+<br><br>
+<table cellspacing="0" cellpadding="2">
+                    <tr>
+                        <td width="210" class="bold" >HILO:</td>
+                        <td width="210" class="bold" >ETIQUETA:</td>
+                        <td width="210" class="bold" >NÚMERO DE CORTE:</td>
+                    </tr>
+                    <tr>
+                        <td width="210">{$tadacorte[0]->hilo}</td>
+                        <td width="210">{$tadacorte[0]->etiqueta}</td> 
+                        <td width="210" style="font-weight: bold;font-size: 20px">{$tadacorte[0]->numero_corte}</td>                       
+                    </tr>                   
+              </table>
+
+EOD;
+
+                $pdf->writeHTML($tableDatos5, true, false, true, false, '');
+
                 // Close and output PDF document
                 // This method has several options, check the source code documentation for more information.
-                $pdf->Output('example_001.pdf', 'I');
+                $pdf->Output('OrdenCorte_Num'.$ordenCorte.'.pdf', 'I');
 
             //============================================================+
             // END OF FILE
