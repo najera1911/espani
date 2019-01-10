@@ -40,6 +40,17 @@ class Operaciones_model extends CI_Model
         return $this->db->get("modelos_cortes_view")->result();
     }
 
+    function ifExistOperacion($txtOperacion){
+        $this->db->where('operacion',trim($txtOperacion));
+        $r = $this->db->get('cat_operaciones');
+
+        if($r->num_rows()>0){
+            return true;
+        }else{
+            return FALSE;
+        }
+    }
+
 	function updateOperacion($idEmpleado, $data){
 		if(empty($idEmpleado)){
 		return FALSE;

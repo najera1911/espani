@@ -33,17 +33,24 @@ class OrdenCorte_model extends CI_Model{
         $this->db->query("DROP TABLE IF EXISTS tblmodelos_temp");
         $sql='CREATE TABLE tblmodelos_temp SELECT * FROM modelos_cortes_view where estatus=1 and cat_modelos_cortes_id=?';
         $this->db->query($sql, array($idModel));
+        $this->db->order_by('cat_tipo_corte_id', 'ASC');
         $this->db->get("tblmodelos_temp");
     }
 
     public function datosModelosCortesDetalleLimit($start,$length){
-        $this->db->limit($length,$start);
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
+        $this->db->order_by('cat_tipo_corte_id', 'ASC');
         return $this->db->get('tblmodelos_temp')->result();
     }
 
     function  getOperacionSearch($start, $length, $value, $column){
         $this->db->like($column, $value);
-        $this->db->limit($length,$start);
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
+        $this->db->order_by('cat_tipo_corte_id', 'ASC');
         return $this->db->get('tblmodelos_temp')->result();
     }
 
@@ -117,20 +124,7 @@ from tblmodelos_temp';
 
             $this->db->query($sql, array($insert_id, $insert_id2 ,(int) $dataBultos[$i]['resta'],(int) $dataBultos[$i]['resta']));
 
-//            $array=array();
-//            $array['tbl_ordencorte_id'] = $insert_id;
-//            $array['num_bulto'] = (int) $dataBultos[$i]['num_bulto'];
-//            $array['tallas'] = (int) $dataBultos[$i]['tallas'];
-//            $array['cantidad'] = (int) $dataBultos[$i]['cantidad'];
-//            $array['resta'] = (int) $dataBultos[$i]['resta'];
-//            array_push($dataDetalle ,$array);
-//
-//            $sum = $sum + (int) $dataBultos[$i]['cantidad'];
         }
-
-        //$this->db->insert_batch('tbl_ordencorte_bultos', $dataDetalle);
-
-
 
         if ($this->db->trans_status() === FALSE)
         {
@@ -142,6 +136,59 @@ from tblmodelos_temp';
             $this->db->trans_commit();
             return true;
         }
+    }
+
+    function EditModeloCorte($data, $dataBultos, $idOrden){
+        if(empty($idOrden)){
+            return FALSE;
+        }
+
+        $this->db->trans_begin();
+
+        $this->db->where('tbl_OrdenCorte_id', $idOrden);
+        $this->db->update('tbl_ordencorte',$data);
+
+        $this->db->delete('tbl_ordencorte_bultos', array('tbl_ordencorte_id' => $idOrden));
+        $this->db->delete('tbl_ordencorte_operaciones', array('tbl_ordencorte_id' => $idOrden));
+
+        $dataDetalle= array();
+        $longitud = count($dataBultos);
+
+        $sum = 0;
+
+        for($i=0; $i<$longitud; $i++)
+        {
+
+            $data2 = array(
+                "tbl_ordencorte_id" => $idOrden,
+                "num_bulto" => (int) $dataBultos[$i]['num_bulto'],
+                "tallas" => (int) $dataBultos[$i]['tallas'],
+                "cantidad" => (int) $dataBultos[$i]['cantidad'],
+                "resta" => (int) $dataBultos[$i]['resta']
+            );
+
+            $this->db->insert('tbl_ordencorte_bultos', $data2);
+            $insert_id2 = $this->db->insert_id();
+
+            $sql='INSERT INTO tbl_ordencorte_operaciones (tbl_ordencorte_id, cat_ordencorte_bultos_id, cat_operaciones_id, cantidad, resta)
+SELECT ? as tbl_ordencorte_id, ? as cat_ordencorte_bultos_id ,cat_operaciones_id, ? as cantidad, ? as resta 
+from tblmodelos_temp';
+
+            $this->db->query($sql, array($idOrden, $insert_id2 ,(int) $dataBultos[$i]['resta'],(int) $dataBultos[$i]['resta']));
+
+        }
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+
     }
 
     function get_OrdenesCorteView($start,$length){
@@ -195,6 +242,27 @@ GROUP by A.tbl_OrdenCorte_id";
         $this->db->where('tbl_ordencorte_id',$ordenCorte);
         $this->db->order_by("cat_tipo_corte_id", "asc");
         return $this->db->get()->result();
+    }
+
+    function validaEdit($data){
+        $this->db->where('tbl_ordencorte_id',$data);
+        $r = $this->db->get("tbl_reportediario_detalle");
+
+        if($r->num_rows()>0){
+            return true;
+        }else{
+            return FALSE;
+        }
+    }
+
+    function getOrdenData($idOrden){
+        $this->db->where("tbl_OrdenCorte_id",$idOrden);
+        return $this->db->get("tbl_ordencorte")->result();
+    }
+
+    function getOrdenBultosData($idOrden){
+        $this->db->where("tbl_ordencorte_id",$idOrden);
+        return $this->db->get("tbl_ordencorte_bultos")->result();
     }
 
 

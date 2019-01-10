@@ -34,6 +34,16 @@ class OrdenCorte extends CI_Controller{
         $this->load->view('ordenCorte/vw_' . $pagina);
     }
 
+    function index2($pagina = '',$id){
+        if (!file_exists(VIEWPATH . 'ordenCorte/vw_' . $pagina . '.php')) {
+            show_404();
+        }
+        $datos = array(
+            'id' => $id,
+        );
+        $this->load->view('ordenCorte/vw_' . $pagina,$datos);
+    }
+
     function get($data=''){
         if(!$this->session->userdata('isLoggedIn')){
             $this->cliError('Default response');
@@ -102,6 +112,25 @@ class OrdenCorte extends CI_Controller{
 
                 $data = array('data'=>$data);
                 exit(json_encode($data));
+                break;
+            case 'validaEdit':
+                $data = filter_input(INPUT_POST,'id');
+                $res = $this->ordenCorte_model->validaEdit($data);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    exit('notOK');
+                }
+                break;
+            case 'dataOrden':
+                $idOrden = filter_input(INPUT_POST,'idOrden');
+                $res = $this->ordenCorte_model->getOrdenData($idOrden);
+                exit(json_encode($res));
+                break;
+            case 'dataOrdenBultos':
+                $idOrden = filter_input(INPUT_POST,'idOrden');
+                $res = $this->ordenCorte_model->getOrdenBultosData($idOrden);
+                exit(json_encode($res));
                 break;
             default: $this->cliError();
         }
@@ -242,6 +271,102 @@ class OrdenCorte extends CI_Controller{
                 }
 
                 break;
+            case 'ordencorteEdit':
+                $idOrden = filter_input(INPUT_POST,'idOrden');
+                $cmbCliente = filter_input(INPUT_POST,'cmbCliente');
+                $txtFch = filter_input(INPUT_POST,'txtFch');
+                $txtNombreModelo = filter_input(INPUT_POST,'txtNombreModelo');
+                $txtTela = filter_input(INPUT_POST,'txtTela');
+                $txtNunOrden = filter_input(INPUT_POST,'txtNunOrdenEspani');
+                $txtNunOrdenCliente = filter_input(INPUT_POST,'txtNunOrdenCliente');
+                $txtMetrosTela = filter_input(INPUT_POST,'txtMetrosTela');
+                $txtColores = filter_input(INPUT_POST,'txtColores');
+                $txtNumBultos = filter_input(INPUT_POST,'txtNumBultos');
+
+                if(empty($idOrden)){
+                    $this->cliError('Debe de selecionar una orden de corte');
+                }
+
+                if(empty($cmbCliente)){
+                    $this->cliError('Debe de Seleccionar un Cliente');
+                }
+                if(empty($txtFch)){
+                    $this->cliError('Debe de Seleccionar una Fecha');
+                }
+                if(empty($txtNombreModelo)){
+                    $this->cliError('Debe de Ingresar un nombre de modelo');
+                }
+                if(empty($txtNunOrden)){
+                    $this->cliError('Debe de Ingresar un número de orden de ESPANI');
+                }
+                if(empty($txtNunOrdenCliente)){
+                    $this->cliError('Debe de Ingresar un número de orden del CLiente');
+                }
+
+                if(empty($txtNumBultos)){
+                    $this->cliError('Debe de ingresar numero de bulto');
+                }
+
+                $txtObserv = filter_input(INPUT_POST,'txtObserv');
+                $txtPinzasD = filter_input(INPUT_POST,'txtPinzasD');
+                $txtPinzasT = filter_input(INPUT_POST,'txtPinzasT');
+                $txtBolsasD = filter_input(INPUT_POST,'txtBolsasD');
+                $txtBolsasT = filter_input(INPUT_POST,'txtBolsasT');
+                $txtTrabas = filter_input(INPUT_POST,'txtTrabas');
+                $txtPretina = filter_input(INPUT_POST,'txtPretina');
+                $txtCartera = filter_input(INPUT_POST,'txtCartera');
+                $txtSecreta = filter_input(INPUT_POST,'txtSecreta');
+                $txtBoton = filter_input(INPUT_POST,'txtBoton');
+                $txtCierre = filter_input(INPUT_POST,'txtCierre');
+                $txtHilo = filter_input(INPUT_POST,'txtHilo');
+                $txtEtiqueta = filter_input(INPUT_POST,'txtEtiqueta');
+                $cat_usuario_captuta = $this->session->userdata('idU');
+
+                $data = array(
+                    "numero_corte" => $txtNunOrden,
+                    "cat_clientes_id" => $cmbCliente,
+                    "fecha_orden" => date_format((date_create_from_format('d/m/Y', $txtFch)), 'Y-m-d'),
+                    "modelo" => $txtNombreModelo,
+                    "tela" => $txtTela,
+                    "mtros_tela_cortada" => $txtMetrosTela,
+                    "colores" => $txtColores,
+                    "observaciones" => $txtObserv,
+                    "pinzas_delanteras" => $txtPinzasD,
+                    "pinzas_traseras" => $txtPinzasT,
+                    "bolsas_detanteras" => $txtBolsasD,
+                    "bolsas_traseras" => $txtBolsasT,
+                    "trabas" => $txtTrabas,
+                    "pretina" => $txtPretina,
+                    "carteras" => $txtCartera,
+                    "secreta" => $txtSecreta,
+                    "boton" => $txtBoton,
+                    "cierre" => $txtCierre,
+                    "hilo" => $txtHilo,
+                    "etiqueta" => $txtEtiqueta,
+                    "cat_usuario_captura" => $cat_usuario_captuta,
+                    "estatus" => true,
+                    "num_corte_cliente" => $txtNunOrdenCliente
+                );
+
+                $dataBultos = array();
+                for ($i=0;$i<$txtNumBultos;$i++){
+                    $nb = filter_input(INPUT_POST,'nb'.$i);
+                    $tall = filter_input(INPUT_POST,'tall'.$i);
+                    $cant = filter_input(INPUT_POST,'cant'.$i);
+                    array_push($dataBultos,
+                        array("num_bulto"=>$nb,"tallas"=>$tall, "cantidad"=>$cant, "resta"=>$cant)
+                    );
+                }
+
+                $res = $this->ordenCorte_model->EditModeloCorte($data, $dataBultos, $idOrden);
+
+                if ($res) {
+                    exit('ok');
+                } else {
+                    $this->cliError("ocurrio un error");
+                }
+
+                break;
             case 'ordenCortePDF':
                 $ordenCorte = filter_input(INPUT_GET, 'ordenCorte');
 
@@ -299,7 +424,7 @@ class OrdenCorte extends CI_Controller{
                 // set some language-dependent strings (optional)
                 if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
                     require_once(dirname(__FILE__).'/lang/eng.php');
-                    $pdf->setLanguageArray($l);
+                    $pdf->setLanguageArray();
                 }
 
                 // ---------------------------------------------------------

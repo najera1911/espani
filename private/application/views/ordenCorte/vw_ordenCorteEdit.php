@@ -23,7 +23,7 @@ $this->load->view("plantilla/encabezado", $data);
 <section class="ml-5 mr-5" id="Operaciones">
     <div class="row mt-5 mb-5">
         <div class="col text-center text-uppercase">
-            <h3 class="txt-Subtitulos">Generar Ordenes de Corte</h3>
+            <h3 class="txt-Subtitulos">Editar Ordenes de Corte <span></span></h3>
         </div>
     </div>
 </section>
@@ -178,9 +178,6 @@ $this->load->view("plantilla/encabezado", $data);
     </div>
 </section>
 
-
-
-
 <script>
     let MY = {};
     let deleteRow = 0;
@@ -198,9 +195,129 @@ $this->load->view("plantilla/encabezado", $data);
             btnAddOpera = $("#btnAddOpera"),
             btnGuadar = $("#btnGuardar"),
             resultadoT = $("#resultadoT"),
-            $tblDatos2 = $("#tblDatos2")
-
+            $tblDatos2 = $("#tblDatos2"),
+            id_ordenCorte = <?php echo $id ?>
         ;
+
+        $.post('<?php echo site_url("/ordenCorte/get/dataOrden")?>', { idOrden: id_ordenCorte })
+            .done(function( data ) {
+                let obj = JSON.parse(data);
+                let d = obj[0];
+                const $head = $("#Operaciones").find('.txt-Subtitulos span');
+                $head.html(' - ' + d.numero_corte);
+                //cmbCliente.val(obj[0].cat_clientes_id);
+                setTimeout(function () {
+                    $('select[name="cmbCliente"]').val(d.cat_clientes_id).change();
+                }, 500);
+                $('input[name="txtNombreModelo"]').val(d.modelo);
+                txtFch.data('Zebra_DatePicker').set_date(new Date(d.fecha_orden));
+                $('input[name="txtTela"]').val(d.tela);
+                $('input[name="txtNunOrdenEspani"]').val(d.numero_corte);
+                $('input[name="txtNunOrdenCliente"]').val(d.num_corte_cliente);
+                $('input[name="txtMetrosTela"]').val(d.mtros_tela_cortada);
+                $('input[name="txtColores"]').val(d.colores);
+                $('textarea[name="txtObserv"]').val(d.observaciones);
+                $('input[name="txtPinzasD"]').val(d.pinzas_delanteras);
+                $('input[name="txtPinzasT"]').val(d.pinzas_traseras);
+                $('input[name="txtBolsasD"]').val(d.bolsas_detanteras);
+                $('input[name="txtBolsasT"]').val(d.bolsas_traseras);
+                $('input[name="txtTrabas"]').val(d.trabas);
+                $('input[name="txtPretina"]').val(d.pretina);
+                $('input[name="txtCartera"]').val(d.carteras);
+                $('input[name="txtSecreta"]').val(d.secreta);
+                $('input[name="txtBoton"]').val(d.boton);
+                $('input[name="txtCierre"]').val(d.cierre);
+                $('input[name="txtHilo"]').val(d.hilo);
+                $('input[name="txtEtiqueta"]').val(d.etiqueta);
+            });
+
+        $.post('<?php echo site_url("/ordenCorte/get/dataOrdenBultos")?>', { idOrden: id_ordenCorte })
+            .done(function( data ) {
+                let obj = JSON.parse(data);
+                let numBultos = obj.length;
+                $('input[name="txtNumBultos"]').val(numBultos);
+
+                tblBultos.empty();
+                if(numBultos==="1"){
+                    tblBultos.append(`
+                        <div class="col-6">
+                            <table class="table table-bordered table-sm">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th scope="col">BULTOS</th>
+                                        <th scope="col">TALLAS</th>
+                                        <th scope="col">CANTIDAD</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th><input type="number" min="1" id="nb0" name="nb0" value="${obj[0].num_bulto}"></th>
+                                        <td><input type="number" min="1" id="tall0" name="tall0" value="${obj[0].tallas}"></td>
+                                        <td><input type="number" min="1" id="cant0" name="cant0" value="${obj[0].cantidad}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        `);
+                }else{
+                    let x = Math.round(numBultos/2);
+                    tblBultos.append(`
+                    <div class="col-6 pr-3">
+                        <table class="table table-bordered table-sm" width="50%">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th scope="col">BULTOS</th>
+                                        <th scope="col">TALLAS</th>
+                                        <th scope="col">CANTIDAD</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblR"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-6 pl-3">
+                        <table class="table table-bordered table-sm">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th scope="col">BULTOS</th>
+                                        <th scope="col">TALLAS</th>
+                                        <th scope="col">CANTIDAD</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblL"></tbody>
+                            </table>
+                    </div>
+                `);
+
+                    for(let i=0;i<x;i++){
+                        $("#tblR").append(`
+                         <tr>
+                         <th><input type="number" min="1" id="nb${i}" name="nb${i}" value="${obj[i].num_bulto}"></th>
+                         <td><input type="number" min="1" id="tall${i}" name="tall${i}" value="${obj[i].tallas}"></td>
+                         <td><input type="number" min="1" id="cant${i}" name="cant${i}" value="${obj[i].cantidad}"></td>
+                         </tr>
+                    `);
+                    }
+
+                    for(let j=x; j<numBultos;j++){
+                        $("#tblL").append(`
+                        <tr>
+                         <th><input type="number" min="1" id="nb${j}" name="nb${j}" value="${obj[j].num_bulto}"></th>
+                         <td><input type="number" min="1" id="tall${j}" name="tall${j}" value="${obj[j].tallas}"></td>
+                         <td><input type="number" min="1" id="cant${j}" name="cant${j}" value="${obj[j].cantidad}"></td>
+                         </tr>
+                    `);
+                    }
+                }
+            });
+
+        buttonTotal.click(function () {
+            let sum =0;
+            for(let x=0; x<txtNumBultos.val();x++){
+                sum = sum + Number($('#cant'+x+'').val());
+            }
+            resultadoT.val(sum);
+        });
+
 
         txtFch.Zebra_DatePicker({
             show_icon: true
@@ -248,90 +365,6 @@ $this->load->view("plantilla/encabezado", $data);
         //agregar select
         cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/clientes")?>', {}, cmbCliente, 'Elije');
         cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/modeloCorte")?>', {}, cmbModelo, 'Elije');
-
-        txtNumBultos.change(function() {
-            let numBultos = txtNumBultos.val();
-            tblBultos.empty();
-            if(numBultos==="1"){
-                tblBultos.append(`
-                        <div class="col-6">
-                            <table class="table table-bordered table-sm">
-                                <thead class="text-center">
-                                    <tr>
-                                        <th scope="col">BULTOS</th>
-                                        <th scope="col">TALLAS</th>
-                                        <th scope="col">CANTIDAD</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th><input type="number" min="1" id="nb0" name="nb0"></th>
-                                        <td><input type="number" min="1" id="tall0" name="tall0"></td>
-                                        <td><input type="number" min="1" id="cant0" name="cant0"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        `);
-            }else{
-                let x = Math.round(numBultos/2);
-                tblBultos.append(`
-                    <div class="col-6 pr-3">
-                        <table class="table table-bordered table-sm" width="50%">
-                                <thead class="text-center">
-                                    <tr>
-                                        <th scope="col">BULTOS</th>
-                                        <th scope="col">TALLAS</th>
-                                        <th scope="col">CANTIDAD</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblR"></tbody>
-                        </table>
-                    </div>
-                    <div class="col-6 pl-3">
-                        <table class="table table-bordered table-sm">
-                                <thead class="text-center">
-                                    <tr>
-                                        <th scope="col">BULTOS</th>
-                                        <th scope="col">TALLAS</th>
-                                        <th scope="col">CANTIDAD</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblL"></tbody>
-                            </table>
-                    </div>
-                `);
-
-                for(let i=0;i<x;i++){
-                    $("#tblR").append(`
-                         <tr>
-                         <th><input type="number" min="1" id="nb${i}" name="nb${i}"></th>
-                         <td><input type="number" min="1" id="tall${i}" name="tall${i}"></td>
-                         <td><input type="number" min="1" id="cant${i}" name="cant${i}"></td>
-                         </tr>
-                    `);
-                }
-
-                for(let j=x; j<numBultos;j++){
-                    $("#tblL").append(`
-                        <tr>
-                         <th><input type="number" min="1" id="nb${j}" name="nb${j}"></th>
-                         <td><input type="number" min="1" id="tall${j}" name="tall${j}"></td>
-                         <td><input type="number" min="1" id="cant${j}" name="cant${j}"></td>
-                         </tr>
-                    `);
-                }
-            }
-
-        });
-
-        buttonTotal.click(function () {
-            let sum =0;
-           for(let x=0; x<txtNumBultos.val();x++){
-               sum = sum + Number($('#cant'+x+'').val());
-           }
-            resultadoT.val(sum);
-        });
 
         cmbModelo.change(function () {
             cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/filtroCorte")?>', {}, cmbFCorte, 'Elije');
@@ -482,30 +515,29 @@ $this->load->view("plantilla/encabezado", $data);
         });
 
         function setOrdenCorte() {
-                $.ajax({
-                    type: 'post',
-                    url: '<?php echo site_url("/ordenCorte/set/ordencorte")?>',
-                    data: frmOrdenCorte.serialize(),
-                    success: function (e) {
-                        if (e === 'ok') {
-                            swal("Correcto", "Datos se guardados exitosamente", "success");
-                            frmOrdenCorte.get(0).reset();
-                            location.href = '<?php echo site_url("/ordenCorte/index/ordenCorteMenu")?>';
-                        }
-                    },
-                    error: function (e) {
-                        toastr.error("Error al procesar la petición " + e.responseText);
-                    },
-                    complete: function () {
-                        btnGuadar.removeClass('loading');
+            $.ajax({
+                type: 'post',
+                url: '<?php echo site_url("/ordenCorte/set/ordencorteEdit")?>',
+                data: frmOrdenCorte.serialize() + "&idOrden=" + id_ordenCorte,
+                success: function (e) {
+                    if (e === 'ok') {
+                        swal("Correcto", "Datos se guardados exitosamente", "success");
+                        frmOrdenCorte.get(0).reset();
+                        location.href = '<?php echo site_url("/ordenCorte/index/ordenCorteMenu")?>';
                     }
-                });
+                },
+                error: function (e) {
+                    toastr.error("Error al procesar la petición " + e.responseText);
+                },
+                complete: function () {
+                    btnGuadar.removeClass('loading');
+                }
+            });
         }
 
-
-    }); // end document ready
-
+    });
 </script>
+
 <?php
 $data['scripts'] = array(
     "jqw/localized-es.js",

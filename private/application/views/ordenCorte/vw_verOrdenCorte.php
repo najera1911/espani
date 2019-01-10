@@ -124,6 +124,11 @@ $this->load->view("plantilla/encabezado", $data);
                             render:function(data, type,row){
                                 return '<button class="btn btn-info btn-sm">Ver</button>';
                             }
+                        },
+                        { "title": "Editar", data:null,
+                            render:function(data, type,row){
+                                return '<button class="btn btn-success btn-sm">Editar</button>';
+                            }
                         }
                     ],
                     order: [],
@@ -138,6 +143,28 @@ $this->load->view("plantilla/encabezado", $data);
                 data = data[0];
                 console.log(data.tbl_OrdenCorte_id);
                 window.open("<?php echo site_url('/ordenCorte/set/ordenCortePDF?ordenCorte=')?>"+data.tbl_OrdenCorte_id, '_blank');
+            });
+
+            $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+                let data = MY.table.rows($(this).closest("tr")).data();
+                data = data[0];
+                $.ajax({
+                    url: '<?php echo base_url("/ordenCorte/get/validaEdit")?>',
+                    type: "POST",
+                    data: {id: data.tbl_OrdenCorte_id},
+                    dataType: "html",
+                    success: function (e) {
+                        if (e === 'OK') {
+                            swal("No se puede editar", "La orden de pago no puede ser editada, ya se generaron pagos", "error");
+                        }
+                        else if (e=== 'notOK'){
+                            location.href = '<?php echo site_url("/ordenCorte/index2/ordenCorteEdit/")?>'+data.tbl_OrdenCorte_id;
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        swal("Error deleting!", "Please try again", "error");
+                    }
+                });
             });
 
         });

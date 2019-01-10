@@ -92,7 +92,8 @@ class Operaciones extends CI_Controller {
         switch ($data) {
             case 'operacion':
                 $cmbTipoCorte = filter_input(INPUT_POST, 'cmbTipoCorte');
-                $txtOperacion = filter_input(INPUT_POST, 'txtOperacion');
+                $txtOperacion2 = filter_input(INPUT_POST, 'txtOperacion');
+                $txtOperacion = trim($txtOperacion2);
                 $txtDescripcion = filter_input(INPUT_POST, 'txtDescripcion');
                 $txtTarifa_sin = filter_input(INPUT_POST, 'txtTarifa_sin');
                 $txtTarifa_con = filter_input(INPUT_POST, 'txtTarifa_con');
@@ -113,6 +114,12 @@ class Operaciones extends CI_Controller {
                  if(empty($txtTarifa_sin)){
                      $this->cliError('Tarifa sin 7° no puede ser vacio');
                  }
+
+                $existe = $this->operaciones_model->ifExistOperacion($txtOperacion);
+
+                if($existe){
+                    $this->cliError('La clave de operación ya existe');
+                }
 
                 $data = array(
                     "cat_tipo_corte_id" => $cmbTipoCorte,
