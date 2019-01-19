@@ -17,6 +17,7 @@ class Nomina extends CI_Controller{
         if( $this->session->userdata('isLoggedIn') ) {
             $this->acl->setUserId($this->session->userdata('idU'));
         }
+        $this->load->library("Pdf");
     }
 
     function cliError($msg = "Bad Request", $num = "0x0")//
@@ -56,39 +57,40 @@ class Nomina extends CI_Controller{
                 $res = $this->nomina_model->getEmpleadosData($idEmpleado);
                 exit(json_encode($res));
                 break;
+            case 'dataReporteProd':
+                $idReporte = filter_input(INPUT_POST,'idReporte');
+                $res = $this->nomina_model->getDataReporteProd($idReporte);
+                exit(json_encode($res));
+                break;
             case 'getCortes':
                 $res = $this->nomina_model->getCortes();
                 exit(json_encode($res));
                 break;
             case 'getBultos':
                 $idCorte = filter_input(INPUT_GET,'idCorte');
-                $res = $this->nomina_model->getBultos($idCorte);
+                $idOper = filter_input(INPUT_GET,'idOper');
+                $res = $this->nomina_model->getBultos($idCorte,$idOper);
                 exit(json_encode($res));
                 break;
             case 'getOperaciones':
                 $idCorte = filter_input(INPUT_GET,'idCorte');
-                $idBulto = filter_input(INPUT_GET,'idBulto');
-                $res = $this->nomina_model->getOperaciones($idCorte,$idBulto);
+                $res = $this->nomina_model->getOperaciones($idCorte);
                 exit(json_encode($res));
                 break;
             case 'getReporteDiarios':
                 $idEmpleado = filter_input(INPUT_POST,'idEmpleado');
-                $ff = filter_input(INPUT_POST,'fecha_f');
+                //$ff = filter_input(INPUT_POST,'fecha_f');
                 $fi = filter_input(INPUT_POST,'fecha_i');
                 $start = $_POST['start']; //valor de inicio para el limit
                 $length = $_POST['length'] ;
-                if($fi == ''){
-                    $fecha_i = '2018-01-01';
+                if($fi==""){
+                    $fecha_i = '';
                 }else{
                     $fecha_i = date_format((date_create_from_format('Y/m/d', $fi)), 'Y-m-d');
                 }
-                if($ff == ''){
-                    $fecha_f = '2018-01-01';
-                }else{
-                    $fecha_f = date_format((date_create_from_format('Y/m/d', $ff)), 'Y-m-d');
-                }
+
                 // si no hay valor para buscar entonces llama toda la tablas
-                $data = $this->nomina_model->get_ReporteDiario($start,$length,$idEmpleado,$fecha_i,$fecha_f);
+                $data = $this->nomina_model->get_ReporteDiario($start,$length,$idEmpleado,$fecha_i);
                 $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;
@@ -112,59 +114,213 @@ class Nomina extends CI_Controller{
             case 'addDatos':
                 $cat_rh_empleado_id = filter_input(INPUT_POST,'idEmpleado');
                 $fecha_reporte_i = filter_input(INPUT_POST,'txtFchaInicio');
-                $fecha_reporte_f = filter_input(INPUT_POST,'txtFchaFin');
+                //$fecha_reporte_f = filter_input(INPUT_POST,'txtFchaFin');
                 $usuario_caprura_id = $this->session->userdata('idU');
                 $tbl_ordencorte_id = filter_input(INPUT_POST,'cmbCorte');
-                $tbl_ordencorte_bultos_id = filter_input(INPUT_POST,'cmbBulto');
+                if(isset($_POST['cmbBulto'])){
+                    $tbl_ordencorte_bultos_id = $_POST['cmbBulto'];
+                }else{
+                    $tbl_ordencorte_bultos_id[0] = 0;
+                }
+                //$tbl_ordencorte_bultos_id = filter_input(INPUT_POST,'cmbBulto');
                 $tbl_cordencorte_operaciones_id = filter_input(INPUT_POST,'cmbOper');
                 $cantidad = filter_input(INPUT_POST,'txtCantidad');
                 $id_reporte = filter_input(INPUT_POST,'id_reporte');
 
+
+                if (empty($fecha_reporte_i)) {
+                    $this->cliError('Debe seleccionar fecha inicial');
+                }
+                if (empty($tbl_ordencorte_id)) {
+                    $this->cliError('Debe seleccionar orden de corte');
+                }
+                if($tbl_cordencorte_operaciones_id>0 and empty($tbl_ordencorte_bultos_id)){
+                    $this->cliError('Debe seleccionar núm bulto');
+                }
+
+                if (is_null($tbl_cordencorte_operaciones_id)) {
+                    $this->cliError('Debe seleccionar operación');
+                }
+
+                if (empty($cantidad)) {
+                    $this->cliError('Debe ingresar cantidad');
+                }
+
+                $nnewResta = 0;
                 if($id_reporte==0){
-                    $existe = $this->nomina_model->ifExistOper($cat_rh_empleado_id,$fecha_reporte_i,$fecha_reporte_f);
+
+                    $rn222 = 0;
+                    $existe = $this->nomina_model->ifExistOper($cat_rh_empleado_id,$fecha_reporte_i);
 
                     if($existe){
-                        $this->cliError('Ya existe un reporte entre esas fechas para el Empleado, Verifique');
+                        $this->cliError('Ya existe un reporte en esa fecha para el Empleado, Verifique');
                     }
 
                     $data = array(
                         "cat_rh_empleado_id" => $cat_rh_empleado_id,
                         "fecha_reporte_i" => date_format((date_create_from_format('Y/m/d', $fecha_reporte_i)), 'Y-m-d'),
-                        "fecha_reporte_f" => date_format((date_create_from_format('Y/m/d', $fecha_reporte_f)), 'Y-m-d'),
                         "usuario_caprura_id" => $usuario_caprura_id,
                     );
 
-                    if($tbl_cordencorte_operaciones_id==99){
-                        $r2["resta"] = 0;
-                    }else{
-                        $restaO = $this->nomina_model->existenciaOp($tbl_cordencorte_operaciones_id);
-                        $r2 = (array) $restaO[0];
+                    if((int) $tbl_cordencorte_operaciones_id==0){
+                        $existeS01 = $this->nomina_model->ifExistS01($id_reporte);
 
-                        if($cantidad>(int) $r2["resta"]){
-                            $this->cliError('La cantidad es mayor que la cantidad del número del Operaciones');
+                        if($existeS01){
+                            $this->cliError('Ya existe la orden S01-SABADO  ');
+                        }
+                    }else{
+                        $restaO = $this->nomina_model->existenciaOp($tbl_ordencorte_bultos_id);
+                        $r2 = (array) $restaO[0];
+                        $rn222 = $r2["resta"];
+                    }
+
+
+                    $data2 = array();
+                    $n = count($tbl_ordencorte_bultos_id);
+
+                    if($n>1){
+                        if($cantidad>(int) $rn222){
+                            $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r2["resta"].' ');
+                        }
+                        if($cantidad<(int) $rn222){
+                            $this->cliError('La cantidad es menor que la cantidad del total de todos los bultos: '.$r2["resta"].' ');
+                        }
+                    }else{
+                        if((int) $tbl_cordencorte_operaciones_id!=0){
+                            if($cantidad>(int) $rn222){
+                                $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                            }
                         }
                     }
 
-                    $res = $this->nomina_model->AddReporte($data,$tbl_ordencorte_id,$tbl_ordencorte_bultos_id,$tbl_cordencorte_operaciones_id,$cantidad,$r2["resta"]);
-                    if ($res) {
-                        exit(json_encode($res));
+                    $lastID = $this->nomina_model->AddReporte($data);
+                    if ($lastID) {
+                        if($n>1){
+                            if($cantidad>(int) $rn222){
+                                $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r2["resta"].' ');
+                            }
+                            if($cantidad<(int) $rn222){
+                                $this->cliError('La cantidad es menor que la cantidad del total de todos los bultos: '.$r2["resta"].' ');
+                            }
+
+                            for($i=0;$i<$n;$i++){
+                                if((int)$tbl_ordencorte_bultos_id[$i]==0){
+                                    $cant = $cantidad;
+                                }else{
+                                    $cantidadB = $this->nomina_model->existenciaBulto($tbl_ordencorte_bultos_id[$i]);
+                                    $r22 = (array) $cantidadB[0];
+                                    $cant = (int) $r22["resta"];
+                                }
+                                $data22 = array(
+                                    "tbl_reportediario_id" => $lastID,
+                                    "tbl_ordencorte_id" => $tbl_ordencorte_id,
+                                    "tbl_ordencorte_bultos_id" => 0,
+                                    "tbl_cordencorte_operaciones_id" => $tbl_ordencorte_bultos_id[$i],
+                                    "cantidad" => $cant
+                                );
+                                array_push($data2,$data22);
+                            }
+
+                        }else{
+                            if((int) $tbl_cordencorte_operaciones_id!=0){
+                                if($cantidad>(int) $rn222){
+                                    $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                                }
+                            }
+
+                            $nnewResta = $rn222 - $cantidad;
+
+                            for($i=0;$i<$n;$i++){
+                                $cant = $cantidad;
+                                $data22 = array(
+                                    "tbl_reportediario_id" => $lastID,
+                                    "tbl_ordencorte_id" => $tbl_ordencorte_id,
+                                    "tbl_ordencorte_bultos_id" => 0,
+                                    "tbl_cordencorte_operaciones_id" => $tbl_ordencorte_bultos_id[$i],
+                                    "cantidad" => $cant
+                                );
+                                array_push($data2,$data22);
+                            }
+
+                        }
+                        $res2 = $this->nomina_model->AddReporte2($lastID,$data2,$n,$tbl_ordencorte_bultos_id,$nnewResta);
+
+                        echo $lastID;
+                        exit($lastID);
+
                     } else {
-                        $this->cliError('No se pudo eliminar el usuario');
+                        $this->cliError('error');
                     }
                 }else{
 
-                    if($tbl_cordencorte_operaciones_id==99){
-                        $r2["resta"] = 0;
-                    }else{
-                        $restaO = $this->nomina_model->existenciaOp($tbl_cordencorte_operaciones_id);
-                        $r2 = (array) $restaO[0];
+                    $r222 = 0;
+                    $newResta = 0;
 
-                        if($cantidad>(int) $r2["resta"]){
-                            $this->cliError('La cantidad es mayor que la cantidad del número del Operaciones');
+                    if((int) $tbl_cordencorte_operaciones_id==0){
+                        $existeS01 = $this->nomina_model->ifExistS01($id_reporte);
+
+                        if($existeS01){
+                            $this->cliError('Ya existe la orden S01-SABADO  ');
                         }
+                    }else{
+                        $restaO = $this->nomina_model->existenciaOp($tbl_ordencorte_bultos_id);
+                        $r2 = (array) $restaO[0];
+                        $r222 = $r2["resta"];
                     }
 
-                    $res = $this->nomina_model->AddReporte2($id_reporte,$tbl_ordencorte_id,$tbl_ordencorte_bultos_id,$tbl_cordencorte_operaciones_id,$cantidad,$r2["resta"]);
+                    $data2 = array();
+                    $n = count($tbl_ordencorte_bultos_id);
+                    if($n>1){
+                        if($cantidad>(int) $r222){
+                            $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                        }
+                        if($cantidad<(int) $r222){
+                            $this->cliError('La cantidad es menor que la cantidad del total de todos los bultos: '.$r222.' ');
+                        }
+
+                        for($i=0;$i<$n;$i++){
+                            if((int)$tbl_ordencorte_bultos_id[$i]==0){
+                                $cant = $cantidad;
+                            }else{
+                                $cantidadB = $this->nomina_model->existenciaBulto($tbl_ordencorte_bultos_id[$i]);
+                                $r22 = (array) $cantidadB[0];
+                                $cant = (int) $r22["resta"];
+                            }
+                            $data22 = array(
+                                "tbl_reportediario_id" => $id_reporte,
+                                "tbl_ordencorte_id" => $tbl_ordencorte_id,
+                                "tbl_ordencorte_bultos_id" => 0,
+                                "tbl_cordencorte_operaciones_id" => $tbl_ordencorte_bultos_id[$i],
+                                "cantidad" => $cant
+                            );
+                            array_push($data2,$data22);
+                        }
+
+                    }else{
+
+                        if((int) $tbl_cordencorte_operaciones_id!=0){
+                            if($cantidad>(int) $r222){
+                                $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                            }
+                        }
+
+                        $newResta = $r222 - $cantidad;
+
+                        for($i=0;$i<$n;$i++){
+                            $cant = $cantidad;
+                            $data22 = array(
+                                "tbl_reportediario_id" => $id_reporte,
+                                "tbl_ordencorte_id" => $tbl_ordencorte_id,
+                                "tbl_ordencorte_bultos_id" => 0,
+                                "tbl_cordencorte_operaciones_id" => $tbl_ordencorte_bultos_id[$i],
+                                "cantidad" => $cant
+                            );
+                            array_push($data2,$data22);
+                        }
+
+                    }
+
+                    $res = $this->nomina_model->AddReporte2($id_reporte,$data2,$n,$tbl_ordencorte_bultos_id,$newResta);
                     if ($res) {
                         exit($id_reporte);
                     } else {
@@ -172,6 +328,178 @@ class Nomina extends CI_Controller{
                     }
                 }
 
+                break;
+            case 'deleteOperacion':
+                $data = $_POST['datos']; //obtiene el nombre de las columnas
+                $idReporteDetalle = $data["tbl_reportediario_detalle_id"];
+                $cantidad = $data["cantidad"];
+                $idOperacion = $data["tbl_cordencorte_operaciones_id"];
+                $idBulto = $data["tbl_ordencorte_bultos_id"];
+
+
+                if($idOperacion>0){
+                    $restaO = $this->nomina_model->existenciaOp($idOperacion);
+                    $r2 = (array) $restaO[0];
+                }else{
+                    $r2["resta"] = 0;
+                }
+
+
+                $sum = $cantidad + $r2["resta"];
+
+                $res = $this->nomina_model->deleteOperacion($idReporteDetalle,$idOperacion,$sum);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar el usuario');
+                }
+
+                break;
+            case 'reporteDiarioPDF':
+                $idReporte = filter_input(INPUT_GET, 'idReporte');
+                if (empty($idReporte)) {
+                    $this->cliError('Faltan datos', '0X001');
+                }
+
+                //obtener datos del modelo
+                $data = $this -> nomina_model->getDataReporte($idReporte);
+                $detalle = $this->nomina_model->getDetalleR($idReporte);
+                //$operaciones = $this->ordenCorte_model->getOperaciones($ordenCorte);
+
+                setlocale(LC_TIME, 'spanish');
+                //$inicio = strftime("%d de %B del %Y", strtotime($tadacorte[0]->fecha_orden));
+
+                $PDF_HEADER_TITLE="Titulo del PDF";
+
+
+
+                // create new PDF document
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+                // set document information
+                $pdf->SetCreator(PDF_CREATOR);
+                $pdf->SetAuthor('ESPANI S.A de C.V');
+                $pdf->SetTitle('MAQUILADORA ESPANI S.A. DE C.V.');
+
+                $PDF_HEADER_STRING="";
+
+
+
+                // set default header data
+                $pdf->SetHeaderData(PDF_HEADER_LOGO, 10, 'MAQUILADORA ESPANI S.A. DE C.V.', $PDF_HEADER_STRING, array(0,0,0), array(0,0,0));
+                $pdf->setFooterData(array(0,0,0), array(0,0,0));
+
+                // set header and footer fonts
+                $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+                $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+                // set default monospaced font
+                $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+                // set margins
+                $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+                $pdf->SetHeaderMargin(5);
+                $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+                // set auto page breaks
+                $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+                // set image scale factor
+                $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+                // set some language-dependent strings (optional)
+                if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+                    require_once(dirname(__FILE__).'/lang/eng.php');
+                    $pdf->setLanguageArray();
+                }
+
+                // ---------------------------------------------------------
+
+                // set default font subsetting mode
+                $pdf->setFontSubsetting(true);
+
+                // Set font
+                // dejavusans is a UTF-8 Unicode font, if you only need to
+                // print standard ASCII chars, you can use core fonts like
+                // helvetica or times to reduce file size.
+                $pdf->SetFont('dejavusans', '', 14, '', true);
+
+                // Add a page
+                // This method has several options, check the source code documentation for more information.
+                $pdf->AddPage();
+
+                // set text shadow effect
+                $pdf->SetFont('dejavusans', '', 10);
+
+                $tableDatos = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="150" class="bold">Fecha Reporte:</td>
+                        <td width="200">{$data[0]->fecha_reporte_i}</td>                        
+                    </tr>
+                    <tr>
+                        <td width="70" class="bold">PISO:</td>
+                        <td width="200">{$data[0]->departamento}</td>
+                        <td width="100" class="bold">NOMBRE:</td>
+                        <td width="230">{$data[0]->NombreC}</td>
+                    </tr>
+
+              </table>
+EOD;
+                $pdf->writeHTML($tableDatos, true, false, true, false, '');
+
+                $table = <<<EOD
+                                <style>                
+    td {
+        height: 30px;
+    }
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">CORTE</td>
+                        <td align="center" width="200">CLIENTE</td>
+                        <td align="center" width="100">BULTO</td>
+                        <td align="center" width="142">OPERACIÓN</td>
+                        <td align="center" width="100">CANTIDAD</td>
+                    </tr>
+                </thead>
+EOD;
+
+                $numItems = count($detalle);
+
+
+                for($i=0;$i<$numItems;$i++){
+                    $table .= '
+                        <tr>
+                            <td width="100" align="center">'.$detalle[$i]->numero_corte.'</td>
+                            <td width="200" align="center">'.$detalle[$i]->nombre_corto.'</td>
+                            <td width="100" align="center">'.$detalle[$i]->num_bulto.'</td>
+                            <td width="142" align="center">'.$detalle[$i]->operacion.'</td>
+                            <td width="100" align="center">'.$detalle[$i]->cantidad .'</td>
+                        </tr>
+                    ';
+                }
+
+
+                $table .= '</table>';
+
+                $pdf->writeHTML($table, true, false, true, false, '');
+
+
+                // Close and output PDF document
+                // This method has several options, check the source code documentation for more information.
+                $pdf->Output('OrdenCorte_Num'.$idReporte.'.pdf', 'I');
+
+                //============================================================+
+                // END OF FILE
+                //============================================================+
                 break;
             default: $this->cliError();
         }

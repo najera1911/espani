@@ -15,27 +15,39 @@ class Nomina_model extends CI_Model{
         return $this->db->get("empleados_view")->result();
     }
 
+    function getDataReporteProd($idReporte){
+        $this->db->select("A.*, B.NombreC, B.departamento, B.puesto");
+        $this->db->from("tbl_reportediario A");
+        $this->db->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
+        $this->db->where("tbl_reporteDiario_id",$idReporte);
+        return $this->db->get()->result();
+    }
+
     function getCortes(){
-        $sql="SELECT DISTINCT A.tbl_OrdenCorte_id as id, concat(A.numero_corte,' - ',C.nombre_corto) as nombre,'' as txt 
+        $sql="SELECT A.tbl_OrdenCorte_id as id, concat(A.numero_corte,' - ',C.nombre_corto) as nombre,'' as txt 
 FROM tbl_ordenCorte A
-INNER join tbl_ordencorte_bultos B on a.tbl_OrdenCorte_id=B.tbl_ordencorte_id
+INNER join tbl_ordencorte_operaciones B on a.tbl_OrdenCorte_id=B.tbl_ordencorte_id
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id
+WHERE A.validado = 1
 GROUP by A.tbl_OrdenCorte_id
 HAVING sum(B.resta)>0";
         return $this->db->query($sql)->result();
     }
 
-    function getBultos($idCorte){
-        $this->db->select("tbl_OrdenCorte_bultos_id as id, concat('Bulto ', num_bulto) as nombre,'' as txt");
-        $this->db->where("tbl_ordencorte_id",$idCorte)->where("resta>",0);
-        return $this->db->get("tbl_ordencorte_bultos")->result();
+    function getBultos($idCorte,$idOper){
+        $this->db->select("tbl_OrdenCorte_operaciones as id, concat(num_bulto, '  (Restan  ',B.resta,' )') as nombre, '' as txt");
+        $this->db->from("tbl_ordencorte_bultos A");
+        $this->db->join("tbl_ordencorte_operaciones B","A.tbl_OrdenCorte_bultos_id=B.cat_ordencorte_bultos_id");
+        $this->db->where("cat_operaciones_id",$idOper)->where("B.tbl_ordencorte_id",$idCorte)->where("B.resta>",0);
+        return $this->db->get()->result();
     }
 
-    function getOperaciones($idCorte,$idBulto){
-        $this->db->select("A.tbl_ordencorte_operaciones as id, concat(B.operacion,' - ',B.descripcion,' - RESTAN ',A.resta) as nombre,'' as txt");
+    function getOperaciones($idCorte){
+        $this->db->select("A.cat_operaciones_id as id, concat(B.operacion,' - ',B.descripcion,' - RESTAN ', sum(A.resta)) as nombre,'' as txt");
         $this->db->from("tbl_ordencorte_operaciones A");
         $this->db->join("cat_operaciones B","A.cat_operaciones_id=B.cat_operaciones_id");
-        $this->db->where("tbl_ordencorte_id",$idCorte)->where('cat_ordencorte_bultos_id',$idBulto)->where("resta>",0);
+        $this->db->where("tbl_ordencorte_id",$idCorte)->where("resta>",0);
+        $this->db->group_by('B.operacion');
         $query1 = $this->db->get()->result();
 
         $this->db->select("0 as id, concat(operacion,' - ', descripcion) as nombre, '' as txt");
@@ -48,30 +60,71 @@ HAVING sum(B.resta)>0";
         return $query;
     }
 
-    function get_ReporteDiario($start,$length,$idEmpleado,$fecha_i,$fecha_f){
-        $sql="SELECT tbl_reporteDiario_id, A.cat_rh_empleado_id, B.NombreC, B.puesto, b.departamento, A.fecha_reporte_i, A.fecha_reporte_f
+    function get_ReporteDiario($start,$length,$idEmpleado,$fecha_i){
+
+        if($idEmpleado=='' and $fecha_i!=''){
+            $sql="SELECT tbl_reporteDiario_id, A.cat_rh_empleado_id, B.NombreC, B.puesto, b.departamento, A.fecha_reporte_i, A.fecha_reporte_f
 FROM tbl_reportediario A
 INNER JOIN empleados_view B on A.cat_rh_empleado_id = B.cat_rh_empleado_id
-where A.cat_rh_empleado_id = ? and A.fecha_reporte_i BETWEEN ? and ? LIMIT ?, ?";
-        return $this->db->query($sql, array((int) $idEmpleado, $fecha_i, $fecha_f,(int) $start, (int) $length))->result();
+where A.fecha_reporte_i=? LIMIT ?, ?";
+            return $this->db->query($sql, array($fecha_i, (int) $start, (int) $length))->result();
+        }else if($fecha_i=='' and $idEmpleado!=''){
+            $sql="SELECT tbl_reporteDiario_id, A.cat_rh_empleado_id, B.NombreC, B.puesto, b.departamento, A.fecha_reporte_i, A.fecha_reporte_f
+FROM tbl_reportediario A
+INNER JOIN empleados_view B on A.cat_rh_empleado_id = B.cat_rh_empleado_id
+where A.cat_rh_empleado_id = ? LIMIT ?, ?";
+            return $this->db->query($sql, array((int) $idEmpleado, (int) $start, (int) $length))->result();
+        }else{
+            $sql="SELECT tbl_reporteDiario_id, A.cat_rh_empleado_id, B.NombreC, B.puesto, b.departamento, A.fecha_reporte_i, A.fecha_reporte_f
+FROM tbl_reportediario A
+INNER JOIN empleados_view B on A.cat_rh_empleado_id = B.cat_rh_empleado_id
+where A.cat_rh_empleado_id = ? and A.fecha_reporte_i=? LIMIT ?, ?";
+            return $this->db->query($sql, array((int) $idEmpleado, $fecha_i, (int) $start, (int) $length))->result();
+        }
     }
 
     function getReporte($tbl_reportediario_id,$start,$length){
-        $sql="SELECT B.numero_corte, C.nombre_corto, F.num_bulto, 
-IFNULL(E.operacion,'S01') as operacion, IFNULL(E.descripcion,'SABADOS') as descripcion, A.cantidad
+        if($length>=0){
+            $sql="SELECT A.tbl_reportediario_detalle_id, B.numero_corte, C.nombre_corto, F.num_bulto, 
+IFNULL(E.operacion,'S01') as operacion, IFNULL(E.descripcion,'SABADOS') as descripcion, A.cantidad, 
+A.tbl_cordencorte_operaciones_id, A.tbl_ordencorte_bultos_id
 FROM tbl_reportediario_detalle A
 INNER JOIN tbl_ordencorte B on A.tbl_ordencorte_id=B.tbl_OrdenCorte_id
 INNER JOIN tbl_clientes C on B.cat_clientes_id=C.tbl_clientes_id
 LEFT JOIN tbl_ordencorte_operaciones D on A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones
 LEFT JOIN cat_operaciones E on D.cat_operaciones_id = E.cat_operaciones_id
-INNER JOIN tbl_ordencorte_bultos F on A.tbl_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id
+LEFT JOIN tbl_ordencorte_bultos F on D.cat_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id
 where A.tbl_reportediario_id = ? LIMIT ?, ?";
-        return $this->db->query($sql, array((int) $tbl_reportediario_id, (int) $start, (int) $length))->result();
+            return $this->db->query($sql, array((int) $tbl_reportediario_id, (int) $start, (int) $length))->result();
+        }else{
+            $sql="SELECT A.tbl_reportediario_detalle_id, B.numero_corte, C.nombre_corto, F.num_bulto, 
+IFNULL(E.operacion,'S01') as operacion, IFNULL(E.descripcion,'SABADOS') as descripcion, A.cantidad, 
+A.tbl_cordencorte_operaciones_id, A.tbl_ordencorte_bultos_id
+FROM tbl_reportediario_detalle A
+INNER JOIN tbl_ordencorte B on A.tbl_ordencorte_id=B.tbl_OrdenCorte_id
+INNER JOIN tbl_clientes C on B.cat_clientes_id=C.tbl_clientes_id
+LEFT JOIN tbl_ordencorte_operaciones D on A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones
+LEFT JOIN cat_operaciones E on D.cat_operaciones_id = E.cat_operaciones_id
+LEFT JOIN tbl_ordencorte_bultos F on D.cat_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id
+where A.tbl_reportediario_id = ?";
+            return $this->db->query($sql, array((int) $tbl_reportediario_id))->result();
+        }
     }
 
-    function ifExistOper($cat_rh_empleado_id,$fecha_reporte_i,$fecha_reporte_f){
-        $this->db->where('cat_rh_empleado_id',$cat_rh_empleado_id)->where('fecha_reporte_i>=',$fecha_reporte_i)->where('fecha_reporte_i<=',$fecha_reporte_i);
+    function ifExistOper($cat_rh_empleado_id,$fecha_reporte_i){
+        $this->db->where('cat_rh_empleado_id',$cat_rh_empleado_id)->where('fecha_reporte_i',$fecha_reporte_i);
         $r = $this->db->get('tbl_reportediario');
+
+        if($r->num_rows()>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+
+    function ifExistS01($id_reporte){
+        $this->db->where('tbl_reportediario_id',$id_reporte)->where('tbl_cordencorte_operaciones_id',0);
+        $r = $this->db->get('tbl_reportediario_detalle');
 
         if($r->num_rows()>0){
             return TRUE;
@@ -86,49 +139,26 @@ where A.tbl_reportediario_id = ? LIMIT ?, ?";
         return $r;
     }
 
-    function existenciaOp($tbl_cordencorte_operaciones_id){
-        $this->db->select('resta')->where('tbl_OrdenCorte_operaciones',$tbl_cordencorte_operaciones_id);
+    function existenciaOp($data){
+        $this->db->select('sum(resta) as resta');
+        $this->db->where_in('tbl_OrdenCorte_operaciones', $data);
+        $this->db->group_by('cat_operaciones_id');
         $r = $this->db->get("tbl_ordencorte_operaciones")->result();
         return $r;
     }
 
-    function AddReporte($data,$tbl_ordencorte_id,$tbl_ordencorte_bultos_id,$tbl_cordencorte_operaciones_id,$cantidad,$restaO){
+    function existenciaBulto($bultoId){
+        $this->db->select('resta');
+        $this->db->where('tbl_OrdenCorte_operaciones', $bultoId);
+        $r = $this->db->get("tbl_ordencorte_operaciones")->result();
+        return $r;
+    }
+
+    function AddReporte($data){
         $this->db->trans_begin();
 
         $this->db->insert('tbl_reportediario', $data);
         $insert_id = $this->db->insert_id();
-
-        $data2 = array(
-            "tbl_reportediario_id" => $insert_id,
-            "tbl_ordencorte_id" => $tbl_ordencorte_id,
-            "tbl_ordencorte_bultos_id" => $tbl_ordencorte_bultos_id,
-            "tbl_cordencorte_operaciones_id" => $tbl_cordencorte_operaciones_id,
-            "cantidad" => $cantidad
-        );
-
-        $this->db->insert('tbl_reportediario_detalle', $data2);
-
-        if((int)$tbl_cordencorte_operaciones_id!=99){
-            $r2= (int) $restaO - (int) $cantidad;
-            $data4 = array(
-                'resta' => $r2,
-            );
-
-            $this->db->where('tbl_OrdenCorte_operaciones', $tbl_cordencorte_operaciones_id);
-            $this->db->update('tbl_ordencorte_operaciones', $data4);
-
-            $this->db->select('sum(resta)')->where('cat_ordencorte_bultos_id',$tbl_ordencorte_bultos_id);
-            $r = $this->db->get("tbl_ordencorte_operaciones")->result();
-
-            if($r===0){
-                $data3 = array(
-                    'resta' => 0,
-                );
-
-                $this->db->where('tbl_OrdenCorte_bultos_id', $tbl_ordencorte_bultos_id);
-                $this->db->update('tbl_ordencorte_bultos', $data3);
-            }
-        }
 
         if ($this->db->trans_status() === FALSE)
         {
@@ -142,40 +172,33 @@ where A.tbl_reportediario_id = ? LIMIT ?, ?";
         }
     }
 
-    function AddReporte2($id_reporte,$tbl_ordencorte_id,$tbl_ordencorte_bultos_id,$tbl_cordencorte_operaciones_id,$cantidad,$restaO){
+    function AddReporte2($id_reporte, $data,$n,$tbl_ordencorte_bultos_id,$newResta = 0){
         $this->db->trans_begin();
 
-        $data2 = array(
-            "tbl_reportediario_id" => $id_reporte,
-            "tbl_ordencorte_id" => $tbl_ordencorte_id,
-            "tbl_ordencorte_bultos_id" => $tbl_ordencorte_bultos_id,
-            "tbl_cordencorte_operaciones_id" => $tbl_cordencorte_operaciones_id,
-            "cantidad" => $cantidad
-        );
+        $this->db->insert_batch('tbl_reportediario_detalle', $data);
 
-        $this->db->insert('tbl_reportediario_detalle', $data2);
-
-        if((int)$tbl_cordencorte_operaciones_id!=99){
-            $r2= (int) $restaO - (int) $cantidad;
-            $data4 = array(
-                'resta' => $r2,
-            );
-
-            $this->db->where('tbl_OrdenCorte_operaciones', $tbl_cordencorte_operaciones_id);
-            $this->db->update('tbl_ordencorte_operaciones', $data4);
-
-            $this->db->select('sum(resta)')->where('cat_ordencorte_bultos_id',$tbl_ordencorte_bultos_id);
-            $r = $this->db->get("tbl_ordencorte_operaciones")->result();
-
-            if($r===0){
-                $data3 = array(
-                    'resta' => 0,
-                );
-
-                $this->db->where('tbl_OrdenCorte_bultos_id', $tbl_ordencorte_bultos_id);
-                $this->db->update('tbl_ordencorte_bultos', $data3);
+        if($n==1){
+            for($i=0;$i<$n;$i++){
+                if((int)$tbl_ordencorte_bultos_id[$i]!=0){
+                    $data4 = array(
+                        'resta' => $newResta,
+                    );
+                    $this->db->where('tbl_OrdenCorte_operaciones', $tbl_ordencorte_bultos_id[$i]);
+                    $this->db->update('tbl_ordencorte_operaciones', $data4);
+                }
+            }
+        }else{
+            for($i=0;$i<$n;$i++){
+                if((int)$tbl_ordencorte_bultos_id[$i]!=0){
+                    $data4 = array(
+                        'resta' => 0,
+                    );
+                    $this->db->where('tbl_OrdenCorte_operaciones', $tbl_ordencorte_bultos_id[$i]);
+                    $this->db->update('tbl_ordencorte_operaciones', $data4);
+                }
             }
         }
+
 
         if ($this->db->trans_status() === FALSE)
         {
@@ -187,6 +210,51 @@ where A.tbl_reportediario_id = ? LIMIT ?, ?";
             $this->db->trans_commit();
             return $id_reporte;
         }
+    }
+
+    function getDataReporte($idReporte){
+        $this->db->select("A.*, B.NombreC, B.departamento");
+        $this->db->from("tbl_reportediario A")->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
+        $this->db->where('tbl_reporteDiario_id',$idReporte);
+        return $this->db->get()->result();
+    }
+
+    function getDetalleR($idReporte){
+        $this->db->select("A.tbl_reportediario_id, B.numero_corte, C.nombre_corto, F.num_bulto, E.operacion, E.descripcion, A.cantidad");
+        $this->db->from("tbl_reportediario_detalle A");
+        $this->db->join("tbl_ordencorte B","A.tbl_ordencorte_id=B.tbl_OrdenCorte_id");
+        $this->db->join("tbl_clientes C","B.cat_clientes_id=C.tbl_clientes_id");
+        $this->db->join("tbl_ordencorte_operaciones D","A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones");
+        $this->db->join("cat_operaciones E","D.cat_operaciones_id = E.cat_operaciones_id");
+        $this->db->join("tbl_ordencorte_bultos F","A.tbl_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id");
+        $this->db->where('tbl_reportediario_id',$idReporte);
+        $this->db->order_by("B.numero_corte, E.cat_operaciones_id, F.num_bulto", "asc");
+        $query1 = $this->db->get()->result();
+
+        $this->db->select("A.tbl_reportediario_id, '' AS numero_corte, '' AS nombre_corto, '' AS num_bulto, B.operacion, B.descripcion, A.cantidad");
+        $this->db->from("tbl_reportediario_detalle A");
+        $this->db->join("cat_operaciones B","B.operacion='S01'");
+        $this->db->where("tbl_reportediario_id",$idReporte)->where("tbl_cordencorte_operaciones_id",0);
+        $query2 = $this->db->get()->result();
+
+        $query = array_merge($query1, $query2);
+
+
+        return $query;
+    }
+
+    function deleteOperacion($idReporteDetalle,$idOperacion,$sum){
+
+        $this->db->delete('tbl_reportediario_detalle', array('tbl_reportediario_detalle_id' => $idReporteDetalle));
+
+        $data = array(
+            'resta' => $sum
+        );
+        $this->db->where('tbl_OrdenCorte_operaciones', $idOperacion);
+        $res = $this->db->update('tbl_ordencorte_operaciones', $data);
+
+        return $res;
+
     }
 
 }

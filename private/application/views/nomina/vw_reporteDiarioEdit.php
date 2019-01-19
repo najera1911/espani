@@ -11,9 +11,9 @@ $this->load->view("plantilla/encabezado", $data);
 ?>
 
 <section class="ml-5 mr-5" id="Operaciones">
-    <div class="row mt-5 mb-5">
+    <div class="row mt-5 mb-3">
         <div class="col text-center text-uppercase">
-            <h3 class="txt-Subtitulos">Reporte Diario de Producción Nuevo</h3>
+            <h3 class="txt-Subtitulos">Editar Reporte Diario de Producción</h3>
         </div>
     </div>
     <div class="row pb-5 pt-3">
@@ -26,10 +26,10 @@ $this->load->view("plantilla/encabezado", $data);
                     <label for="txtFchaInicio">Fecha Reporte</label>
                     <input type="text" class="form-control" id="txtFchaInicio" name="txtFchaInicio" required>
                 </div>
-                <!--                <div class="form-group col-3 text-uppercase">-->
-                <!--                    <label for="txtFchaFin">Fecha Final Reporte</label>-->
-                <!--                    <input type="text" class="form-control" id="txtFchaFin" name="txtFchaFin" required>-->
-                <!--                </div>-->
+<!--                <div class="form-group col-3 text-uppercase">-->
+<!--                    <label for="txtFchaFin">Fecha Final Reporte</label>-->
+<!--                    <input type="text" class="form-control" id="txtFchaFin" name="txtFchaFin" required>-->
+<!--                </div>-->
                 <div class="form-group col-6">
                     <label for="cmbCorte">Corte</label>
                     <select class="form-control js-example-basic-single" id="cmbCorte" name="cmbCorte" required></select>
@@ -83,7 +83,7 @@ $this->load->view("plantilla/encabezado", $data);
     let MY = {};
 
     $(document).ready(function (){
-        let idEmpleado = <?php echo $id ?>,
+        let idReporte = <?php echo $id ?>,
             nombreEmpleado = $("#nombre"),
             $tblDatos2 = $("#tblDatos2"),
             txtFchaInicio = $("#txtFchaInicio"),
@@ -110,11 +110,11 @@ $this->load->view("plantilla/encabezado", $data);
             format: 'Y/m/d'
         });
 
-        // txtFchaFin.Zebra_DatePicker({
-        //     show_icon: true,
-        //     format: 'Y/m/d',
-        //     direction: true // change 0 to true
-        // });
+        /*txtFchaFin.Zebra_DatePicker({
+            show_icon: true,
+            format: 'Y/m/d',
+            direction: true // change 0 to true
+        });*/
 
         function cargar_catalogo(url, data) {
             return $.getJSON(url, data, function (e) {
@@ -181,10 +181,13 @@ $this->load->view("plantilla/encabezado", $data);
             }
         });
 
-        $.post('<?php echo site_url("/nomina/get/dataEmpleado")?>', { idEmpleado: idEmpleado })
+        $.post('<?php echo site_url("/nomina/get/dataReporteProd")?>', { idReporte: idReporte })
             .done(function( data ) {
                 let obj = JSON.parse(data);
-                nombreEmpleado.html('Nombre: '+ obj[0].NombreC + '   '+ obj[0].departamento +'   Puesto: ' + obj[0].puesto);
+                let d = obj[0];
+                nombreEmpleado.html('Nombre: '+ d.NombreC + '   '+ d.departamento +'   Puesto: ' + d.puesto);
+                txtFchaInicio.data('Zebra_DatePicker').set_date(new Date(d.fecha_reporte_i));
+
             });
 
         getReporte();
@@ -201,7 +204,7 @@ $this->load->view("plantilla/encabezado", $data);
                 ajax: {
                     "url": "<?php echo site_url('/nomina/get/getReporte')?>",
                     "type": "POST",
-                    "data": { "tbl_reportediario_id": id_reporte }
+                    "data": { "tbl_reportediario_id": idReporte }
                 },
                 columns: [
                     {"title": "Corte", "data": "numero_corte", "className": "text-center"},
@@ -289,8 +292,7 @@ $this->load->view("plantilla/encabezado", $data);
 
         function setDatos() {
             let data = frmReporte.serializeArray();
-            data.push({name: 'idEmpleado', value: idEmpleado});
-            data.push({name: 'id_reporte', value: id_reporte});
+            data.push({name: 'id_reporte', value: idReporte});
 
             $.ajax({
                 type: 'post',
@@ -298,15 +300,15 @@ $this->load->view("plantilla/encabezado", $data);
                 data: data,
                 success: function (e) {
                     console.log(e);
-                        toastr.success("Dato Guardado");
-                        cmbCorte.html('');
-                        cmbBulto.html('');
-                        cmbOper.html('');
-                        txtCantidad.val('');
-                        cargar_catalogo_select('<?php echo site_url("/nomina/get/getCortes")?>', {}, cmbCorte, 'Corte');
-                        id_reporte = e;
-                        $tblDatos2.dataTable().fnDestroy();
-                        getReporte();
+                    toastr.success("Dato Guardado");
+                    cmbCorte.html('');
+                    cmbBulto.html('');
+                    cmbOper.html('');
+                    txtCantidad.val('');
+                    cargar_catalogo_select('<?php echo site_url("/nomina/get/getCortes")?>', {}, cmbCorte, 'Corte');
+                    id_reporte = e;
+                    $tblDatos2.dataTable().fnDestroy();
+                    getReporte();
 
                 },
                 error: function (e) {
@@ -325,6 +327,7 @@ $this->load->view("plantilla/encabezado", $data);
 
     });
 </script>
+
 <?php
 $data['scripts'] = array(
     "jqw/localized-es.js",

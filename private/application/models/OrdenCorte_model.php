@@ -10,7 +10,14 @@ class OrdenCorte_model extends CI_Model{
 
     function getModelosCorte(){
         $this->db->select("cat_modelos_cortes_id as id, descripcion as nombre,'' as txt")->where('estatus',1);
-        return $this->db->get("cat_modelos_cortes")->result();
+        $query1 = $this->db->get("cat_modelos_cortes")->result();
+
+        $this->db->select("0 as id, 'Nuevo Modelo' as nombre,'' as txt");
+        $query2 = $this->db->get()->result();
+
+        $query = array_merge($query2, $query1);
+
+        return $query;
     }
 
     function getFiltroCorte(){
@@ -37,6 +44,36 @@ class OrdenCorte_model extends CI_Model{
         $this->db->get("tblmodelos_temp");
     }
 
+    function datosModelosCortesDetalleEditLimit($start,$length,$tbl_ordencorte_id){
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
+
+        $this->db->distinct();
+        $this->db->select("A.cat_operaciones_id, C.descripcion as filtro_corte, B.operacion as clave, B.descripcion as operacion, '-' as nombre_modelo");
+        $this->db->from("tbl_ordencorte_operaciones A");
+        $this->db->join("cat_operaciones B","A.cat_operaciones_id=B.cat_operaciones_id");
+        $this->db->join("cat_tipo_corte C","B.cat_tipo_corte_id = C.cat_tipo_corte_id");
+        $this->db->where("tbl_ordencorte_id",$tbl_ordencorte_id);
+        $this->db->order_by('C.cat_tipo_corte_id, clave');
+        return $this->db->get()->result();
+    }
+
+    function getOperacionEditSearch($start,$length,$value, $column,$tbl_ordencorte_id){
+        $this->db->like('B.operacion', $value);
+        if($length>=0){
+            $this->db->limit($length,$start);
+        }
+        $this->db->distinct();
+        $this->db->select("A.cat_operaciones_id, C.descripcion as filtro_corte, B.operacion as clave, B.descripcion as operacion, '-' as nombre_modelo");
+        $this->db->from("tbl_ordencorte_operaciones A");
+        $this->db->join("cat_operaciones B","A.cat_operaciones_id=B.cat_operaciones_id");
+        $this->db->join("cat_tipo_corte C","B.cat_tipo_corte_id = C.cat_tipo_corte_id");
+        $this->db->where("tbl_ordencorte_id",$tbl_ordencorte_id);
+        $this->db->order_by('C.cat_tipo_corte_id, clave');
+        return $this->db->get()->result();
+    }
+
     public function datosModelosCortesDetalleLimit($start,$length){
         if($length>=0){
             $this->db->limit($length,$start);
@@ -61,9 +98,62 @@ class OrdenCorte_model extends CI_Model{
         return $res;
     }
 
+    function deleteOperacionEdit($data,$tbl_ordencorte_id){
+        $this->db->where('tbl_ordencorte_id', $tbl_ordencorte_id)->where('cat_operaciones_id',$data);
+        $res= $this->db->delete('tbl_ordencorte_operaciones');
+
+        return $res;
+    }
+
+    function validarOrdenCorte($data){
+        $data2 = array(
+            "validado" => true,
+        );
+
+        $this->db->where('tbl_OrdenCorte_id', $data );
+        $res= $this->db->update('tbl_ordencorte', $data2);
+
+        return $res;
+    }
+
+    function deleteOrdenCorte($data){
+        $this->db->trans_begin();
+
+        $this->db->where('tbl_ordencorte_id', $data);
+        $this->db->delete('tbl_ordencorte_operaciones');
+
+        $this->db->where('tbl_ordencorte_id', $data);
+        $this->db->delete('tbl_ordencorte_bultos');
+
+        $this->db->where('tbl_OrdenCorte_id', $data);
+        $this->db->delete('tbl_ordencorte');
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
     function ifExistOper($data){
         $this->db->where('cat_operaciones_id',$data);
         $r = $this->db->get('tblmodelos_temp');
+
+        if($r->num_rows()>0){
+            return true;
+        }else{
+            return FALSE;
+        }
+    }
+
+    function ifExistOperEdit($data,$tbl_ordencorte_id){
+        $this->db->where('cat_operaciones_id',$data)->where('tbl_ordencorte_id',$tbl_ordencorte_id);
+        $r = $this->db->get('tbl_ordencorte_operaciones');
 
         if($r->num_rows()>0){
             return true;
@@ -80,6 +170,34 @@ where cat_operaciones_id=?';
         $res = $this->db->query($sql, array($cat_modelos_cortes_id,$model,$data));
 
         return $res;
+    }
+
+    function AddOperacionEdit($data,$tbl_ordencorte_id,$idBultos){
+        $this->db->trans_begin();
+        $longitud = count($idBultos);
+        for($i=0; $i<$longitud; $i++){
+            $data2 = array(
+                "tbl_ordencorte_id" => $tbl_ordencorte_id,
+                "cat_ordencorte_bultos_id" => (int) $idBultos[$i]->tbl_OrdenCorte_bultos_id,
+                "cat_operaciones_id" => $data,
+                "cantidad" => 0,
+                "resta" => 0
+            );
+
+            $this->db->insert('tbl_ordencorte_operaciones', $data2);
+        }
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+
     }
 
     function ifExistNumOrden($txtNunOrden){
@@ -138,7 +256,13 @@ from tblmodelos_temp';
         }
     }
 
-    function EditModeloCorte($data, $dataBultos, $idOrden){
+    function getIdBultos($idOrden){
+        $this->db->select("tbl_OrdenCorte_bultos_id");
+        $this->db->where("tbl_ordencorte_id",$idOrden);
+        return $this->db->get('tbl_ordencorte_bultos')->result();
+    }
+
+    function EditModeloCorte($data, $dataBultos, $idOrden, $idBultos){
         if(empty($idOrden)){
             return FALSE;
         }
@@ -148,33 +272,28 @@ from tblmodelos_temp';
         $this->db->where('tbl_OrdenCorte_id', $idOrden);
         $this->db->update('tbl_ordencorte',$data);
 
-        $this->db->delete('tbl_ordencorte_bultos', array('tbl_ordencorte_id' => $idOrden));
-        $this->db->delete('tbl_ordencorte_operaciones', array('tbl_ordencorte_id' => $idOrden));
-
-        $dataDetalle= array();
         $longitud = count($dataBultos);
-
-        $sum = 0;
 
         for($i=0; $i<$longitud; $i++)
         {
 
             $data2 = array(
-                "tbl_ordencorte_id" => $idOrden,
                 "num_bulto" => (int) $dataBultos[$i]['num_bulto'],
                 "tallas" => (int) $dataBultos[$i]['tallas'],
                 "cantidad" => (int) $dataBultos[$i]['cantidad'],
                 "resta" => (int) $dataBultos[$i]['resta']
             );
 
-            $this->db->insert('tbl_ordencorte_bultos', $data2);
-            $insert_id2 = $this->db->insert_id();
+            $this->db->where('tbl_OrdenCorte_bultos_id', (int) $idBultos[$i]->tbl_OrdenCorte_bultos_id );
+            $this->db->update('tbl_ordencorte_bultos', $data2);
 
-            $sql='INSERT INTO tbl_ordencorte_operaciones (tbl_ordencorte_id, cat_ordencorte_bultos_id, cat_operaciones_id, cantidad, resta)
-SELECT ? as tbl_ordencorte_id, ? as cat_ordencorte_bultos_id ,cat_operaciones_id, ? as cantidad, ? as resta 
-from tblmodelos_temp';
+            $data3 = array(
+                "cantidad" => (int) $dataBultos[$i]['cantidad'],
+                "resta" => (int) $dataBultos[$i]['resta']
+            );
 
-            $this->db->query($sql, array($idOrden, $insert_id2 ,(int) $dataBultos[$i]['resta'],(int) $dataBultos[$i]['resta']));
+            $this->db->where('cat_ordencorte_bultos_id', (int) $idBultos[$i]->tbl_OrdenCorte_bultos_id )->where('tbl_ordencorte_id',$idOrden);
+            $this->db->update('tbl_ordencorte_operaciones', $data3);
 
         }
 
@@ -195,7 +314,8 @@ from tblmodelos_temp';
         if($length>=0){
             $sql='SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
 A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
-sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes, A.validado
+FROM tbl_ordencorte A 
 INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
 GROUP by A.tbl_OrdenCorte_id LIMIT ?, ?';
@@ -203,7 +323,8 @@ GROUP by A.tbl_OrdenCorte_id LIMIT ?, ?';
         }else{
             $sql='SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
 A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
-sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes, A.validado
+FROM tbl_ordencorte A 
 INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
 GROUP by A.tbl_OrdenCorte_id';
@@ -214,7 +335,8 @@ GROUP by A.tbl_OrdenCorte_id';
     function get_OrdenesCorteViewSearch($value){
         $sql="SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
 A.modelo, A.colores, COUNT(B.num_bulto) as num_bultos, sum(B.cantidad) as cantidad, 
-sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes FROM tbl_ordencorte A 
+sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes, A.validado
+FROM tbl_ordencorte A 
 INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 and A.numero_corte = ?
 GROUP by A.tbl_OrdenCorte_id";
@@ -240,7 +362,7 @@ GROUP by A.tbl_OrdenCorte_id";
         $this->db->join("cat_operaciones B","A.cat_operaciones_id=B.cat_operaciones_id");
         $this->db->join("cat_tipo_corte C","B.cat_tipo_corte_id=C.cat_tipo_corte_id");
         $this->db->where('tbl_ordencorte_id',$ordenCorte);
-        $this->db->order_by("cat_tipo_corte_id", "asc");
+        $this->db->order_by("cat_tipo_corte_id, operacion", "asc");
         return $this->db->get()->result();
     }
 

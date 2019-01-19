@@ -5,7 +5,6 @@ $data['title'] = ":: Reporte Diario";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",
-    "../datatables/datatables.min.css",
     "../select2/css/select2.min.css"
 );
 $this->load->view("plantilla/encabezado", $data);
@@ -23,13 +22,13 @@ $this->load->view("plantilla/encabezado", $data);
             <select class="form-control js-example-basic-single" id="cmbEmpleado" name="cmbEmpleado" required></select>
         </div>
         <div class="form-group col-md-2 col-6 text-uppercase">
-            <label for="txtFchaInicio">Fecha Inicio Reporte</label>
+            <label for="txtFchaInicio">Fecha Reporte</label>
             <input type="text" class="form-control" id="txtFchaInicio" name="txtFchaInicio" required>
         </div>
-        <div class="form-group col-md-2 col-6 text-uppercase">
-            <label for="txtFchaFin">Fecha Final Reporte</label>
-            <input type="text" class="form-control" id="txtFchaFin" name="txtFchaFin" required>
-        </div>
+<!--        <div class="form-group col-md-2 col-6 text-uppercase">-->
+<!--            <label for="txtFchaFin">Fecha Final Reporte</label>-->
+<!--            <input type="text" class="form-control" id="txtFchaFin" name="txtFchaFin" required>-->
+<!--        </div>-->
         <div class="form-group col-md-2 col-6 text-uppercase">
             <br>
             <button type="button" class="btn btn-secondary pl-2" id="buscarReporte"><i class="fas fa-search"></i>  Buscar</button>
@@ -58,7 +57,7 @@ $this->load->view("plantilla/encabezado", $data);
     $(document).ready(function (){
         let cmbEmpleado = $("#cmbEmpleado"),
             txtFchaInicio = $("#txtFchaInicio"),
-            txtFchaFin = $("#txtFchaFin"),
+            //txtFchaFin = $("#txtFchaFin"),
             buscarReporte = $("#buscarReporte"),
             $tblDatos2 = $("#tblDatos2"),
             $tblDatos3 = $("#tblDatos3"),
@@ -69,23 +68,20 @@ $this->load->view("plantilla/encabezado", $data);
         cmbEmpleado.select2();
         txtFchaInicio.Zebra_DatePicker({
             show_icon: true,
-            format: 'Y/m/d',
-            inline: true,
-            pair: $('#txtFchaFin'),
-            firstDay: 1
+            format: 'Y/m/d'
         });
 
-        txtFchaFin.Zebra_DatePicker({
-            show_icon: true,
-            format: 'Y/m/d',
-            direction: true // change 0 to true
-        });
+        // txtFchaFin.Zebra_DatePicker({
+        //     show_icon: true,
+        //     format: 'Y/m/d',
+        //     direction: true // change 0 to true
+        // });
 
-        txtFchaInicio.on('blur change',function () {
-            let mydate = new Date(txtFchaInicio.val());
-            console.log(txtFchaInicio.val());
-            txtFchaFin.data('Zebra_DatePicker').set_date(txtFchaInicio.val());
-        });
+        // txtFchaInicio.on('blur change',function () {
+        //     let mydate = new Date(txtFchaInicio.val());
+        //     console.log(txtFchaInicio.val());
+        //     txtFchaFin.data('Zebra_DatePicker').set_date(txtFchaInicio.val());
+        // });
 
         function cargar_catalogo(url, data) {
             return $.getJSON(url, data, function (e) {
@@ -142,19 +138,22 @@ $this->load->view("plantilla/encabezado", $data);
                 ajax: {
                     "url": "<?php echo site_url('/nomina/get/getReporteDiarios')?>",
                     "type": "POST",
-                    "data": { "idEmpleado": cmbEmpleado.val(), "fecha_i": txtFchaInicio.val(), "fecha_f": txtFchaFin.val() }
+                    "data": { "idEmpleado": cmbEmpleado.val(), "fecha_i": txtFchaInicio.val()}
                 },
                 columns: [
                     {"title": "Nombre Empleado", "data": "NombreC", "className": "text-center"},
                     {"title": "Piso", "data": "departamento", "className": "text-center"},
                     {"title": "Puesto", "data": "puesto", "className": "text-center"},
-                    {"title": "Fecha reporte inicial", "data": "fecha_reporte_i", "className": "text-center"},
-                    {"title": "Fecha reporte final", "data": "fecha_reporte_f", "className": "text-center"},
-                    {
-                        "title": "Editar", data: null,
-                        render: function (data, type, row) {
-                            return '<button class="btn btn-danger btn-sm">Editar</button>';
-                        }, "className": "text-center"
+                    {"title": "Fecha reporte", "data": "fecha_reporte_i", "className": "text-center"},
+                    { "title": "Ver", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-info btn-sm">Ver</button>';
+                        }
+                    },
+                    { "title": "Editar", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-success btn-sm">Editar</button>';
+                        }
                     }
                 ],
                 order: [],
@@ -164,28 +163,40 @@ $this->load->view("plantilla/encabezado", $data);
             });
         } // end
 
+        $("#tblDatos2 tbody").on('click','td .btn-info',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            console.log(data.tbl_OrdenCorte_id);
+            window.open("<?php echo site_url('/nomina/set/reporteDiarioPDF?idReporte=')?>"+data.tbl_reporteDiario_id, '_blank');
+        });
+
+        $("#tblDatos2 tbody").on('click','td .btn-success',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            console.log(data.tbl_OrdenCorte_id);
+            location.href = '<?php echo site_url("/nomina/index2/reporteDiarioEdit/")?>'+data.tbl_reporteDiario_id;
+        });
+
         btnNuevoReporte.hide();
         buscarReporte.click(function(){
-            if(cmbEmpleado.val()===''){
-                toastr.error("Debe de seleccionar un empleado");
-            }else if (txtFchaInicio.val()===''){
-                toastr.error("Debe ingresar una fecha inicial");
-            }else if (txtFchaFin.val()==='') {
-                toastr.error("Debe ingresar una fecha final");
-            }else {
-                btnNuevoReporte.show();
-                $tblDatos2.dataTable().fnDestroy();
-                getReportesDiarios();
-            }
+            // if(cmbEmpleado.val()===''){
+            //     toastr.error("Debe de seleccionar un empleado");
+            // }else if (txtFchaInicio.val()===''){
+            //     toastr.error("Debe ingresar una fecha inicial");
+            // }else if (txtFchaFin.val()==='') {
+            //     toastr.error("Debe ingresar una fecha final");
+            // }else {
+            //
+            // }
+
+            btnNuevoReporte.show();
+            $tblDatos2.dataTable().fnDestroy();
+            getReportesDiarios();
         });
 
         btnNuevoReporte.click(function(){
             if(cmbEmpleado.val()===''){
                 toastr.error("Debe de seleccionar un empleado");
-            }else if (txtFchaInicio.val()===''){
-                toastr.error("Debe ingresar una fecha inicial");
-            }else if (txtFchaFin.val()==='') {
-                toastr.error("Debe ingresar una fecha final");
             }else {
                 location.href = '<?php echo site_url("/nomina/index2/reporteDiarioNew/")?>'+cmbEmpleado.val();
             }
@@ -235,7 +246,6 @@ $this->load->view("plantilla/encabezado", $data);
 $data['scripts'] = array(
     "jqw/localized-es.js",
     "toastr.min.js",
-    "../datatables/datatables.min.js",
     "zebra_datepicker.src.js",
     "js1/moment.min.js",
     "../select2/js/select2.min.js"

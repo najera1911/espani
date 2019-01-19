@@ -5,7 +5,7 @@ $data['title'] = ":: Operaciones";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",
-    "../datatables/datatables.min.css"
+//    "../datatables/datatables.min.css"
 );
 $this->load->view("plantilla/encabezado", $data);
 ?>
@@ -418,7 +418,7 @@ $this->load->view("plantilla/encabezado", $data);
 $data['scripts'] = array(
     "jqw/localized-es.js",
     "toastr.min.js",
-    "../datatables/datatables.min.js",
+//    "../datatables/datatables.min.js",
     "zebra_datepicker.src.js",
     "js1/moment.min.js"
 );

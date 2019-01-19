@@ -6,11 +6,17 @@ $data['title'] = ":: Clientes";
 $data['css'] = array(
     "toastr.min.css",
     "zebra.css",
-    "../datatables/datatables.min.css"
+//    "../datatables/datatables.min.css"
 );
 
 $this->load->view("plantilla/encabezado", $data);
 ?>
+<style>
+    .table-info, .table-info>td, .table-info>th {
+        font-size: 12px;
+        text-align: center;
+    }
+</style>
 
 <section class="ml-5 mr-5" id="Clientes">
     <div class="row mt-5 mb-5">
@@ -20,7 +26,7 @@ $this->load->view("plantilla/encabezado", $data);
     </div>
     <div class="row">
         <div class="col-12 text-uppercase">
-            <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <table id="tblDatos2" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="table-info"></thead>
             </table>
         </div>
@@ -39,7 +45,8 @@ $this->load->view("plantilla/encabezado", $data);
                 MY.table = $tblDatos2.DataTable( {
                     processing: true,
                     serverSide: true,
-                    scrollY: 400,
+                    scrollY: '50vh',
+                    scrollCollapse: true,
                     ordering: true,
                     info: false,
                     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
@@ -117,7 +124,7 @@ $this->load->view("plantilla/encabezado", $data);
                         { "title": "Modelo", "data": "modelo" },
                         { "title": "Color", "data":"colores" },
                         { "title": "Núm Bultos", "data":"num_bultos" },
-                        { "title": "Cantidad Marcada", "data":"cantidad" },
+                        { "title": "Cantidad Marcada", "data":"cantidad"  },
                         { "title": "Terminado", "data":"terminado" },
                         { "title": "Faltantes", "data":"faltantes" },
                         { "title": "Ver", data:null,
@@ -127,21 +134,128 @@ $this->load->view("plantilla/encabezado", $data);
                         },
                         { "title": "Editar", data:null,
                             render:function(data, type,row){
-                                return '<button class="btn btn-success btn-sm">Editar</button>';
+                                if(parseInt(row.validado, 10)===0){
+                                    return '<button class="btn btn-success btn-sm">Editar</button>';
+                                }
+                                else{
+                                    return '<span class="badge badge-success">Validado</span>';
+                                }
+                            }
+                        },
+                        { "title": "Eliminar", data:null,
+                            render:function(data, type,row){
+                                if(parseInt(row.validado, 10)===0){
+                                    return '<button class="btn btn-danger btn-sm">Eliminar</button>';
+                                }
+                                else{
+                                    return '<span class="badge badge-success">Validado</span>';
+                                }
+                            }
+                        },
+                        { "title": "Validar", data:null,
+                            render:function(data, type,row){
+                                if(parseInt(row.validado, 10)===0){
+                                    return '<button class="btn btn btn-warning btn-sm">Validar</button>';
+                                }
+                                else{
+                                    return '<span class="badge badge-success">Validado</span>';
+                                }
                             }
                         }
                     ],
-                    order: [],
+                    order: [[ 0, 'asc' ]],
                     language: {
                         "url": "<?php echo base_url();?>/assets/js/lang-es.lang"
                     }
                 } );
             }
 
-            $("#tblDatos2 tbody").on('click','td .btn-info',function(){
+            function validar(data) {
+                swal({
+                        title: "Validar una Orden de Corte",
+                        text: "Desea validar la orden de corte: "+ data.numero_corte +"",
+                        type: "info",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Validar",
+                        cancelButtonText: "Cancelar",
+                        closeOnConfirm: false,
+                        closeOnCancel: true
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            $.ajax({
+                                url: '<?php echo base_url("/ordenCorte/set/validarOrdenCorte")?>',
+                                type: "POST",
+                                data: {datos: data.tbl_OrdenCorte_id},
+                                dataType: "html",
+                                success: function (e) {
+                                    if (e === 'OK') {
+                                        swal("Bien", "La Orden de Corte se ha validado correctamente", "success");
+                                        MY.table.ajax.reload();
+                                    }
+                                },
+                                error: function (e,xhr, ajaxOptions, thrownError) {
+                                    swal("Error", e.responseText , "error");
+                                }
+                            });
+                        }
+                    });
+            }
+
+            function OrdenDelete(data){
+                swal({
+                        title: "Eliminar una Orden de Corte",
+                        text: "Desea eliminar la operación: "+ data.numero_corte +"",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Eliminar",
+                        cancelButtonText: "Cancelar",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            $.ajax({
+                                url: '<?php echo base_url("/ordenCorte/set/deleteOrdenCorte")?>',
+                                type: "POST",
+                                data: {datos: data.tbl_OrdenCorte_id},
+                                dataType: "html",
+                                success: function (e) {
+                                    if (e === 'OK') {
+                                        swal("Bien", "La Orden de Corte se ha eliminado correctamente", "success");
+                                        MY.table.ajax.reload();
+                                    }
+                                },
+                                error: function (e,xhr, ajaxOptions, thrownError) {
+                                    swal("Error", e.responseText , "error");
+                                }
+                            });
+                        } else {
+                            swal("Cancelado, la orden de corte ", data.numero_corte + " no se elimino", "error");
+                        }
+                    });
+            }
+
+
+
+            $("#tblDatos2 tbody").on('click','td .btn-warning',function(){
                 let data = MY.table.rows($(this).closest("tr")).data();
                 data = data[0];
                 console.log(data.tbl_OrdenCorte_id);
+                validar(data);
+            });
+
+            $("#tblDatos2 tbody").on('click','td .btn-danger',function(){
+                let data = MY.table.rows($(this).closest("tr")).data();
+                data = data[0];
+                OrdenDelete(data);
+            });
+
+            $("#tblDatos2 tbody").on('click','td .btn-info',function(){
+                let data = MY.table.rows($(this).closest("tr")).data();
+                data = data[0];
                 window.open("<?php echo site_url('/ordenCorte/set/ordenCortePDF?ordenCorte=')?>"+data.tbl_OrdenCorte_id, '_blank');
             });
 
@@ -175,7 +289,7 @@ $data['scripts'] = array(
     "jqw/localized-es.js",
     "toastr.min.js",
     "zebra_datepicker.src.js",
-    "../datatables/datatables.min.js",
+//    "../datatables/datatables.min.js",
     "js1/moment.min.js"
 );
 $this->load->view("plantilla/pie", $data);

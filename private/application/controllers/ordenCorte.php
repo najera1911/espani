@@ -98,6 +98,23 @@ class OrdenCorte extends CI_Controller{
                     exit(json_encode($res));
                 }
                 break;
+            case 'getModelosEdit':
+                $datasearch = $_POST['search']; //obtiene el valor para buscar
+                $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
+                $start = $_POST['start']; //valor de inicio para el limit
+                $length = $_POST['length'] ;
+                $tbl_ordencorte_id = filter_input(INPUT_POST, 'tbl_ordencorte_id');
+
+                if (empty($datasearch["value"])){
+                    $res = $this->ordenCorte_model->datosModelosCortesDetalleEditLimit($start,$length,$tbl_ordencorte_id);
+                }else{  //de lo contrario hace una busqueda tipo like
+                    $res = $this->ordenCorte_model->getOperacionEditSearch($start,$length,$datasearch["value"],$nameColumn[2]["data"],$tbl_ordencorte_id);
+                }
+
+                $res = array('data'=>$res);
+                exit(json_encode($res));
+
+                break;
             case 'ordenesCorteView':
                 $datasearch = $_POST['search']; //obtiene el valor para buscar
                 $nameColumn = $_POST['columns']; //obtiene el nombre de las columnas
@@ -150,6 +167,16 @@ class OrdenCorte extends CI_Controller{
                     $this->cliError('No se pudo eliminar el usuario');
                 }
                 break;
+            case 'deleteOrdenOperacionEdit':
+                $data = filter_input(INPUT_POST,'datos');
+                $tbl_ordencorte_id = filter_input(INPUT_POST,'tbl_ordencorte_id');
+                $res = $this->ordenCorte_model->deleteOperacionEdit($data,$tbl_ordencorte_id);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar el usuario');
+                }
+                break;
             case 'addOperacion':
                 $data = filter_input(INPUT_POST,'data');
                 $cat_modelos_cortes_id = filter_input(INPUT_POST,'cat_modelos_cortes_id');
@@ -173,13 +200,40 @@ class OrdenCorte extends CI_Controller{
                 }
 
                 break;
+            case 'addOperacionEdit':
+                $data = filter_input(INPUT_POST,'data');
+                $tbl_ordencorte_id = filter_input(INPUT_POST,'tbl_ordencorte_id');
+                $idBultos = $this->ordenCorte_model->getIdBultos($tbl_ordencorte_id);
+
+                //var_dump($idBultos[0]->tbl_OrdenCorte_bultos_id);
+
+                if(empty($data)){
+                    $this->cliError('Elije una operación');
+                }
+
+                $existe = $this->ordenCorte_model->ifExistOperEdit($data,$tbl_ordencorte_id);
+
+                if($existe){
+                    $this->cliError('La operación ya existe en el modelo');
+                }
+
+                $res = $this->ordenCorte_model->AddOperacionEdit($data,$tbl_ordencorte_id,$idBultos);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('Error');
+                }
+
+                break;
             case 'ordencorte':
                 $cmbCliente = filter_input(INPUT_POST,'cmbCliente');
                 $txtFch = filter_input(INPUT_POST,'txtFch');
                 $txtNombreModelo = filter_input(INPUT_POST,'txtNombreModelo');
                 $txtTela = filter_input(INPUT_POST,'txtTela');
-                $txtNunOrden = filter_input(INPUT_POST,'txtNunOrdenEspani');
-                $txtNunOrdenCliente = filter_input(INPUT_POST,'txtNunOrdenCliente');
+                $txtNunO = filter_input(INPUT_POST,'txtNunOrdenEspani');
+                $txtNunOrdenC = filter_input(INPUT_POST,'txtNunOrdenCliente');
+                $txtNunOrden = trim($txtNunO);
+                $txtNunOrdenCliente = trim($txtNunOrdenC);
                 $txtMetrosTela = filter_input(INPUT_POST,'txtMetrosTela');
                 $txtColores = filter_input(INPUT_POST,'txtColores');
                 $txtNumBultos = filter_input(INPUT_POST,'txtNumBultos');
@@ -223,6 +277,9 @@ class OrdenCorte extends CI_Controller{
                 $txtCierre = filter_input(INPUT_POST,'txtCierre');
                 $txtHilo = filter_input(INPUT_POST,'txtHilo');
                 $txtEtiqueta = filter_input(INPUT_POST,'txtEtiqueta');
+                $txtTaqueda = filter_input(INPUT_POST,'txtTaqueda');
+                $txtPase = filter_input(INPUT_POST,'txtPase');
+                $txtLargo = filter_input(INPUT_POST,'txtLargo');
                 $cat_usuario_captuta = $this->session->userdata('idU');
 
 
@@ -249,7 +306,11 @@ class OrdenCorte extends CI_Controller{
                     "etiqueta" => $txtEtiqueta,
                     "cat_usuario_captura" => $cat_usuario_captuta,
                     "estatus" => true,
-                    "num_corte_cliente" => $txtNunOrdenCliente
+                    "num_corte_cliente" => $txtNunOrdenCliente,
+                    "taqueda" => $txtTaqueda,
+                    "pase" => $txtPase,
+                    "largo" => $txtLargo,
+                    "validado" => false
                 );
 
                 $dataBultos = array();
@@ -277,8 +338,10 @@ class OrdenCorte extends CI_Controller{
                 $txtFch = filter_input(INPUT_POST,'txtFch');
                 $txtNombreModelo = filter_input(INPUT_POST,'txtNombreModelo');
                 $txtTela = filter_input(INPUT_POST,'txtTela');
-                $txtNunOrden = filter_input(INPUT_POST,'txtNunOrdenEspani');
-                $txtNunOrdenCliente = filter_input(INPUT_POST,'txtNunOrdenCliente');
+                $txtNunO = filter_input(INPUT_POST,'txtNunOrdenEspani');
+                $txtNunOrdenC = filter_input(INPUT_POST,'txtNunOrdenCliente');
+                $txtNunOrden = trim($txtNunO);
+                $txtNunOrdenCliente = trim($txtNunOrdenC);
                 $txtMetrosTela = filter_input(INPUT_POST,'txtMetrosTela');
                 $txtColores = filter_input(INPUT_POST,'txtColores');
                 $txtNumBultos = filter_input(INPUT_POST,'txtNumBultos');
@@ -320,6 +383,9 @@ class OrdenCorte extends CI_Controller{
                 $txtCierre = filter_input(INPUT_POST,'txtCierre');
                 $txtHilo = filter_input(INPUT_POST,'txtHilo');
                 $txtEtiqueta = filter_input(INPUT_POST,'txtEtiqueta');
+                $txtTaqueda = filter_input(INPUT_POST,'txtTaqueda');
+                $txtPase = filter_input(INPUT_POST,'txtPase');
+                $txtLargo = filter_input(INPUT_POST,'txtLargo');
                 $cat_usuario_captuta = $this->session->userdata('idU');
 
                 $data = array(
@@ -345,11 +411,19 @@ class OrdenCorte extends CI_Controller{
                     "etiqueta" => $txtEtiqueta,
                     "cat_usuario_captura" => $cat_usuario_captuta,
                     "estatus" => true,
-                    "num_corte_cliente" => $txtNunOrdenCliente
+                    "num_corte_cliente" => $txtNunOrdenCliente,
+                    "taqueda" => $txtTaqueda,
+                    "pase" => $txtPase,
+                    "largo" => $txtLargo,
+                    "validado" => false
                 );
 
+                $idBultos = $this->ordenCorte_model->getIdBultos($idOrden);
+
+                $n = count($idBultos);
+
                 $dataBultos = array();
-                for ($i=0;$i<$txtNumBultos;$i++){
+                for ($i=0;$i<$n;$i++){
                     $nb = filter_input(INPUT_POST,'nb'.$i);
                     $tall = filter_input(INPUT_POST,'tall'.$i);
                     $cant = filter_input(INPUT_POST,'cant'.$i);
@@ -358,12 +432,37 @@ class OrdenCorte extends CI_Controller{
                     );
                 }
 
-                $res = $this->ordenCorte_model->EditModeloCorte($data, $dataBultos, $idOrden);
+                $res = $this->ordenCorte_model->EditModeloCorte($data, $dataBultos, $idOrden, $idBultos);
 
                 if ($res) {
                     exit('ok');
                 } else {
                     $this->cliError("ocurrio un error");
+                }
+
+                break;
+            case 'validarOrdenCorte':
+                $data = filter_input(INPUT_POST,'datos');
+                $res = $this->ordenCorte_model->validarOrdenCorte($data);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar el usuario');
+                }
+                break;
+            case 'deleteOrdenCorte':
+                $data = filter_input(INPUT_POST,'datos');
+
+                $res = $this->ordenCorte_model->validaEdit($data);
+                if ($res) {
+                    $this->cliError('No se pudo eliminar la orden de corte, ya tiene generados pagos');
+                }
+
+                $res = $this->ordenCorte_model->deleteOrdenCorte($data);
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar el usuario');
                 }
 
                 break;
@@ -473,71 +572,171 @@ EOD;
 
                 $pdf->SetFont('dejavusans', '', 9);
 
-                $table = <<<EOD
-             <table cellspacing="0" cellpadding="2" border="1">
-                <thead>
-                    <tr style="font-weight: bold">
-                        <td align="center" width="100">Núm. Bulto</td>
-                        <td align="center" width="100">Talla</td>
-                        <td align="center" width="100">Cantidad</td>
-                    </tr>
-                </thead>
-EOD;
-
-                $table2 = <<<EOD
-             <table cellspacing="0" cellpadding="2" border="1">
-                <thead>
-                    <tr style="font-weight: bold">
-                        <td align="center" width="100">Núm. Bulto</td>
-                        <td align="center" width="100">Talla</td>
-                        <td align="center" width="100">Cantidad</td>
-                    </tr>
-                </thead>
-EOD;
-
                 $numItems = count($bultos);
-                $ni = ceil($numItems/2);
+
                 $total = 0;
 
-                for($i=0;$i<$ni;$i++){
-                    $table .= '
+                if($numItems>=25){
+                    $ni = ceil($numItems/3);
+                    $ni2 = $ni + $ni;
+
+                    $table = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="66">Núm. Bulto</td>
+                        <td align="center" width="66">Talla</td>
+                        <td align="center" width="66">Cantidad</td>
+                    </tr>
+                </thead>
+EOD;
+
+                    $table2 = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="66">Núm. Bulto</td>
+                        <td align="center" width="66">Talla</td>
+                        <td align="center" width="66">Cantidad</td>
+                    </tr>
+                </thead>
+EOD;
+
+                    $table3 = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="66">Núm. Bulto</td>
+                        <td align="center" width="66">Talla</td>
+                        <td align="center" width="66">Cantidad</td>
+                    </tr>
+                </thead>
+EOD;
+
+                    for($i=0;$i<$ni;$i++){
+                        $table .= '
+                        <tr>
+                            <td width="66" align="center">'.$bultos[$i]->num_bulto.'</td>
+                            <td width="66" align="center">'.$bultos[$i]->tallas.'</td>
+                            <td width="66" align="center">'.$bultos[$i]->cantidad.'</td>
+                        </tr>
+                    ';
+                        $total = $total + $bultos[$i]->cantidad;
+                    }
+
+                    for($j=$ni;$j<$ni2;$j++){
+                        $table2 .= '
+                        <tr>
+                            <td width="66" align="center">'.$bultos[$j]->num_bulto.'</td>
+                            <td width="66" align="center">'.$bultos[$j]->tallas.'</td>
+                            <td width="66" align="center">'.$bultos[$j]->cantidad.'</td>
+                        </tr>
+                    ';
+                        $total = $total + $bultos[$j]->cantidad;
+                    }
+
+                    for($k=$ni2;$k<$numItems;$k++){
+                        $table3 .= '
+                        <tr>
+                            <td width="66" align="center">'.$bultos[$k]->num_bulto.'</td>
+                            <td width="66" align="center">'.$bultos[$k]->tallas.'</td>
+                            <td width="66" align="center">'.$bultos[$k]->cantidad.'</td>
+                        </tr>
+                    ';
+                        $total = $total + $bultos[$k]->cantidad;
+                    }
+
+                    $table3 .= '<tr style="background-color:#d5d0d1;color:#000000;"><td  width="132" align="right">TOTAL:</td>
+                            <td width="66" style="font-weight: bold">'.$total.'</td></tr>';
+
+                    $table .= '</table>';
+                    $table2 .= '</table>';
+                    $table3 .= '</table>';
+
+                    //tabla grande
+                    $tablefin = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td align="center" width="213">{$table}</td>
+                        <td align="center" width="213">{$table2}</td>
+                        <td align="center" width="213">{$table3}</td>
+                    </tr>
+             </table>
+EOD;
+
+                    //imprime numero de bultos
+                    $pdf->writeHTML($tablefin, true, false, true, false, '');
+
+
+                }else{
+                    $ni = ceil($numItems/2);
+
+                    $table = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">Núm. Bulto</td>
+                        <td align="center" width="100">Talla</td>
+                        <td align="center" width="100">Cantidad</td>
+                    </tr>
+                </thead>
+EOD;
+
+                    $table2 = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">Núm. Bulto</td>
+                        <td align="center" width="100">Talla</td>
+                        <td align="center" width="100">Cantidad</td>
+                    </tr>
+                </thead>
+EOD;
+
+                    for($i=0;$i<$ni;$i++){
+                        $table .= '
                         <tr>
                             <td width="100" align="center">'.$bultos[$i]->num_bulto.'</td>
                             <td width="100" align="center">'.$bultos[$i]->tallas.'</td>
                             <td width="100" align="center">'.$bultos[$i]->cantidad.'</td>
                         </tr>
                     ';
-                    $total = $total + $bultos[$i]->cantidad;
-                }
+                        $total = $total + $bultos[$i]->cantidad;
+                    }
 
-                for($j=$ni;$j<$numItems;$j++){
-                    $table2 .= '
+                    for($j=$ni;$j<$numItems;$j++){
+                        $table2 .= '
                         <tr>
                             <td width="100" align="center">'.$bultos[$j]->num_bulto.'</td>
                             <td width="100" align="center">'.$bultos[$j]->tallas.'</td>
                             <td width="100" align="center">'.$bultos[$j]->cantidad.'</td>
                         </tr>
                     ';
-                    $total = $total + $bultos[$j]->cantidad;
-                }
+                        $total = $total + $bultos[$j]->cantidad;
+                    }
 
-                $table2 .= '<tr style="background-color:#d5d0d1;color:#000000;"><td  width="200" align="right">TOTAL:</td>
+                    $table2 .= '<tr style="background-color:#d5d0d1;color:#000000;"><td  width="200" align="right">TOTAL:</td>
                             <td width="100" style="font-weight: bold">'.$total.'</td></tr>';
 
-                $table .= '</table>';
-                $table2 .= '</table>';
+                    $table .= '</table>';
+                    $table2 .= '</table>';
 
-                //tabla grande
-                $tablefin = <<<EOD
-             <table cellspacing="0" cellpadding="2" border="1" style="float:left">
+                    //tabla grande
+                    $tablefin = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="0">
                     <tr>
                         <td align="center" width="320">{$table}</td>
                         <td align="center" width="320">{$table2}</td>
                     </tr>
+             </table>
 EOD;
 
-                //imprime numero de bultos
-                $pdf->writeHTML($tablefin, true, false, true, false, '');
+                    //imprime numero de bultos
+                    $pdf->writeHTML($tablefin, true, false, true, false, '');
+
+                } // end else
+
+
                 //$pdf->writeHTML($table);
 
             //gereneral las tablas de operaciones
@@ -722,6 +921,16 @@ EOD;
                         <td width="235">{$tadacorte[0]->carteras}</td>  
                         <td width="80" class="bold" >SECRETA:</td>
                         <td width="235">{$tadacorte[0]->secreta}</td>                       
+                    </tr>
+                    <tr>
+                        <td width="80" class="bold" >TAQUEDA:</td>
+                        <td width="235">{$tadacorte[0]->taqueda}</td>  
+                        <td width="80" class="bold" >PASE:</td>
+                        <td width="235">{$tadacorte[0]->pase}</td>                       
+                    </tr>
+                    <tr>
+                        <td width="80" class="bold" >LARGO:</td>
+                        <td width="235">{$tadacorte[0]->largo}</td>                        
                     </tr>
               </table>
 EOD;

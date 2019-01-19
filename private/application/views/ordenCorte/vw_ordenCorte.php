@@ -9,10 +9,6 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado", $data);
 ?>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-
 <style>
     #tblBultos input {
         border: 1px solid #ebebebc4 !important;
@@ -53,11 +49,11 @@ $this->load->view("plantilla/encabezado", $data);
                 <div class="form-row">
                     <div class="form-group col-md-3">
                         <label for="txtNunOrdenEspani">Núm. O. de Corte ESPANI</label>
-                        <input type="number" class="form-control" id="txtNunOrdenEspani" name="txtNunOrdenEspani" required>
+                        <input type="text" class="form-control" id="txtNunOrdenEspani" name="txtNunOrdenEspani" required>
                     </div>
                     <div class="form-group col-md-3">
                         <label for="txtNunOrdenCliente">Núm. O. de Corte Cliente</label>
-                        <input type="number" class="form-control" id="txtNunOrdenCliente" name="txtNunOrdenCliente" required>
+                        <input type="text" class="form-control" id="txtNunOrdenCliente" name="txtNunOrdenCliente" required>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="txtMetrosTela">Mts. de tela Cortada</label>
@@ -102,7 +98,7 @@ $this->load->view("plantilla/encabezado", $data);
                         <input type="text" class="form-control" id="txtPinzasT" name="txtPinzasT" required>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="txtBolsasD">Bolsas Delenteras</label>
+                        <label for="txtBolsasD">Bolsas Delanteras</label>
                         <input type="text" class="form-control" id="txtBolsasD" name="txtBolsasD" required>
                     </div>
                     <div class="form-group col-md-3">
@@ -144,6 +140,20 @@ $this->load->view("plantilla/encabezado", $data);
                     <div class="form-group col-md-3">
                         <label for="txtEtiqueta">Etiqueta</label>
                         <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtBoton">Taqueda</label>
+                        <input type="text" class="form-control" id="txtTaqueda" name="txtTaqueda" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtCierre">Pase</label>
+                        <input type="text" class="form-control" id="txtPase" name="txtPase" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtHilo">Largo</label>
+                        <input type="text" class="form-control" id="txtLargo" name="txtLargo" required>
                     </div>
                 </div>
             </form>
@@ -490,7 +500,7 @@ $this->load->view("plantilla/encabezado", $data);
                         if (e === 'ok') {
                             swal("Correcto", "Datos se guardados exitosamente", "success");
                             frmOrdenCorte.get(0).reset();
-                            location.href = '<?php echo site_url("/ordenCorte/index/ordenCorteMenu")?>';
+                            location.href = '<?php echo site_url("/ordenCorte/index/verOrdenCorte")?>';
                         }
                     },
                     error: function (e) {
@@ -510,7 +520,7 @@ $this->load->view("plantilla/encabezado", $data);
 $data['scripts'] = array(
     "jqw/localized-es.js",
     "toastr.min.js",
-    "../datatables/datatables.min.js",
+//    "../datatables/datatables.min.js",
     "zebra_datepicker.src.js",
     "js1/moment.min.js",
 );

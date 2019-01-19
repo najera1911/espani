@@ -53,11 +53,11 @@ $this->load->view("plantilla/encabezado", $data);
                 <div class="form-row">
                     <div class="form-group col-md-3">
                         <label for="txtNunOrdenEspani">Núm. O. de Corte ESPANI</label>
-                        <input type="number" class="form-control" id="txtNunOrdenEspani" name="txtNunOrdenEspani" required>
+                        <input type="text" class="form-control" id="txtNunOrdenEspani" name="txtNunOrdenEspani" required>
                     </div>
                     <div class="form-group col-md-3">
                         <label for="txtNunOrdenCliente">Núm. O. de Corte Cliente</label>
-                        <input type="number" class="form-control" id="txtNunOrdenCliente" name="txtNunOrdenCliente" required>
+                        <input type="text" class="form-control" id="txtNunOrdenCliente" name="txtNunOrdenCliente" required>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="txtMetrosTela">Mts. de tela Cortada</label>
@@ -102,7 +102,7 @@ $this->load->view("plantilla/encabezado", $data);
                         <input type="text" class="form-control" id="txtPinzasT" name="txtPinzasT" required>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="txtBolsasD">Bolsas Delenteras</label>
+                        <label for="txtBolsasD">Bolsas Delanteras</label>
                         <input type="text" class="form-control" id="txtBolsasD" name="txtBolsasD" required>
                     </div>
                     <div class="form-group col-md-3">
@@ -146,13 +146,27 @@ $this->load->view("plantilla/encabezado", $data);
                         <input type="text" min="1" class="form-control" id="txtEtiqueta" name="txtEtiqueta" required>
                     </div>
                 </div>
-            </form>
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="cmbModelo">Buscar Modelo</label>
-                    <select class="form-control" id="cmbModelo" name="cmbModelo" required></select>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="txtBoton">Taqueda</label>
+                        <input type="text" class="form-control" id="txtTaqueda" name="txtTaqueda" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtCierre">Pase</label>
+                        <input type="text" class="form-control" id="txtPase" name="txtPase" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="txtHilo">Largo</label>
+                        <input type="text" class="form-control" id="txtLargo" name="txtLargo" required>
+                    </div>
                 </div>
-            </div>
+            </form>
+<!--            <div class="row">-->
+<!--                <div class="form-group col-md-6">-->
+<!--                    <label for="cmbModelo">Buscar Modelo</label>-->
+<!--                    <select class="form-control" id="cmbModelo" name="cmbModelo" required></select>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="row pt-5">
                 <div class="col-12 text-center pb-3"><h5>Lista de Operaciónes</h5></div>
                 <div class="col-1"><label for="cmbFCorte">Filtro Corte</label></div>
@@ -185,7 +199,7 @@ $this->load->view("plantilla/encabezado", $data);
     $(document).ready(function (){
         let frmOrdenCorte = $("#frmOrdenCorte"),
             cmbCliente = $("#cmbCliente"),
-            cmbModelo = $("#cmbModelo"),
+            //cmbModelo = $("#cmbModelo"),
             cmbFCorte = $("#cmbFCorte"),
             cmbOpe = $("#cmbOpe"),
             txtNumBultos = $("#txtNumBultos"),
@@ -229,6 +243,9 @@ $this->load->view("plantilla/encabezado", $data);
                 $('input[name="txtCierre"]').val(d.cierre);
                 $('input[name="txtHilo"]').val(d.hilo);
                 $('input[name="txtEtiqueta"]').val(d.etiqueta);
+                $('input[name="txtTaqueda"]').val(d.taqueda);
+                $('input[name="txtPase"]').val(d.pase);
+                $('input[name="txtLargo"]').val(d.largo);
             });
 
         $.post('<?php echo site_url("/ordenCorte/get/dataOrdenBultos")?>', { idOrden: id_ordenCorte })
@@ -364,18 +381,13 @@ $this->load->view("plantilla/encabezado", $data);
 
         //agregar select
         cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/clientes")?>', {}, cmbCliente, 'Elije');
-        cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/modeloCorte")?>', {}, cmbModelo, 'Elije');
 
-        cmbModelo.change(function () {
-            cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/filtroCorte")?>', {}, cmbFCorte, 'Elije');
-            cmbFCorte.change(function () {
-                cmbOpe.html('');
-                cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/operac")?>', {id: cmbFCorte.val()}, cmbOpe, 'Elije');
-            });
-            deleteRow = 0;
-            $tblDatos2.dataTable().fnDestroy();
-            getModelosDetalle();
+        cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/filtroCorte")?>', {}, cmbFCorte, 'Elije');
+        cmbFCorte.change(function () {
+            cmbOpe.html('');
+            cargar_catalogo_select('<?php echo site_url("/ordenCorte/get/operac")?>', {id: cmbFCorte.val()}, cmbOpe, 'Elije');
         });
+
 
         getModelosDetalle();
         function getModelosDetalle() {
@@ -387,15 +399,15 @@ $this->load->view("plantilla/encabezado", $data);
                 info: false,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
                 ajax: {
-                    "url": "<?php echo site_url('/ordenCorte/get/getModelos')?>",
+                    "url": "<?php echo site_url('/ordenCorte/get/getModelosEdit')?>",
                     "type": "POST",
-                    "data": { "idModel": cmbModelo.val(), "deleteRow": deleteRow }
+                    "data": { "tbl_ordencorte_id": id_ordenCorte}
                 },
                 columns: [
-                    {"title": "Nombre Modelo", "data": "modeloCorte", "className": "text-center"},
-                    {"title": "Filtro Corte", "data": "tipoCorte", "className": "text-center"},
-                    {"title": "Clave", "data": "operacion", "className": "text-center"},
-                    {"title": "Operación", "data": "nombreOperacion", "className": "text-center"},
+                    {"title": "Nombre Modelo", "data": "nombre_modelo", "className": "text-center"},
+                    {"title": "Filtro Corte", "data": "filtro_corte", "className": "text-center"},
+                    {"title": "Clave", "data": "clave", "className": "text-center"},
+                    {"title": "Operación", "data": "operacion", "className": "text-center"},
                     {
                         "title": "Eliminar", data: null,
                         render: function (data, type, row) {
@@ -422,7 +434,7 @@ $this->load->view("plantilla/encabezado", $data);
         function OperacionDelete(data){
             swal({
                     title: "Eliminar una operación",
-                    text: "Desea eliminar a: "+ data.nombreOperacion +"",
+                    text: "Desea eliminar a: "+ data.clave +"",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
@@ -434,9 +446,9 @@ $this->load->view("plantilla/encabezado", $data);
                 function(isConfirm) {
                     if (isConfirm) {
                         $.ajax({
-                            url: '<?php echo base_url("ordenCorte/set/deleteOrden")?>',
+                            url: '<?php echo base_url("ordenCorte/set/deleteOrdenOperacionEdit")?>',
                             type: "POST",
-                            data: {datos: data.cat_operaciones_id},
+                            data: {datos: data.cat_operaciones_id, tbl_ordencorte_id: id_ordenCorte},
                             dataType: "html",
                             success: function (e) {
                                 if (e === 'OK') {
@@ -463,11 +475,10 @@ $this->load->view("plantilla/encabezado", $data);
         });
 
         function setAddCorte() {
-            $nameModel = $("#cmbModelo option:selected").text();
             $.ajax({
                 type: 'post',
-                url: '<?php echo site_url("/ordenCorte/set/addOperacion")?>',
-                data: {"data": cmbOpe.val(), "cat_modelos_cortes_id" : cmbModelo.val(), "model": $nameModel },
+                url: '<?php echo site_url("/ordenCorte/set/addOperacionEdit")?>',
+                data: {"data": cmbOpe.val(), "tbl_ordencorte_id": id_ordenCorte },
                 success: function (e) {
                     if (e === 'OK') {
                         swal("Correcto", "Datos se guardados exitosamente", "success");
@@ -487,7 +498,6 @@ $this->load->view("plantilla/encabezado", $data);
         }
 
         btnGuadar.click(function () {
-            console.log(cmbModelo.val());
 
             if($("#cmbCliente").val()===''){
                 toastr.error("Debe de seleccionar un cliente");
@@ -503,8 +513,6 @@ $this->load->view("plantilla/encabezado", $data);
                 toastr.error("Debe de seleccionar al menos un bulto ");
             }else if($("#nb0").val()==='' || $("#tall0").val()==='' || $("#cant0").val()==='' ){
                 toastr.error("Debe de ingresar al menos un dato en bulto ");
-            }else if(cmbModelo.val()=== ''){
-                toastr.error("Debe de seleccionar un modelo ");
             }else{
                 if (btnGuadar.hasClass('loading')) {
                     return false;
@@ -523,7 +531,7 @@ $this->load->view("plantilla/encabezado", $data);
                     if (e === 'ok') {
                         swal("Correcto", "Datos se guardados exitosamente", "success");
                         frmOrdenCorte.get(0).reset();
-                        location.href = '<?php echo site_url("/ordenCorte/index/ordenCorteMenu")?>';
+                        location.href = '<?php echo site_url("/ordenCorte/index/verOrdenCorte")?>';
                     }
                 },
                 error: function (e) {
