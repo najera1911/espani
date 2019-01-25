@@ -318,7 +318,7 @@ sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes, A.valida
 FROM tbl_ordencorte A 
 INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
-GROUP by A.tbl_OrdenCorte_id LIMIT ?, ?';
+GROUP by A.tbl_OrdenCorte_id order by fecha_orden, numero_corte LIMIT ?, ?';
             return $this->db->query($sql, array((int) $start, (int) $length))->result();
         }else{
             $sql='SELECT A.tbl_OrdenCorte_id, A.numero_corte, A.fecha_orden, C.tbl_clientes_id, C.nombre_corto, 
@@ -327,7 +327,7 @@ sum(B.cantidad) - sum(B.resta) as terminado, sum(B.resta) as faltantes, A.valida
 FROM tbl_ordencorte A 
 INNER JOIN tbl_ordencorte_bultos B on A.tbl_OrdenCorte_id=B.tbl_ordencorte_id 
 INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id where A.estatus=1 
-GROUP by A.tbl_OrdenCorte_id';
+GROUP by A.tbl_OrdenCorte_id order by fecha_orden, numero_corte';
             return $this->db->query($sql)->result();
         }
     }

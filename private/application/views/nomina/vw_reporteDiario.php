@@ -43,13 +43,46 @@ $this->load->view("plantilla/encabezado", $data);
     </div>
     <div class="row">
         <div class="col-12 text-uppercase">
-            <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <table id="tblDatos2" class="table table-sm table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="table-info text-center"></thead>
             </table>
         </div>
     </div>
 </section>
 
+
+<div class="modal fade bd-example-modal-lg" id="wHorasEEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-fluid modal-full-height modal-top modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Horas Extras - <span></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <form id="frmHE" role="form" autocomplete="off">
+                            <div class="form-row">
+                                <div class="form-group col-lg-12">
+                                    <label for="txtHE">Total de Horas Extras</label>
+                                    <input type="number" class="form-control" id="txtHE" name="txtHE"
+                                            required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-success" id="btnGuardarHE">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     let MY = {};
@@ -62,7 +95,13 @@ $this->load->view("plantilla/encabezado", $data);
             $tblDatos2 = $("#tblDatos2"),
             $tblDatos3 = $("#tblDatos3"),
             wRegistro = $("#wRegistro"),
-            btnNuevoReporte = $("#btnNuevoReporte")
+            btnNuevoReporte = $("#btnNuevoReporte"),
+            $wHorasEEdit = $("#wHorasEEdit"),
+            $frmHE = $("#frmHE"),
+            $btnGuardarHE = $("#btnGuardarHE"),
+            $nameTrabajador = '',
+            $txtHE = 0,
+            tbl_reporte = 0
         ;
 
         cmbEmpleado.select2();
@@ -71,17 +110,6 @@ $this->load->view("plantilla/encabezado", $data);
             format: 'Y/m/d'
         });
 
-        // txtFchaFin.Zebra_DatePicker({
-        //     show_icon: true,
-        //     format: 'Y/m/d',
-        //     direction: true // change 0 to true
-        // });
-
-        // txtFchaInicio.on('blur change',function () {
-        //     let mydate = new Date(txtFchaInicio.val());
-        //     console.log(txtFchaInicio.val());
-        //     txtFchaFin.data('Zebra_DatePicker').set_date(txtFchaInicio.val());
-        // });
 
         function cargar_catalogo(url, data) {
             return $.getJSON(url, data, function (e) {
@@ -154,6 +182,16 @@ $this->load->view("plantilla/encabezado", $data);
                         render:function(data, type,row){
                             return '<button class="btn btn-success btn-sm">Editar</button>';
                         }
+                    },
+                    { "title": "HorasE", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-primary btn-sm">H. E.</button>';
+                        }
+                    },
+                    { "title": "Recibo", data:null,
+                        render:function(data, type,row){
+                            return '<button class="btn btn-secondary btn-sm">Recibo</button>';
+                        }
                     }
                 ],
                 order: [],
@@ -162,6 +200,110 @@ $this->load->view("plantilla/encabezado", $data);
                 }
             });
         } // end
+
+        $wHorasEEdit.on('hide.bs.modal', function () {
+            $frmHE.get(0).reset();
+            $btnGuardarHE.removeClass("loading");
+            $frmHE.removeClass('loading');
+            $nameTrabajador = '';
+            tbl_reporte = 0;
+        });
+
+        $wHorasEEdit.on('shown.bs.modal', function () {
+            const $head = $wHorasEEdit.find('.modal-title span');
+            $head.html(' ' + $nameTrabajador);
+        });
+
+        $btnGuardarHE.click(function () {
+            if ($btnGuardarHE.hasClass('loading')) {
+                return false;
+            }
+            $btnGuardarHE.addClass('loading');
+            $frmHE.addClass('loading');
+
+            let dataSet = new FormData($frmHE.get(0));
+
+            dataSet.append('tbl_reporteDiario_id', tbl_reporte);
+
+            $.ajax({
+                type: 'post',
+                url: '<?php echo site_url("/nomina/set/horasExtras")?>',
+                xhr: function () {  // Custom XMLHttpRequest
+                    const myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // Check if upload property exists
+                        myXhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                            }
+                        }, false); // For handling the progress of the upload
+                    }
+                    return myXhr;
+                },
+                data: dataSet,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (e) {
+                    if (e.length) {
+                        if (e.length) {
+                            let obj = JSON.parse(e);
+                            if (obj.hasOwnProperty('status') && obj.status === "Ok") {
+                                $frmHE.get(0).reset();
+                                $wHorasEEdit.modal('hide');
+                                tbl_reporte=0;
+                                swal("Correcto", "Datos se guardados exitosamente", "success");
+                            }
+                        } else {
+                            swal("Error", e, "error");
+                            $frmHE.get(0).reset();
+                            $wHorasEEdit.modal('hide');
+                            tbl_reporte=0;
+                        }
+                    }
+                },
+                error: function (e) {
+                    toastr.error("Error al procesar la petición " + e.responseText);
+                },
+                complete: function () {
+                    $btnGuardarHE.removeClass('loading');
+                    $frmHE.removeClass('loading');
+                }
+            });
+
+        });
+
+        $("#tblDatos2 tbody").on('click','td .btn-secondary',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            console.log(data);
+            window.open("<?php echo site_url('/nomina/set/reciboPDF?idReporte=')?>"+data.tbl_reporteDiario_id, '_blank');
+        });
+
+
+        $("#tblDatos2 tbody").on('click','td .btn-primary',function(){
+            let data = MY.table.rows($(this).closest("tr")).data();
+            data = data[0];
+            console.log(data);
+            $nameTrabajador = data.NombreC+ ' F. Reporte: '+ data.fecha_reporte_i;
+            tbl_reporte = data.tbl_reporteDiario_id;
+
+            $.ajax({
+                url: '<?php echo base_url("nomina/get/horasExtras")?>',
+                type: "POST",
+                data: {id: data.tbl_reporteDiario_id},
+                dataType: "html",
+                success: function (e) {
+                    let obj = JSON.parse(e);
+                    console.log(obj[0].he);
+                    $('input[name="txtHE"]').val(obj[0].he);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    swal("Error", "Error al eliminar usuario", "error");
+                }
+            });
+
+            $wHorasEEdit.modal("show");
+
+        });
 
         $("#tblDatos2 tbody").on('click','td .btn-info',function(){
             let data = MY.table.rows($(this).closest("tr")).data();

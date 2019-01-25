@@ -102,6 +102,40 @@ class Nomina extends CI_Controller{
                 $data = array('data'=>$data);
                 exit(json_encode($data));
                 break;
+            case 'dataRecibo':
+                $idReporte = filter_input(INPUT_POST,'datos');
+                $res = $this->nomina_model->getDataRecibo($idReporte);
+                exit(json_encode($res));
+                break;
+            case 'horasExtras':
+                $id = filter_input(INPUT_POST,'id');
+                $res = $this->nomina_model->getHorasExtras($id);
+                exit(json_encode($res));
+                break;
+            case 'getTTBultos':
+
+                $b=0;
+                if(isset($_POST['cmbBulto'])){
+                    $tbl_ordencorte_bultos_id = $_POST['cmbBulto'];
+                    $b=0;
+                }else{
+                    $tbl_ordencorte_bultos_id[0] = 0;
+                    $b = 1;
+                }
+
+                if($b==0){
+                    $restaO = $this->nomina_model->existenciaOp($tbl_ordencorte_bultos_id);
+                    $r2 = (array) $restaO[0];
+                    $rn222 = $r2["resta"];
+                }else{
+                    $rn222 = 0;
+                }
+
+
+
+                exit($rn222);
+
+                break;
             default: $this->cliError();
         }
     }
@@ -159,7 +193,7 @@ class Nomina extends CI_Controller{
                     $data = array(
                         "cat_rh_empleado_id" => $cat_rh_empleado_id,
                         "fecha_reporte_i" => date_format((date_create_from_format('Y/m/d', $fecha_reporte_i)), 'Y-m-d'),
-                        "usuario_caprura_id" => $usuario_caprura_id,
+                        "usuario_caprura_id" => $usuario_caprura_id
                     );
 
                     if((int) $tbl_cordencorte_operaciones_id==0){
@@ -188,7 +222,7 @@ class Nomina extends CI_Controller{
                     }else{
                         if((int) $tbl_cordencorte_operaciones_id!=0){
                             if($cantidad>(int) $rn222){
-                                $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                                $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$rn222.' ');
                             }
                         }
                     }
@@ -224,7 +258,7 @@ class Nomina extends CI_Controller{
                         }else{
                             if((int) $tbl_cordencorte_operaciones_id!=0){
                                 if($cantidad>(int) $rn222){
-                                    $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$r222.' ');
+                                    $this->cliError('La cantidad es mayor que la cantidad del total de todos los bultos: '.$rn222.' ');
                                 }
                             }
 
@@ -355,6 +389,62 @@ class Nomina extends CI_Controller{
                 }
 
                 break;
+            case 'deleteOperacionesGroup':
+                if(isset($_POST['data'])){
+                    $data = $_POST['data'];
+                }else{
+                    $this->cliError('Debe de seleccionar una operación ');
+                }
+
+                $n = count($data);
+
+                for($i=0;$i<$n;$i++){
+                    $idReporteDetalle = $data[$i]["tbl_reportediario_detalle_id"];
+                    $cantidad = $data[$i]["cantidad"];
+                    $idOperacion = $data[$i]["tbl_cordencorte_operaciones_id"];
+
+
+                    if($idOperacion>0){
+                        $restaO = $this->nomina_model->existenciaOp($idOperacion);
+                        $r2 = (array) $restaO[0];
+                    }else{
+                        $r2["resta"] = 0;
+                    }
+
+
+                    $sum = $cantidad + $r2["resta"];
+
+                    $res = $this->nomina_model->deleteOperacion($idReporteDetalle,$idOperacion,$sum);
+                }
+
+                if ($res) {
+                    exit('OK');
+                } else {
+                    $this->cliError('No se pudo eliminar');
+                }
+
+                break;
+            case 'horasExtras':
+                $txtHE = filter_input(INPUT_POST,'txtHE');
+                $tbl_reporteDiario_id = filter_input(INPUT_POST,'tbl_reporteDiario_id');
+
+
+                if(empty($tbl_reporteDiario_id) or $tbl_reporteDiario_id ==0 ){
+                    $this->cliError('Debe Seleccionar un reporte');
+                }
+
+                $data = array(
+                    "he" => $txtHE
+                );
+
+                $res = $this->nomina_model->addHorasExtras($data,$tbl_reporteDiario_id);
+
+                if ($res) {
+                    exit(json_encode(["status" => "Ok"]));
+                } else {
+                    $this->cliError("ocurrio un error");
+                }
+                break;
             case 'reporteDiarioPDF':
                 $idReporte = filter_input(INPUT_GET, 'idReporte');
                 if (empty($idReporte)) {
@@ -455,42 +545,82 @@ EOD;
 
                 $table = <<<EOD
                                 <style>                
-    td {
-        height: 30px;
-    }
+  
 
                 </style>
              <table cellspacing="0" cellpadding="2" border="1">
                 <thead>
                     <tr style="font-weight: bold">
-                        <td align="center" width="100">CORTE</td>
-                        <td align="center" width="200">CLIENTE</td>
-                        <td align="center" width="100">BULTO</td>
-                        <td align="center" width="142">OPERACIÓN</td>
-                        <td align="center" width="100">CANTIDAD</td>
+                        <td align="center" width="50">CORTE</td>
+                        <td align="center" width="120">CLIENTE</td>
+                        <td align="center" width="50">BULTO</td>
+                        <td align="center" width="50">OPERACIÓN</td>
+                        <td align="center" width="50">CANTIDAD</td>
+                    </tr>
+                </thead>
+EOD;
+
+                $table2 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="1">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="50">CORTE</td>
+                        <td align="center" width="120">CLIENTE</td>
+                        <td align="center" width="50">BULTO</td>
+                        <td align="center" width="50">OPERACIÓN</td>
+                        <td align="center" width="50">CANTIDAD</td>
                     </tr>
                 </thead>
 EOD;
 
                 $numItems = count($detalle);
+                $ni = ceil($numItems/2);
 
-
-                for($i=0;$i<$numItems;$i++){
+                for($i=0;$i<$ni;$i++){
                     $table .= '
                         <tr>
-                            <td width="100" align="center">'.$detalle[$i]->numero_corte.'</td>
-                            <td width="200" align="center">'.$detalle[$i]->nombre_corto.'</td>
-                            <td width="100" align="center">'.$detalle[$i]->num_bulto.'</td>
-                            <td width="142" align="center">'.$detalle[$i]->operacion.'</td>
-                            <td width="100" align="center">'.$detalle[$i]->cantidad .'</td>
+                            <td width="50" align="center">'.$detalle[$i]->numero_corte.'</td>
+                            <td width="120" align="center">'.$detalle[$i]->nombre_corto.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->num_bulto.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->operacion.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->cantidad .'</td>
+                        </tr>
+                    ';
+                }
+
+                for($i=$ni;$i<$numItems;$i++){
+                    $table2 .= '
+                        <tr>
+                            <td width="50" align="center">'.$detalle[$i]->numero_corte.'</td>
+                            <td width="120" align="center">'.$detalle[$i]->nombre_corto.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->num_bulto.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->operacion.'</td>
+                            <td width="50" align="center">'.$detalle[$i]->cantidad .'</td>
                         </tr>
                     ';
                 }
 
 
                 $table .= '</table>';
+                $table2 .= '</table>';
 
-                $pdf->writeHTML($table, true, false, true, false, '');
+                //tabla grande
+                $tablefin = <<<EOD
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td align="center" width="325">{$table}</td>
+                        <td align="center" width="322">{$table2}</td>
+                    </tr>
+             </table>
+EOD;
+
+                $pdf->SetFont('dejavusans', '', 9);
+
+                $pdf->writeHTML($tablefin, true, false, true, false, '');
 
 
                 // Close and output PDF document
@@ -501,7 +631,229 @@ EOD;
                 // END OF FILE
                 //============================================================+
                 break;
+            case 'reciboPDF':
+                $idReporte = filter_input(INPUT_GET, 'idReporte');
+                if (empty($idReporte)) {
+                    $this->cliError('Faltan datos', '0X001');
+                }
+
+                $sum = 0;
+                $s=0;
+
+                //obtener datos del modelo
+                $data = $this -> nomina_model->getDataReporte($idReporte);
+                $detalle = $this->nomina_model->getDataRecibo($idReporte);
+
+                setlocale(LC_TIME, 'spanish');
+                //$inicio = strftime("%d de %B del %Y", strtotime($tadacorte[0]->fecha_orden));
+
+                $PDF_HEADER_TITLE="Titulo del PDF";
+
+
+
+                // create new PDF document
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+                // set document information
+                $pdf->SetCreator(PDF_CREATOR);
+                $pdf->SetAuthor('ESPANI S.A de C.V');
+                $pdf->SetTitle('MAQUILADORA ESPANI S.A. DE C.V.');
+
+                $PDF_HEADER_STRING="";
+
+
+
+                // set default header data
+                $pdf->SetHeaderData(PDF_HEADER_LOGO, 10, 'MAQUILADORA ESPANI S.A. DE C.V.', $PDF_HEADER_STRING, array(0,0,0), array(0,0,0));
+                $pdf->setFooterData(array(0,0,0), array(0,0,0));
+
+                // set header and footer fonts
+                $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+                $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+                // set default monospaced font
+                $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+                // set margins
+                $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+                $pdf->SetHeaderMargin(5);
+                $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+                // set auto page breaks
+                $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+                // set image scale factor
+                $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+                // set some language-dependent strings (optional)
+                if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+                    require_once(dirname(__FILE__).'/lang/eng.php');
+                    $pdf->setLanguageArray();
+                }
+
+                // ---------------------------------------------------------
+
+                // set default font subsetting mode
+                $pdf->setFontSubsetting(true);
+
+                // Set font
+                // dejavusans is a UTF-8 Unicode font, if you only need to
+                // print standard ASCII chars, you can use core fonts like
+                // helvetica or times to reduce file size.
+                $pdf->SetFont('dejavusans', '', 14, '', true);
+
+                // Add a page
+                // This method has several options, check the source code documentation for more information.
+                $pdf->AddPage();
+
+                // set text shadow effect
+                $pdf->SetFont('dejavusans', '', 10);
+
+                $he = $data[0]->he;
+
+                $tableDatos = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="130" class="bold">Fecha Reporte:</td>
+                        <td width="150">{$data[0]->fecha_reporte_i}</td> 
+                        <td width="100" class="bold">NOMBRE:</td>
+                        <td width="200">{$data[0]->NombreC}</td> 
+                        <td width="100" class="bold">{$data[0]->departamento}</td>                
+                    </tr>
+              </table>
+EOD;
+                $pdf->writeHTML($tableDatos, true, false, true, false, '');
+
+                $table = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">OPERACIÓN</td>
+                        <td align="center" width="100">CANTIDAD</td>
+                        <td align="center" width="100">TARIFA</td>
+                        <td align="center" width="100">TOTAL</td>
+                    </tr>
+                </thead>
+EOD;
+
+                $tableSB = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+EOD;
+
+                $numItems = count($detalle);
+
+                for($i=0;$i<$numItems;$i++){
+
+                    if($detalle[$i]->operacion <> 'S01'){
+                        //var_dump($detalle[$i]->operacion);
+                        $total = floatval($detalle[$i]->cantidad) * floatval($detalle[$i]->tarifa_con);
+                        $tarifa = sprintf("%1\$.5f",floatval($detalle[$i]->tarifa_con));
+                        $total = round($total, 2);
+                        $sum = $sum + $total;
+                        $table .= '
+                        <tr>
+                            <td width="100" align="center">'.$detalle[$i]->operacion.'</td>
+                            <td width="100" align="center">'.$detalle[$i]->cantidad.'</td>
+                            <td width="100" align="center">$ '.$tarifa.'</td>
+                            <td width="100" align="right">$ '.sprintf("%1\$.2f",$total).'</td>
+                        </tr>
+                    ';
+                    }else{
+                        $totalS = floatval($detalle[$i]->cantidad) * floatval($detalle[$i]->tarifa_con);
+                        $tarifaS = sprintf("%1\$.2f",floatval($detalle[$i]->tarifa_con));
+                        $s = floatval($detalle[$i]->tarifa_con);
+
+                        $tableSB .= '
+                        <tr>
+                            <td COLSPAN="3" width="300" align="right">SABADO</td>
+                            <td width="100" align="right">$ '.sprintf("%1\$.2f",$totalS).'</td>
+                        </tr>
+                    ';
+
+                    }
+
+                }
+
+                $sumT = sprintf("%1\$.2f",$sum);
+
+                $table2 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="300" align="right">IMPORTE</th>
+                        <th width="100" align="right">$ {$sumT}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+                $totalHE = (($sum / 7)/9)*$he;
+                $totalHE = $totalHE * 2;
+
+                $totalR = $sum + $totalHE + $s;
+                $totalR = sprintf("%1\$.2f",$totalR);
+
+                $tableSB .= '
+                        <tr>
+                            <td width="100" align="center">H.E.</td>
+                            <td width="100" align="center">'.$he.'</td>
+                            <td width="100" align="center">H.E.</td>
+                            <td width="100" align="right">$ '.sprintf("%1\$.2f",$totalHE).'</td>
+                        </tr>
+                    ';
+
+                $table .= '</table>';
+                $tableSB .= '</table>';
+
+                $table3 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="300" align="right">TOTAL</th>
+                        <th width="100" align="right">$ {$totalR}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+                $pdf->writeHTML($table, true, false, true, false, '');
+                $pdf->writeHTML($table2, true, false, true, false, '');
+                $pdf->writeHTML($tableSB, true, false, true, false, '');
+                $pdf->writeHTML($table3, true, false, true, false, '');
+
+
+                // Close and output PDF document
+                // This method has several options, check the source code documentation for more information.
+                $pdf->Output('Recibo'.$idReporte.'.pdf', 'I');
+
+                //============================================================+
+                // END OF FILE
+                //============================================================+
+
+                break;
             default: $this->cliError();
         }
     }
+
 }

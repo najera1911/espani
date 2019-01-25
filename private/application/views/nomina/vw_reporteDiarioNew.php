@@ -10,6 +10,13 @@ $data['css'] = array(
 $this->load->view("plantilla/encabezado", $data);
 ?>
 
+<style>
+    .table-info, .table-info>td, .table-info>th {
+        font-size: 12px;
+        text-align: center;
+    }
+</style>
+
 <section class="ml-5 mr-5" id="Operaciones">
     <div class="row mt-5 mb-5">
         <div class="col text-center text-uppercase">
@@ -57,6 +64,10 @@ $this->load->view("plantilla/encabezado", $data);
                     <br>
                     <button type="button" class="btn btn-secondary pl-2" id="btnAdd">  Agregar </button>
                 </div>
+                <div class="form-group col-4 text-center">
+                    <br>
+                    <span id ="TTBultos"></span>
+                </div>
             </div>
         </form>
     </div>
@@ -66,14 +77,48 @@ $this->load->view("plantilla/encabezado", $data);
 <!--        </div>-->
 <!--    </div>-->
     <div class="row">
-        <div class="col-12 text-uppercase">
+        <div class="col-8 text-uppercase">
             <table id="tblDatos2" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="table-info text-center"></thead>
             </table>
         </div>
+        <div class="col-4 text-uppercase" style="height: 400px; overflow-y: auto;">
+            <div class="card" style="box-shadow: 4px 4px #c0bebe;">
+                <div class="card-header text-center">
+                    RECIBO DE PAGO
+                </div>
+                <div class="card-body" style="font-size: 12px !important;">
+                    <div class="row">
+                        <table class="table table-sm" id="tblRecibo">
+                            <thead>
+                            <tr>
+                                <th scope="col">Operación</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Tarifa</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <table class="table table-sm" id="tblReciboSab">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row pt-5 pb-5">
-        <div class="col-12 text-center">
+        <div class="col-2">
+        </div>
+        <div class="col-3 text-center">
+            <button type="button" class="btn btn-danger" id="btnEliminarT">Eliminar operaciones</button>
+        </div>
+        <div class="col-3 text-center">
             <button type="button" class="btn btn-success" id="btnFinalizar">Finalizar</button>
         </div>
     </div>
@@ -95,8 +140,15 @@ $this->load->view("plantilla/encabezado", $data);
             cmbOper = $("#cmbOper"),
             txtCantidad = $("#txtCantidad"),
             id_reporte = 0,
-            btnFinalizar = $("#btnFinalizar")
+            btnFinalizar = $("#btnFinalizar"),
+            tblRecibo = $("#tblRecibo tbody"),
+            tblReciboSab = $("#tblReciboSab tbody"),
+            $he = 0,
+            $TTBultos = $("#TTBultos"),
+            $btnEliminarT = $("#btnEliminarT")
         ;
+
+        let selected = [];
 
         cmbBulto.select2({
             allowClear: true,
@@ -187,6 +239,113 @@ $this->load->view("plantilla/encabezado", $data);
                 nombreEmpleado.html('Nombre: '+ obj[0].NombreC + '   '+ obj[0].departamento +'   Puesto: ' + obj[0].puesto);
             });
 
+        cmbBulto.change(function () {
+            $.post('<?php echo site_url("/nomina/get/getTTBultos")?>', { cmbBulto: cmbBulto.val() })
+                .done(function( data ) {
+                    $TTBultos.text('Suma Bultos: '+ data);
+                });
+        });
+
+        getDataRecibo();
+        function getDataRecibo(){
+            tblRecibo.empty();
+            tblReciboSab.empty();
+            let sum = 0;
+            $.ajax({
+                url: '<?php echo base_url("/nomina/get/dataRecibo")?>',
+                type: "POST",
+                data: {datos: id_reporte},
+                dataType: "html",
+                success: function (e) {
+                    let obj = JSON.parse(e);
+                    console.log(obj.length);
+
+                    let s= 0;
+
+                    for(let x=0; x < obj.length; x++){
+                        if(obj[x].operacion!='S01'){
+                            let total = parseFloat(obj[x].cantidad) * parseFloat(obj[x].tarifa_con);
+                            let tarifa = parseFloat(obj[x].tarifa_con).toFixed(5);
+                            total = parseFloat(total.toFixed(2));
+                            sum = sum + total;
+                            tblRecibo.append(`
+                            <tr>
+                                <th align="center">${obj[x].operacion}</th>
+                                <td align="center">${obj[x].cantidad}</td>
+                                <td align="right">$ ${tarifa}</td>
+                                <td align="right">$ ${total.toFixed(2)}</td>
+                            </tr>
+                        `);
+                        }else{
+                            let totalS = parseFloat(obj[x].cantidad) * parseFloat(obj[x].tarifa_con);
+                            let tarifaS = parseFloat(obj[x].tarifa_con).toFixed(2);
+                            s= parseFloat(obj[x].tarifa_con);
+                            tblReciboSab.append(`
+                            <tr>
+                                <th align="center">${obj[x].operacion}</th>
+                                <td align="center">${obj[x].cantidad}</td>
+                                <td align="right">$ ${tarifaS}</td>
+                                <td align="right">$ ${totalS.toFixed(2)}</td>
+                            </tr>
+                        `);
+                        }
+                    }
+
+                    tblRecibo.append(`
+                            <tr class="table-dark">
+                                <th align="right" colspan="3">IMPORTE</th>
+                                <td align="right">$ ${sum}</td>
+                            </tr>
+                        `);
+
+                    let $totalHE = ((sum / 7)/9)*$he;
+                    $totalHE = $totalHE * 2;
+
+                    tblReciboSab.append(`
+                            <tr>
+                                <th align="center">H.E.</th>
+                                <td align="center">${$he}</td>
+                                <td align="right">H.E.</td>
+                                <td align="right">$ ${$totalHE.toFixed(2)}</td>
+                            </tr>
+                        `);
+
+                    let totalR = sum + $totalHE + s;
+
+                    tblReciboSab.append(`
+                            <tr class="table-dark">
+                                <th  colspan="3" align="right">TOTAL</th>
+                                <td align="right">$ ${totalR.toFixed(2)}</td>
+                            </tr>
+                        `);
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    swal("Error", "Error al eliminar la operación", "error");
+                }
+            });
+        }
+
+        $.ajax({
+            url: '<?php echo base_url("nomina/get/horasExtras")?>',
+            type: "POST",
+            data: {id: id_reporte},
+            dataType: "html",
+            success: function (e) {
+                let obj = JSON.parse(e);
+                console.log(obj.length);
+                if(obj.length>0){
+                    $he = obj[0].he;
+                }else{
+                    $he=0;
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                swal("Error", "Error al eliminar usuario", "error");
+            }
+        });
+
         getReporte();
         function getReporte() {
             MY.table = $tblDatos2.DataTable({
@@ -233,6 +392,44 @@ $this->load->view("plantilla/encabezado", $data);
 
         });
 
+        $('#tblDatos2 tbody').on('click', 'tr', function () {
+            selected = [];
+            $(this).toggleClass('selected');
+            let data = MY.table.rows('.selected').data();
+            for (let i=0; i<data.length;i++){
+                selected.push(data[i]);
+            }
+        } );
+
+        $btnEliminarT.click(function () {
+            if(selected.length===0){
+                swal("Error", "Debe de seleccionar un registro", "error");
+            }else{
+                console.log(selected);
+                $.ajax({
+                    type: 'post',
+                    url: '<?php echo site_url("/nomina/set/deleteOperacionesGroup")?>',
+                    data: {data : selected},
+                    success: function (e) {
+                        if (e === 'OK') {
+                            swal("Bien", "La operación se ha eliminado correctamente", "success");
+                            MY.table.ajax.reload();
+                            cargar_catalogo_select('<?php echo site_url("/nomina/get/getCortes")?>', {}, cmbCorte, 'Corte');
+                            getDataRecibo();
+                            selected=[];
+                        }
+                    },
+                    error: function (e) {
+                        toastr.error("Error al procesar la petición " + e.responseText);
+                        selected=[];
+                    },
+                    complete: function () {
+                        selected=[];
+                    }
+                });
+            }
+        });
+
         function OperacionDelete(data){
             swal({
                     title: "Eliminar una Operación",
@@ -254,8 +451,10 @@ $this->load->view("plantilla/encabezado", $data);
                             dataType: "html",
                             success: function (e) {
                                 if (e === 'OK') {
-                                    swal("Bien", "El cliente se ha eliminado correctamente", "success");
+                                    swal("Bien", "La operación se ha eliminado correctamente", "success");
                                     MY.table.ajax.reload();
+                                    cargar_catalogo_select('<?php echo site_url("/nomina/get/getCortes")?>', {}, cmbCorte, 'Corte');
+                                    getDataRecibo();
                                 }
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
@@ -269,14 +468,15 @@ $this->load->view("plantilla/encabezado", $data);
         }
 
         btnAdd.click(function () {
+            console.log(cmbOper.val());
             if(cmbCorte.val()===''){
                 toastr.error("Debe de seleccionar un Número de Corte");
-            }else if (cmbBulto.val()===''){
+            }else if (cmbOper.val()===''){
+                toastr.error("Debe seleccionar un número de operación");
+            }else if (cmbBulto.val().length===0 && cmbOper.val()!=0){
                 toastr.error("Debe seleccionar un número de bulto");
-            }else if (cmbOper.val()==='') {
-                toastr.error("Debe seleccionar un número de operación");
             }else if (txtCantidad.val()==='') {
-                toastr.error("Debe seleccionar un número de operación");
+                toastr.error("Debe ingresar cantidad");
             }else {
                 if (btnAdd.hasClass('loading')) {
                     return false;
@@ -307,7 +507,7 @@ $this->load->view("plantilla/encabezado", $data);
                         id_reporte = e;
                         $tblDatos2.dataTable().fnDestroy();
                         getReporte();
-
+                        getDataRecibo();
                 },
                 error: function (e) {
                     toastr.error("Error al procesar la petición " + e.responseText);

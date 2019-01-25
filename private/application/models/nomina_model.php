@@ -94,7 +94,7 @@ INNER JOIN tbl_clientes C on B.cat_clientes_id=C.tbl_clientes_id
 LEFT JOIN tbl_ordencorte_operaciones D on A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones
 LEFT JOIN cat_operaciones E on D.cat_operaciones_id = E.cat_operaciones_id
 LEFT JOIN tbl_ordencorte_bultos F on D.cat_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id
-where A.tbl_reportediario_id = ? LIMIT ?, ?";
+where A.tbl_reportediario_id = ? order by B.numero_corte, operacion, F.num_bulto LIMIT ?, ?";
             return $this->db->query($sql, array((int) $tbl_reportediario_id, (int) $start, (int) $length))->result();
         }else{
             $sql="SELECT A.tbl_reportediario_detalle_id, B.numero_corte, C.nombre_corto, F.num_bulto, 
@@ -106,7 +106,7 @@ INNER JOIN tbl_clientes C on B.cat_clientes_id=C.tbl_clientes_id
 LEFT JOIN tbl_ordencorte_operaciones D on A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones
 LEFT JOIN cat_operaciones E on D.cat_operaciones_id = E.cat_operaciones_id
 LEFT JOIN tbl_ordencorte_bultos F on D.cat_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id
-where A.tbl_reportediario_id = ?";
+where A.tbl_reportediario_id = ? order by B.numero_corte, operacion, F.num_bulto";
             return $this->db->query($sql, array((int) $tbl_reportediario_id))->result();
         }
     }
@@ -212,6 +212,13 @@ where A.tbl_reportediario_id = ?";
         }
     }
 
+    function addHorasExtras($data,$tbl_reporteDiario_id){
+        $this->db->where('tbl_reporteDiario_id', $tbl_reporteDiario_id);
+        $res = $this->db->update('tbl_reportediario', $data);
+
+        return $res;
+    }
+
     function getDataReporte($idReporte){
         $this->db->select("A.*, B.NombreC, B.departamento");
         $this->db->from("tbl_reportediario A")->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
@@ -226,7 +233,7 @@ where A.tbl_reportediario_id = ?";
         $this->db->join("tbl_clientes C","B.cat_clientes_id=C.tbl_clientes_id");
         $this->db->join("tbl_ordencorte_operaciones D","A.tbl_cordencorte_operaciones_id=D.tbl_OrdenCorte_operaciones");
         $this->db->join("cat_operaciones E","D.cat_operaciones_id = E.cat_operaciones_id");
-        $this->db->join("tbl_ordencorte_bultos F","A.tbl_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id");
+        $this->db->join("tbl_ordencorte_bultos F","D.cat_ordencorte_bultos_id=F.tbl_OrdenCorte_bultos_id");
         $this->db->where('tbl_reportediario_id',$idReporte);
         $this->db->order_by("B.numero_corte, E.cat_operaciones_id, F.num_bulto", "asc");
         $query1 = $this->db->get()->result();
@@ -241,6 +248,34 @@ where A.tbl_reportediario_id = ?";
 
 
         return $query;
+    }
+
+    function getDataRecibo($idReporte){
+        $this->db->select("C.operacion, C.tarifa_con, sum(A.cantidad) as cantidad");
+        $this->db->from("tbl_reportediario_detalle A");
+        $this->db->join("tbl_ordencorte_operaciones B","A.tbl_cordencorte_operaciones_id=B.tbl_OrdenCorte_operaciones");
+        $this->db->join("cat_operaciones C","B.cat_operaciones_id=C.cat_operaciones_id");
+        $this->db->where('tbl_reportediario_id',$idReporte);
+        $this->db->group_by('C.operacion');
+        $this->db->order_by("C.operacion", "asc");
+        $query1 = $this->db->get()->result();
+
+        $this->db->select("B.operacion, B.tarifa_con, A.cantidad as cantidad");
+        $this->db->from("tbl_reportediario_detalle A");
+        $this->db->join("cat_operaciones B","B.operacion='S01'");
+        $this->db->where("tbl_reportediario_id",$idReporte)->where("tbl_cordencorte_operaciones_id",0);
+        $query2 = $this->db->get()->result();
+
+        $query = array_merge($query1, $query2);
+
+
+        return $query;
+    }
+
+    function getHorasExtras($id){
+        $this->db->select("he");
+        $this->db->where('tbl_reporteDiario_id',$id);
+        return $this->db->get("tbl_reportediario")->result();
     }
 
     function deleteOperacion($idReporteDetalle,$idOperacion,$sum){
