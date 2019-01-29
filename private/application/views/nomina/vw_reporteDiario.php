@@ -175,22 +175,22 @@ $this->load->view("plantilla/encabezado", $data);
                     {"title": "Fecha reporte", "data": "fecha_reporte_i", "className": "text-center"},
                     { "title": "Ver", data:null,
                         render:function(data, type,row){
-                            return '<button class="btn btn-info btn-sm">Ver</button>';
+                            return '<button class="btn btn-info btn-sm"><i class="fas fa-file-pdf"></i></button>';
                         }
                     },
                     { "title": "Editar", data:null,
                         render:function(data, type,row){
-                            return '<button class="btn btn-success btn-sm">Editar</button>';
+                            return '<button class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>';
                         }
                     },
-                    { "title": "HorasE", data:null,
+                    { "title": "H.E.", data:null,
                         render:function(data, type,row){
-                            return '<button class="btn btn-primary btn-sm">H. E.</button>';
+                            return '<button class="btn btn-primary btn-sm"><i class="fas fa-business-time"></i></button>';
                         }
                     },
                     { "title": "Recibo", data:null,
                         render:function(data, type,row){
-                            return '<button class="btn btn-secondary btn-sm">Recibo</button>';
+                            return '<button class="btn btn-secondary btn-sm"><i class="fas fa-file-invoice-dollar"></i></button>';
                         }
                     }
                 ],
