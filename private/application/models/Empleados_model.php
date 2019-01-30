@@ -16,6 +16,7 @@ class Empleados_model extends CI_Model{
         if($length>=0){
             $this->db->limit($length,$start);
         }
+        $this->db->order_by('cat_rh_departamento ASC, nombre ASC');
         return $this->db->get($table)->result();
     }
 
@@ -24,6 +25,7 @@ class Empleados_model extends CI_Model{
         if($length>=0){
             $this->db->limit($length,$start);
         }
+        $this->db->order_by('cat_rh_departamento ASC, nombre ASC');
         return $this->db->get('empleados_view')->result();
     }
 

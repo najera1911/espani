@@ -22,7 +22,8 @@ class Operaciones_model extends CI_Model
     }
 
     public function  obtener_todosSearch($start, $length, $value, $column){
-        $this->db->like($column, $value);
+        $this->db->like("operacion", $value);
+        $this->db->or_like("descripcion", $value);
         if($length>=0){
             $this->db->limit($length,$start);
         }

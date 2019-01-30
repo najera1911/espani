@@ -17,6 +17,10 @@ $this->load->view("plantilla/encabezado", $data);
         </div>
     </div>
     <div class="row mb-3">
+        <div class="form-group col-md-2 col-12">
+            <label for="cmbPiso">Piso</label>
+            <select class="form-control js-example-basic-single" id="cmbPiso" name="cmbPiso" required></select>
+        </div>
         <div class="form-group col-md-6 col-12">
             <label for="cmbEmpleado">Empleado</label>
             <select class="form-control js-example-basic-single" id="cmbEmpleado" name="cmbEmpleado" required></select>
@@ -101,9 +105,11 @@ $this->load->view("plantilla/encabezado", $data);
             $btnGuardarHE = $("#btnGuardarHE"),
             $nameTrabajador = '',
             $txtHE = 0,
-            tbl_reporte = 0
+            tbl_reporte = 0,
+            cmbPiso = $("#cmbPiso")
         ;
 
+        cmbPiso.select2();
         cmbEmpleado.select2();
         txtFchaInicio.Zebra_DatePicker({
             show_icon: true,
@@ -150,7 +156,11 @@ $this->load->view("plantilla/encabezado", $data);
         }
 
         //agregar select
-        cargar_catalogo_select('<?php echo site_url("/nomina/get/getEmpleados")?>', {}, cmbEmpleado, 'Empleado');
+        cargar_catalogo_select('<?php echo site_url("/nomina/get/getPiso")?>', {}, cmbPiso, 'Piso');
+        cmbPiso.change(function () {
+            cmbEmpleado.html('');
+            cargar_catalogo_select('<?php echo site_url("/nomina/get/getEmpleados")?>', {idPiso: cmbPiso.val()}, cmbEmpleado, 'Empleado');
+        });
 
 
         getReportesDiarios();

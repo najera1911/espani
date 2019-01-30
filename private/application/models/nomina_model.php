@@ -3,10 +3,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Nomina_model extends CI_Model{
 
-    function getEmpleados(){
+    function getEmpleados($idPiso){
         $this->db->select("cat_rh_empleado_id AS id, CONCAT(departamento,' -',NombreC) as nombre,'' as txt");
-        $this->db->where("estatus",1);
+        $this->db->where("estatus",1)->where("cat_rh_departamento",$idPiso);
         return $this->db->get("empleados_view")->result();
+    }
+
+    function getPiso(){
+        $this->db->select("cat_rh_departamento_id AS id, descripcion as nombre,'' as txt");
+        $this->db->where("estatus",1);
+        return $this->db->get("cat_rh_departamento")->result();
     }
 
     function getEmpleadosData($idEmpleado){

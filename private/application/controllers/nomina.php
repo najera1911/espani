@@ -49,7 +49,12 @@ class Nomina extends CI_Controller{
         }
         switch($data){
             case 'getEmpleados':
-                $res = $this->nomina_model->getEmpleados();
+                $idPiso = filter_input(INPUT_GET,'idPiso');
+                $res = $this->nomina_model->getEmpleados($idPiso);
+                exit(json_encode($res));
+                break;
+            case 'getPiso':
+                $res = $this->nomina_model->getPiso();
                 exit(json_encode($res));
                 break;
             case 'dataEmpleado':

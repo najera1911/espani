@@ -338,6 +338,7 @@ $this->load->view("plantilla/encabezado", $data);
                     "type": "POST"
                     },
                 columns: [
+                    { "title": "Piso", "data": "departamento" },
                     { "title": "Nombre", "data":"NombreC" },
                     { "title": "Fecha Nacim", "data": "fcha_nac",
                         render: function(data, type, row){
@@ -354,7 +355,6 @@ $this->load->view("plantilla/encabezado", $data);
                     { "title": "Dirección", "data": "dirC" },
                     { "title": "Correo", "data": "email" },
                     { "title": "Telefono", "data": "telefono" },
-                    { "title": "Piso", "data": "departamento" },
                     { "title": "Puesto", "data": "puesto" },
                     { "title": "Editar", data:null,
                         render:function(data, type,row){

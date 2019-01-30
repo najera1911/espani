@@ -89,23 +89,8 @@ class Clientes extends CI_Controller {
                 if(empty($txtName)){
                     $this->cliError('Campo nombre vacio');
                 }
-                if(empty($txtAPaterno)){
-                    $this->cliError('Campo apellido paterno vacio');
-                }
-                if(empty($txtAMaterno)){
-                    $this->cliError('Campo apellido materno vacio');
-                }
                 if(empty($txtNombreCorto)){
                     $this->cliError('Campo nombre corto vacio');
-                }
-                if(empty($rfc)){
-                    $this->cliError('Faltan agregar RFC');
-                }
-                if(empty($txtCalle || $txtColonia)){
-                    $this->cliError('Debe de introducir calle y colonia');
-                }
-                if(empty($cmbEntidad||$cmbMunicipio||$cmbLocalidad)){
-                    $this->cliError('Debe de introducir una Estado, Municipio y Localidad');
                 }
 
                 $data = array(
