@@ -106,8 +106,12 @@ $this->load->view("plantilla/encabezado", $data);
             $nameTrabajador = '',
             $txtHE = 0,
             tbl_reporte = 0,
-            cmbPiso = $("#cmbPiso")
+            cmbPiso = $("#cmbPiso"),
+            $idPiso = <?php echo $id ?>,
+            $idEmpleado = <?php echo $id2 ?>
         ;
+
+            console.log($idPiso+' '+$idEmpleado);
 
         cmbPiso.select2();
         cmbEmpleado.select2();
@@ -162,6 +166,22 @@ $this->load->view("plantilla/encabezado", $data);
             cargar_catalogo_select('<?php echo site_url("/nomina/get/getEmpleados")?>', {idPiso: cmbPiso.val()}, cmbEmpleado, 'Empleado');
         });
 
+        if($idPiso>0){
+            setTimeout(function () {
+                $('select[name="cmbPiso"]').val($idPiso).change();
+            }, 900);
+
+
+            setTimeout(function () {
+                $('select[name="cmbEmpleado"]').val($idEmpleado).change();
+            }, 1500);
+
+            setTimeout(function () {
+                btnNuevoReporte.show();
+                $tblDatos2.dataTable().fnDestroy();
+                getReportesDiarios();
+            }, 2100);
+        }
 
         getReportesDiarios();
         function getReportesDiarios() {

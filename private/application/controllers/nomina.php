@@ -43,6 +43,17 @@ class Nomina extends CI_Controller{
         $this->load->view('nomina/vw_' . $pagina,$datos);
     }
 
+    function index3($pagina = '',$id,$id2){
+        if (!file_exists(VIEWPATH . 'nomina/vw_' . $pagina . '.php')) {
+            show_404();
+        }
+        $datos = array(
+            'id' => $id,
+            'id2' =>$id2
+        );
+        $this->load->view('nomina/vw_' . $pagina,$datos);
+    }
+
     function get($data=''){
         if(!$this->session->userdata('isLoggedIn')){
             $this->cliError('Default response');

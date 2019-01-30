@@ -149,7 +149,9 @@ $this->load->view("plantilla/encabezado", $data);
             tblReciboSab = $("#tblReciboSab tbody"),
             $he = 0,
             $TTBultos = $("#TTBultos"),
-            $btnEliminarT = $("#btnEliminarT")
+            $btnEliminarT = $("#btnEliminarT"),
+            cat_rh_departamento = 0,
+            idEmpleado=0
         ;
 
         let selected = [];
@@ -245,6 +247,8 @@ $this->load->view("plantilla/encabezado", $data);
                 txtFchaInicio.val(d.fecha_reporte_i).data('Zebra_DatePicker');
                 //txtFchaInicio.data('Zebra_DatePicker').set_date(new Date(d.fecha_reporte_i));
                 $he = parseFloat(d.he);
+                cat_rh_departamento = d.cat_rh_departamento;
+                idEmpleado = d.cat_rh_empleado_id;
                 console.log($he);
             });
 
@@ -509,7 +513,7 @@ $this->load->view("plantilla/encabezado", $data);
 
         btnFinalizar.click(function () {
             frmReporte.get(0).reset();
-            location.href = '<?php echo site_url("/nomina/index/reporteDiario")?>';
+            location.href = '<?php echo site_url("/nomina/index3/reporteDiario/")?>'+cat_rh_departamento+'/'+idEmpleado;
         });
 
     });

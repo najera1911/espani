@@ -145,7 +145,8 @@ $this->load->view("plantilla/encabezado", $data);
             tblReciboSab = $("#tblReciboSab tbody"),
             $he = 0,
             $TTBultos = $("#TTBultos"),
-            $btnEliminarT = $("#btnEliminarT")
+            $btnEliminarT = $("#btnEliminarT"),
+            cat_rh_departamento = 0
         ;
 
         let selected = [];
@@ -237,6 +238,7 @@ $this->load->view("plantilla/encabezado", $data);
             .done(function( data ) {
                 let obj = JSON.parse(data);
                 nombreEmpleado.html('Nombre: '+ obj[0].NombreC + '   '+ obj[0].departamento +'   Puesto: ' + obj[0].puesto);
+                cat_rh_departamento = obj[0].cat_rh_departamento;
             });
 
         cmbBulto.change(function () {
@@ -520,7 +522,7 @@ $this->load->view("plantilla/encabezado", $data);
 
         btnFinalizar.click(function () {
             frmReporte.get(0).reset();
-            location.href = '<?php echo site_url("/nomina/index/reporteDiario")?>';
+            location.href = '<?php echo site_url("/nomina/index3/reporteDiario/")?>'+cat_rh_departamento+'/'+idEmpleado;
         });
 
     });

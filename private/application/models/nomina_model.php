@@ -16,13 +16,13 @@ class Nomina_model extends CI_Model{
     }
 
     function getEmpleadosData($idEmpleado){
-        $this->db->select("cat_rh_empleado_id, departamento, puesto, NombreC");
+        $this->db->select("cat_rh_empleado_id, departamento, puesto, NombreC, cat_rh_departamento");
         $this->db->where("estatus",1)->where("cat_rh_empleado_id",$idEmpleado);
         return $this->db->get("empleados_view")->result();
     }
 
     function getDataReporteProd($idReporte){
-        $this->db->select("A.*, B.NombreC, B.departamento, B.puesto");
+        $this->db->select("A.*, B.NombreC, B.departamento, B.puesto, B.cat_rh_departamento");
         $this->db->from("tbl_reportediario A");
         $this->db->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
         $this->db->where("tbl_reporteDiario_id",$idReporte);

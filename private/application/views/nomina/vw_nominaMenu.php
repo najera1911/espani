@@ -35,7 +35,7 @@ $this->load->view("plantilla/encabezado",$data);
                 <div class="row row justify-content-center">
                     <div class="col-md-2">
                         <div class="li">
-                            <a href="<?php echo base_url()?>nomina/index/reporteDiario">
+                            <a href="<?php echo base_url()?>nomina/index3/reporteDiario/0/0">
                                 <div class="ca-imagen">
                                     <img class="object move-right" src="<?php echo base_url()?>assets/img/ReportDProd.png">
                                 </div>
