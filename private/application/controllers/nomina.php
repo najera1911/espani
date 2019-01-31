@@ -152,6 +152,15 @@ class Nomina extends CI_Controller{
                 exit($rn222);
 
                 break;
+            case 'getFecha':
+                $res = $this->nomina_model->getFecha();
+                exit(json_encode($res));
+                break;
+            case 'getPisoF':
+                $fecha = filter_input(INPUT_GET,'fecha');
+                $res = $this->nomina_model->getPisoF($fecha);
+                exit(json_encode($res));
+                break;
             default: $this->cliError();
         }
     }
@@ -862,6 +871,413 @@ EOD;
                 // Close and output PDF document
                 // This method has several options, check the source code documentation for more information.
                 $pdf->Output('Recibo'.$idReporte.'.pdf', 'I');
+
+                //============================================================+
+                // END OF FILE
+                //============================================================+
+
+                break;
+            case 'ReciboPisoPDF':
+                $idPiso = filter_input(INPUT_GET, 'idPiso');
+                $fecha = filter_input(INPUT_GET, 'fecha');
+                if (empty($idPiso)) {
+                    $this->cliError('Faltan datos', '0X001');
+                }
+
+                //obtener datos del modelo
+
+                $data = $this -> nomina_model->getDataReportePiso($idPiso,$fecha);
+
+                //$data = $this -> nomina_model->getDataReporte($idReporte);
+                //$detalle = $this->nomina_model->getDataRecibo($idReporte);
+
+                setlocale(LC_TIME, 'spanish');
+                //$inicio = strftime("%d de %B del %Y", strtotime($tadacorte[0]->fecha_orden));
+
+                $PDF_HEADER_TITLE="Titulo del PDF";
+
+                // create new PDF document
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+                // set document information
+                $pdf->SetCreator(PDF_CREATOR);
+                $pdf->SetAuthor('ESPANI S.A de C.V');
+
+                $PDF_HEADER_STRING="";
+
+
+                // set default monospaced font
+                $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+                // set margins
+                $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+
+
+                // set auto page breaks
+                $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+                // set some language-dependent strings (optional)
+                if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+                    require_once(dirname(__FILE__).'/lang/eng.php');
+                    $pdf->setLanguageArray();
+                }
+
+                // ---------------------------------------------------------
+
+                // set default font subsetting mode
+                $pdf->setFontSubsetting(true);
+
+                $numItems = count($data);
+                $j=0;
+                $jj=0;
+                $fn=0;
+
+                for ($i=0; $i < $numItems; $i+=2)
+                {
+                    $fn+=2;
+
+
+                    if($fn<$numItems){
+                        $fin = $fn;
+                    }else{
+                        $fin = $numItems;
+                    }
+
+                    for($k=$j;$k<$fin;$k+=2){
+                        $pdf->AddPage('L', 'A4');
+                        $pdf->SetFont('dejavusans', '', 10);
+                        $sum = 0;
+                        $s=0;
+                        $he = $data[$k]->he;
+                        $idReporte1= $data[$k]->tbl_reporteDiario_id;
+                        $detalle1 = $this->nomina_model->getDataRecibo($idReporte1);
+
+                        $tableDatos = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="130" class="bold">Fecha Reporte:</td>
+                        <td width="100">{$data[$k]->fecha_reporte_i}</td>                
+                    </tr>
+                    <tr>
+                        <td width="70" class="bold">NOMBRE:</td>
+                        <td width="180">{$data[$k]->NombreC}</td> 
+                        <td width="80" class="bold">{$data[$k]->departamento}</td>                
+                    </tr>
+              </table>
+EOD;
+
+                        $table = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">OPERACIÓN</td>
+                        <td align="center" width="80">CANTIDAD</td>
+                        <td align="center" width="80">TARIFA</td>
+                        <td align="center" width="80">TOTAL</td>
+                    </tr>
+                </thead>
+EOD;
+
+                        $tableSB = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+EOD;
+
+                        $numItems2 = count($detalle1);
+
+                        for($i=0;$i<$numItems2;$i++){
+
+                            if($detalle1[$i]->operacion <> 'S01'){
+                                //var_dump($detalle[$i]->operacion);
+                                $total = floatval($detalle1[$i]->cantidad) * floatval($detalle1[$i]->tarifa_con);
+                                $tarifa = sprintf("%1\$.5f",floatval($detalle1[$i]->tarifa_con));
+                                $total = round($total, 2);
+                                $sum = $sum + $total;
+                                $table .= '
+                        <tr>
+                            <td width="100" align="center">'.$detalle1[$i]->operacion.'</td>
+                            <td width="80" align="center">'.$detalle1[$i]->cantidad.'</td>
+                            <td width="80" align="center">$ '.$tarifa.'</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$total).'</td>
+                        </tr>
+                    ';
+                            }else{
+                                $totalS = floatval($detalle1[$i]->cantidad) * floatval($detalle1[$i]->tarifa_con);
+                                $tarifaS = sprintf("%1\$.2f",floatval($detalle1[$i]->tarifa_con));
+                                $s = floatval($detalle1[$i]->tarifa_con);
+
+                                $tableSB .= '
+                        <tr>
+                            <td COLSPAN="3" width="260" align="right">SABADO</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$totalS).'</td>
+                        </tr>
+                    ';
+
+                            }
+
+                        }
+
+                        $sumT = sprintf("%1\$.2f",$sum);
+
+                        $table2 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="260" align="right">IMPORTE</th>
+                        <th width="80" align="right">$ {$sumT}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+                        $totalHE = (($sum / 7)/9)*$he;
+                        $totalHE = $totalHE * 2;
+
+                        $totalR = $sum + $totalHE + $s;
+                        $totalR = sprintf("%1\$.2f",$totalR);
+
+                        $tableSB .= '
+                        <tr>
+                            <td width="100" align="center">H.E.</td>
+                            <td width="80" align="center">'.$he.'</td>
+                            <td width="80" align="center">H.E.</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$totalHE).'</td>
+                        </tr>
+                    ';
+
+                        $table .= '</table>';
+                        $tableSB .= '</table>';
+
+                        $table3 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="260" align="right">TOTAL</th>
+                        <th width="80" align="right">$ {$totalR}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+
+                        if($k+1<$numItems){
+                            $sum2 = 0;
+                            $s2=0;
+                            $he2 = $data[$k+1]->he;
+                            $idReporte2= $data[$k+1]->tbl_reporteDiario_id;
+                            $detalle2 = $this->nomina_model->getDataRecibo($idReporte2);
+                            $tableDatos2 = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                    <tr>
+                        <td width="130" class="bold">Fecha Reporte:</td>
+                        <td width="100">{$data[$k+1]->fecha_reporte_i}</td>                
+                    </tr>
+                    <tr>
+                        <td width="70" class="bold">NOMBRE:</td>
+                        <td width="180">{$data[$k+1]->NombreC}</td> 
+                        <td width="80" class="bold">{$data[$k+1]->departamento}</td>                
+                    </tr>
+              </table>
+EOD;
+
+
+                            $table111 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td align="center" width="100">OPERACIÓN</td>
+                        <td align="center" width="80">CANTIDAD</td>
+                        <td align="center" width="80">TARIFA</td>
+                        <td align="center" width="80">TOTAL</td>
+                    </tr>
+                </thead>
+EOD;
+
+                            $tableSB2 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+EOD;
+
+                            $numItems3 = count($detalle2);
+
+                            for($i=0;$i<$numItems3;$i++){
+
+                                if($detalle2[$i]->operacion <> 'S01'){
+                                    //var_dump($detalle[$i]->operacion);
+                                    $total2 = floatval($detalle2[$i]->cantidad) * floatval($detalle2[$i]->tarifa_con);
+                                    $tarifa2 = sprintf("%1\$.5f",floatval($detalle2[$i]->tarifa_con));
+                                    $total2 = round($total2, 2);
+                                    $sum2 = $sum2 + $total2;
+                                    $table111 .= '
+                        <tr>
+                            <td width="100" align="center">'.$detalle2[$i]->operacion.'</td>
+                            <td width="80" align="center">'.$detalle2[$i]->cantidad.'</td>
+                            <td width="80" align="center">$ '.$tarifa2.'</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$total2).'</td>
+                        </tr>
+                    ';
+                                }else{
+                                    $totalS2 = floatval($detalle2[$i]->cantidad) * floatval($detalle2[$i]->tarifa_con);
+                                    $tarifaS2 = sprintf("%1\$.2f",floatval($detalle2[$i]->tarifa_con));
+                                    $s2 = floatval($detalle2[$i]->tarifa_con);
+
+                                    $tableSB2 .= '
+                        <tr>
+                            <td COLSPAN="3" width="260" align="right">SABADO</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$totalS2).'</td>
+                        </tr>
+                    ';
+
+                                }
+
+                            }
+
+                            $sumT2 = sprintf("%1\$.2f",$sum2);
+
+                            $table222 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="260" align="right">IMPORTE</th>
+                        <th width="80" align="right">$ {$sumT2}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+                            $totalHE2 = (($sum2 / 7)/9)*$he2;
+                            $totalHE2 = $totalHE2 * 2;
+
+                            $totalR2 = $sum2 + $totalHE2 + $s2;
+                            $totalR2 = sprintf("%1\$.2f",$totalR2);
+
+                            $tableSB2 .= '
+                        <tr>
+                            <td width="100" align="center">H.E.</td>
+                            <td width="80" align="center">'.$he2.'</td>
+                            <td width="80" align="center">H.E.</td>
+                            <td width="80" align="right">$ '.sprintf("%1\$.2f",$totalHE2).'</td>
+                        </tr>
+                    ';
+
+                            $table111 .= '</table>';
+                            $tableSB2 .= '</table>';
+
+                            $table333 = <<<EOD
+                                <style>                
+  
+
+                </style>
+             <table cellspacing="0" cellpadding="2" border="0">
+                <thead>
+                    <tr style="font-weight: bold">
+                        <th COLSPAN="3" width="260" align="right">TOTAL</th>
+                        <th width="80" align="right">$ {$totalR2}</th>
+                    </tr>
+                </thead>
+            </table>
+EOD;
+
+                        }else{
+                            $tableDatos2 = <<<EOD
+                <style>
+                td.bold{
+    font-weight: bold;
+    }
+</style>
+             <table cellspacing="0" cellpadding="2" border="0">
+              </table>
+EOD;
+                        }
+
+
+
+                        $tablefin = <<<EOD
+                        <style>
+                td.br{
+    border-right: 1px solid #000000 ;
+    }
+</style>
+             <table cellspacing="1" cellpadding="8" border="0">
+                    <tr>
+                        <td class="br" align="center" width="380">{$tableDatos}</td>
+                        <td align="center" width="380">{$tableDatos2}</td>
+                    </tr>
+                    <tr>
+                        <td class="br" align="center" width="380">{$table}</td>
+                        <td align="center" width="380">{$table111}</td>
+                    </tr>
+                    <tr>
+                        <td class="br" align="center" width="380">{$table2}</td>
+                        <td align="center" width="380">{$table222}</td>
+                    </tr>
+                    <tr>
+                        <td class="br" align="center" width="380">{$tableSB}</td>
+                        <td align="center" width="380">{$tableSB2}</td>
+                    </tr>
+                    <tr>
+                        <td class="br" align="center" width="380">{$table3}</td>
+                        <td align="center" width="380">{$table333}</td>
+                    </tr>
+             </table>
+EOD;
+
+
+                        $pdf->SetFont('dejavusans', '', 9);
+
+                        $pdf->writeHTML($tablefin, true, false, true, false, '');
+
+                        }
+
+
+
+                    $j=$fn;
+                }
+
+
+
+
+
+
+                // Close and output PDF document
+                // This method has several options, check the source code documentation for more information.
+                $pdf->Output('Recibo'.$idPiso.'.pdf', 'I');
 
                 //============================================================+
                 // END OF FILE

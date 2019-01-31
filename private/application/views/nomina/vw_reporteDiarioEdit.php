@@ -246,7 +246,11 @@ $this->load->view("plantilla/encabezado", $data);
                 nombreEmpleado.html('Nombre: '+ d.NombreC + '   '+ d.departamento +'   Puesto: ' + d.puesto);
                 txtFchaInicio.val(d.fecha_reporte_i).data('Zebra_DatePicker');
                 //txtFchaInicio.data('Zebra_DatePicker').set_date(new Date(d.fecha_reporte_i));
-                $he = parseFloat(d.he);
+                if(d.he===null){
+                    $he=0;
+                }else{
+                    $he = parseFloat(d.he);
+                }
                 cat_rh_departamento = d.cat_rh_departamento;
                 idEmpleado = d.cat_rh_empleado_id;
                 console.log($he);

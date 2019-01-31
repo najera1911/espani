@@ -15,6 +15,15 @@ class Nomina_model extends CI_Model{
         return $this->db->get("cat_rh_departamento")->result();
     }
 
+    function getPisoF($fecha){
+        $this->db->distinct();
+        $this->db->select("B.cat_rh_departamento as id, B.departamento as nombre, '' as txt");
+        $this->db->from("tbl_reportediario A");
+        $this->db->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
+        $this->db->where("fecha_reporte_i",$fecha);
+        return $this->db->get()->result();
+    }
+
     function getEmpleadosData($idEmpleado){
         $this->db->select("cat_rh_empleado_id, departamento, puesto, NombreC, cat_rh_departamento");
         $this->db->where("estatus",1)->where("cat_rh_empleado_id",$idEmpleado);
@@ -37,6 +46,14 @@ INNER JOIN tbl_clientes C on A.cat_clientes_id=C.tbl_clientes_id
 WHERE A.validado = 1
 GROUP by A.tbl_OrdenCorte_id
 HAVING sum(B.resta)>0";
+        return $this->db->query($sql)->result();
+    }
+
+    function getFecha(){
+        $sql="select id, concat(nombre,@rownum:=@rownum+1) as nombre, ''as txt
+from (SELECT @rownum:=0) r,
+(select distinct fecha_reporte_i as id, concat(fecha_reporte_i,' - Sem ') as nombre 
+from tbl_reportediario order by id asc) as t0";
         return $this->db->query($sql)->result();
     }
 
@@ -229,6 +246,14 @@ where A.tbl_reportediario_id = ? order by B.numero_corte, operacion, F.num_bulto
         $this->db->select("A.*, B.NombreC, B.departamento");
         $this->db->from("tbl_reportediario A")->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
         $this->db->where('tbl_reporteDiario_id',$idReporte);
+        return $this->db->get()->result();
+    }
+
+    function getDataReportePiso($idPiso,$fecha){
+        $this->db->select("A.*, B.NombreC, B.departamento");
+        $this->db->from("tbl_reportediario A")->join("empleados_view B","A.cat_rh_empleado_id=B.cat_rh_empleado_id");
+        $this->db->where('B.cat_rh_departamento',$idPiso)->where("A.fecha_reporte_i",$fecha);
+        $this->db->order_by("B.NombreC", "asc");
         return $this->db->get()->result();
     }
 
